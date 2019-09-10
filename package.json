@@ -1,0 +1,35 @@
+{
+    "name": "front-library",
+    "title": "Frontend library",
+    "description": "Frontend functions and modules",
+    "version": "5.2.13",
+    "homepage": "https://github.com/creative-web-solution/front-library",
+    "author": {
+        "name": "Creative Web Solution",
+        "email": "contact@cws-studio.com",
+        "url": "https://www.cws-studio.com"
+    },
+    "keywords": [],
+    "repository": {
+        "type": "git",
+        "url": "ssh://git@github.com:creative-web-solution/front-library.git"
+    },
+    "license": "UNLICENSED",
+    "private": true,
+    "engines": {
+        "node": ">=9.0.0",
+        "npm": ">=5.0.0"
+    },
+    "scripts": {},
+    "files": [
+        "dom",
+        "events",
+        "helpers",
+        "modules",
+        "documentation",
+        "CHANGELOG.md",
+        "README.md"
+    ],
+    "dependencies": {},
+    "devDependencies": {}
+}
