@@ -1,4 +1,3 @@
-/*dependencies: :slice */
 import { slice } from 'front-library/helpers/slice';
 
 /**

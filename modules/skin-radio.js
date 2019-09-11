@@ -1,4 +1,3 @@
-/*dependencies: dom::wrap,helpers::extend */
 import { extend } from 'front-library/helpers/extend';
 import { wrap } from 'front-library/dom/wrap';
 

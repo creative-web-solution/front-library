@@ -1,5 +1,3 @@
-/*dependencies: helpers::extend */
-
 /**
  * Google Map loader
  *

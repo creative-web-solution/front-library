@@ -1,4 +1,3 @@
-/*dependencies: modules::validator-core,helpers::value */
 import { getValue } from 'front-library/helpers/value';
 import { validatorTools, addValidator } from 'front-library/modules/validator-core';
 

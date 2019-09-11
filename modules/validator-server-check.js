@@ -1,5 +1,3 @@
-/*dependencies: modules::validator-core,helpers::defer */
-
 import { defer } from 'front-library/helpers/defer';
 import { validatorTools, addValidator } from 'front-library/modules/validator-core';
 

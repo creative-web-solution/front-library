@@ -1,4 +1,3 @@
-/*dependencies: helpers::url-parser,helpers::slice,events::event-manager */
 import { on } from 'front-library/events/event-manager';
 import { UrlParser } from 'front-library/helpers/url-parser';
 import { slice } from 'front-library/helpers/slice';

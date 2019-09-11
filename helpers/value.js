@@ -1,4 +1,3 @@
-/*dependencies: helpers::type */
 import { isString, isNumber } from 'front-library/helpers/type';
 
 /**

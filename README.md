@@ -1,6 +1,6 @@
 # Front Library
 
-@version: 5.2.13
+@version: 6.0.0
 
 
 ## Use
@@ -8,7 +8,7 @@
 Just import features as usual:
 
 ```js
-import extend from 'front-library/helpers/extend';
+import { extend } from 'front-library/helpers/extend';
 ```
 
 

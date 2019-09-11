@@ -1,4 +1,3 @@
-/*dependencies: helpers::defer */
 import { defer } from 'front-library/helpers/defer';
 
 /**

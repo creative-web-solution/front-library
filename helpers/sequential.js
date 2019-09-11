@@ -1,4 +1,3 @@
-/*dependencies: helpers::type */
 import { isArray } from 'front-library/helpers/type';
 
 /**

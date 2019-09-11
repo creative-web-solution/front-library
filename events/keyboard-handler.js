@@ -1,4 +1,3 @@
-/*dependencies: helpers::extend,events::event-manager */
 import { on, off } from 'front-library/events/event-manager';
 import { extend } from 'front-library/helpers/extend';
 

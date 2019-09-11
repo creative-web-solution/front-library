@@ -1,4 +1,3 @@
-/*dependencies: :type,dom::index,dom::manipulation,dom::wrap,dom::str-to-dom,modules::template,:extend,events::event-manager */
 import { fire } from 'front-library/events/event-manager';
 import { extend } from 'front-library/helpers/extend';
 import { isNumber } from 'front-library/helpers/type';

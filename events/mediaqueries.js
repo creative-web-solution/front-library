@@ -1,4 +1,3 @@
-/*dependencies: helpers::slice */
 import { extend } from 'front-library/helpers/extend';
 import { slice } from 'front-library/helpers/slice';
 

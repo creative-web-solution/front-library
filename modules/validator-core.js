@@ -1,5 +1,3 @@
-/*dependencies: helpers::extend,helpers::defer,helpers::value,helpers::unique,events::event-manager */
-
 import { getValue } from 'front-library/helpers/value';
 import { extend } from 'front-library/helpers/extend';
 import { defer } from 'front-library/helpers/defer';

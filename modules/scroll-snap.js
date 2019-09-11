@@ -1,4 +1,3 @@
-/*dependencies: dom::class,dom::styles,dom::position,dom::size,helpers::extend,events::gesture,events::event-manager */
 import { on, off } from 'front-library/events/event-manager';
 import { gesture, gestureOff } from 'front-library/events/gesture';
 import { extend } from 'front-library/helpers/extend';

@@ -1,6 +1,20 @@
 # CHANGELOG
 
 
+## 6.0.0
+
+**Not compatible with 5.x.x version**
+
+* Remove builder
+* Remove dependencies system to use classic JS `import` instead
+* Add function to export in `front-library` project hosted on GitHub
+
+
+## 5.2.14
+
+* Fix SnapScroll bug
+
+
 ## 5.2.13
 
 * Add IntersectObserver

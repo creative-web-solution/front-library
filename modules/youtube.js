@@ -1,4 +1,3 @@
-/*dependencies: helpers::extend, helpers::defer */
 import { extend } from 'front-library/helpers/extend';
 import { defer } from 'front-library/helpers/defer';
 

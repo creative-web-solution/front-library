@@ -1,5 +1,3 @@
-/*dependencies: helpers::extend,dom::str-to-dom,dom::manipulation,events::gesture,dom::offset,dom::size,dom::outer-size,dom::position,dom::traversing */
-
 import { gesture, gestureOff } from 'front-library/events/gesture';
 import { extend } from 'front-library/helpers/extend';
 import { append, remove } from 'front-library/dom/manipulation';

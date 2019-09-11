@@ -1,5 +1,3 @@
-/*dependencies: modules::validator-core */
-
 import { validatorTools, addValidator } from 'front-library/modules/validator-core';
 
 /**

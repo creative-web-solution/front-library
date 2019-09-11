@@ -1,5 +1,3 @@
-/*dependencies: helpers::extend,modules::template,dom::str-to-dom,dom::manipulation,dom::window-size,dom::size,helpers::defer,DOM:window-size,events::event-manager */
-
 import { on, off } from 'front-library/events/event-manager';
 import { KeyboardHandler } from 'front-library/events/keyboard-handler';
 import { extend } from 'front-library/helpers/extend';

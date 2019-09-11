@@ -1,4 +1,3 @@
-/*dependencies: helpers::slice,dom::document-size,dom::window-size,dom::window-scroll */
 import { slice } from 'front-library/helpers/slice';
 import { scroll } from 'front-library/dom/window-scroll';
 import { documentSize } from 'front-library/dom/document-size';

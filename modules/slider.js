@@ -1,6 +1,4 @@
-/*dependencies: helpers::extend,helpers::wait,helpers::defer,dom::outer-size,dom::class,events::keyboard-handler,events::gesture,events::event-manager */
-
-import { on, one, off, fire } from 'front-library/events/event-manager';
+import { on, one, fire } from 'front-library/events/event-manager';
 import { gesture, gestureOff } from 'front-library/events/gesture';
 import { KeyboardHandler } from 'front-library/events/keyboard-handler';
 import { extend } from 'front-library/helpers/extend';

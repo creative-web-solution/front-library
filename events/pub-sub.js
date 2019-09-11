@@ -1,4 +1,3 @@
-/*dependencies: events::event-manager */
 import { on, off, fire } from 'front-library/events/event-manager';
 
 /**

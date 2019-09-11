@@ -1,4 +1,3 @@
-/*dependencies: dom::wrap,dom::manipulation,dom::str-to-dom,helpers::extend */
 import { extend } from 'front-library/helpers/extend';
 import { strToDOM } from 'front-library/dom/str-to-dom';
 import { insertAfter, append } from 'front-library/dom/manipulation';

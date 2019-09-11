@@ -2,7 +2,7 @@
     "name": "front-library",
     "title": "Frontend library",
     "description": "Frontend functions and modules",
-    "version": "5.2.13",
+    "version": "6.0.0",
     "homepage": "https://github.com/creative-web-solution/front-library",
     "author": {
         "name": "Creative Web Solution",
@@ -21,15 +21,6 @@
         "npm": ">=5.0.0"
     },
     "scripts": {},
-    "files": [
-        "dom",
-        "events",
-        "helpers",
-        "modules",
-        "documentation",
-        "CHANGELOG.md",
-        "README.md"
-    ],
     "dependencies": {},
     "devDependencies": {}
 }
