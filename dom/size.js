@@ -1,4 +1,4 @@
-import { prop, getStyle } from 'front-library/dom/styles';
+import { prop, getStyle } from 'front-library/DOM/Styles';
 
 /**
  * Compute the width of an element

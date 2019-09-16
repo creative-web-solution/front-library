@@ -1,5 +1,5 @@
-import { on, off } from 'front-library/events/event-manager';
-import { extend } from 'front-library/helpers/extend';
+import { on, off } from 'front-library/Events/EventsManager';
+import { extend } from 'front-library/Helpers/Extend';
 
 /**
  * @callback gestureEvents_Callback

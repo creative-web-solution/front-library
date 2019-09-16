@@ -13,7 +13,7 @@ For validation function, you can use either:
 *Initialisation*
 
 ```
-import { Validator } from 'MODULES'
+import { Validator } from 'front-library/Modules/Validator'
 
 let $form, validator;
 
@@ -299,7 +299,7 @@ Example for an email error message:
 A validator return a Promise which is ALWAYS resolve when the validation is ended. This is its parameter (called state) which will tell us if the validation is ok or not.
 
  ```
-import { addValidator } from 'MODULES'
+import { addValidator } from 'front-library/Modules/Validator'
 
 addValidator(
     VALIDATOR_NAME,
@@ -316,7 +316,7 @@ The ASYNC parameter as no effect on validation, it's just here for indication pu
 Can be useful for debug.
 
  ```
-import { addValidator } from 'MODULES'
+import { addValidator } from 'front-library/Modules/Validator'
 
 addValidator(
     VALIDATOR_NAME,
@@ -353,7 +353,7 @@ There are available tools/helper:
 Import its with:
 
 ```
-import { validatorTools } from 'MODULES'
+import { validatorTools } from 'front-library/Modules/Validator'
 ```
 
 

@@ -3,7 +3,7 @@
 ### Init
 
 ```
-import { Autocomplete } from 'MODULES'
+import { Autocomplete } from 'front-library/Modules/Autocomplete'
 
 ac = Autocomplete(
     {

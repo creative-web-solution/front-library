@@ -1,7 +1,7 @@
 ## Template
 
 ```
-import { template } from 'MODULES'
+import { template } from 'front-library/Modules/template'
 
 let tplFunction = template( html );
 let html = tplFunction( { "text": "hey!!" } );

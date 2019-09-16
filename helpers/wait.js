@@ -1,4 +1,4 @@
-import { defer } from 'front-library/helpers/defer';
+import { defer } from 'front-library/Helpers/defer';
 
 /**
  * Return a promise and wait for 'waitFor' millisecond to resolve it.

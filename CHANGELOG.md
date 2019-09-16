@@ -8,6 +8,7 @@
 * Remove builder
 * Remove dependencies system to use classic JS `import` instead
 * Add function to export in `front-library` project hosted on GitHub
+* General files and folders renaming
 
 
 ## 5.2.14

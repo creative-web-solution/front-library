@@ -119,7 +119,7 @@ popin.destroy();
 Handle one popin only with the API.
 
 ```
-import { Popin } from 'MODULES'
+import { Popin } from 'front-library/Modules/Popin'
 
 popin = new Popin( popinOptions );
 
@@ -134,7 +134,7 @@ If the `selector.links` option is set to `a[data-popin]`, all <a> tag with a [da
 
 
 ```
-import { PopinController } from 'MODULES'
+import { PopinController } from 'front-library/Modules/Popin'
 
 popin = new PopinController( popinOptions );
 ```
@@ -153,7 +153,7 @@ All links with an href pointing to the popin (href="#my-popin") will be handled,
 
 
 ```
-import { PopinController } from 'MODULES'
+import { PopinController } from 'front-library/Modules/Popin'
 
 let $inlinePopin = document.getelementbyId( 'my-popin );
 

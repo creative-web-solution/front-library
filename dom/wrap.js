@@ -1,4 +1,4 @@
-import { strToDOM } from 'front-library/dom/str-to-dom';
+import { strToDOM } from 'front-library/DOM/strToDOM';
 
 /**
  * Wrap a DOM element in another

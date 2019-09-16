@@ -1,12 +1,12 @@
-import { on, one, fire } from 'front-library/events/event-manager';
-import { gesture, gestureOff } from 'front-library/events/gesture';
-import { KeyboardHandler } from 'front-library/events/keyboard-handler';
-import { extend } from 'front-library/helpers/extend';
-import { defer } from 'front-library/helpers/defer';
-import { wait } from 'front-library/helpers/wait';
-import { index } from 'front-library/dom/index';
-import { outerHeight } from 'front-library/dom/outer-size';
-import { aClass, rClass } from 'front-library/dom/class';
+import { on, one, fire } from 'front-library/Events/EventsManager';
+import { gesture, gestureOff } from 'front-library/Events/Gesture';
+import { KeyboardHandler } from 'front-library/Events/KeyboardHandler';
+import { extend } from 'front-library/Helpers/Extend';
+import { defer } from 'front-library/Helpers/defer';
+import { wait } from 'front-library/Helpers/wait';
+import { index } from 'front-library/DOM/index';
+import { outerHeight } from 'front-library/DOM/OuterSize';
+import { aClass, rClass } from 'front-library/DOM/Class';
 
 
 /**

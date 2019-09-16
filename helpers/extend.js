@@ -1,4 +1,4 @@
-import { isFunction, isArray } from 'front-library/helpers/type';
+import { isFunction, isArray } from 'front-library/Helpers/Type';
 
 /**
  * Clone the properties of an object and its children (deep copy)

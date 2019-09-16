@@ -1,10 +1,10 @@
-import { gesture, gestureOff } from 'front-library/events/gesture';
-import { extend } from 'front-library/helpers/extend';
-import { append, remove } from 'front-library/dom/manipulation';
-import { height } from 'front-library/dom/size';
-import { offset } from 'front-library/dom/offset';
-import { outerHeight, outerWidth } from 'front-library/dom/outer-size';
-import { position } from 'front-library/dom/position';
+import { gesture, gestureOff } from 'front-library/Events/Gesture';
+import { extend } from 'front-library/Helpers/Extend';
+import { append, remove } from 'front-library/DOM/Manipulation';
+import { height } from 'front-library/DOM/Size';
+import { offset } from 'front-library/DOM/offset';
+import { outerHeight, outerWidth } from 'front-library/DOM/OuterSize';
+import { position } from 'front-library/DOM/position';
 
 /**
  * Autocomplete

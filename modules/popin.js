@@ -1,11 +1,11 @@
-import { on, off } from 'front-library/events/event-manager';
-import { KeyboardHandler } from 'front-library/events/keyboard-handler';
-import { extend } from 'front-library/helpers/extend';
-import { defer } from 'front-library/helpers/defer';
-import { strToDOM } from 'front-library/dom/str-to-dom';
-import { append } from 'front-library/dom/manipulation';
-import { windowSize } from 'front-library/dom/window-size';
-import { template } from 'front-library/modules/template';
+import { on, off } from 'front-library/Events/EventsManager';
+import { KeyboardHandler } from 'front-library/Events/KeyboardHandler';
+import { extend } from 'front-library/Helpers/Extend';
+import { defer } from 'front-library/Helpers/defer';
+import { strToDOM } from 'front-library/DOM/strToDOM';
+import { append } from 'front-library/DOM/Manipulation';
+import { windowSize } from 'front-library/DOM/windowSize';
+import { template } from 'front-library/Modules/template';
 
 /**
  * Create a simple popin

@@ -1,6 +1,6 @@
-import { on } from 'front-library/events/event-manager';
-import { UrlParser } from 'front-library/helpers/url-parser';
-import { slice } from 'front-library/helpers/slice';
+import { on } from 'front-library/Events/EventsManager';
+import { UrlParser } from 'front-library/Helpers/UrlParser';
+import { slice } from 'front-library/Helpers/slice';
 
 /**
  * @typedef {object} state_Object

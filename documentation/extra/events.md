@@ -1,7 +1,7 @@
 ## Gestures
 
 ```
-import { gesture, gestureOff } from 'EVENTS'
+import { gesture, gestureOff } from 'front-library/Events/Gesture'
 
 let gestureHanlder = gesture( $element, 'handlerName', options );
 
@@ -157,7 +157,7 @@ Callbacks are bound on 'keydown' events
 
 
 ```
-import { KeyboardHandler } from 'EVENTS'
+import { KeyboardHandler } from 'front-library/Events/KeyboardHandler'
 
 let keyboardControls = new KeyboardHandler(
     $domElement,
