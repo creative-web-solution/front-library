@@ -22,5 +22,8 @@
     },
     "scripts": {},
     "dependencies": {},
-    "devDependencies": {}
+    "devDependencies": {},
+    "browserify": {
+        "transform": [["babelify", { "presets": ["@babel/preset-env"] }]]
+    }
 }
