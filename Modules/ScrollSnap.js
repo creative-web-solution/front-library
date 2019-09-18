@@ -31,6 +31,9 @@ import { width, height } from 'front-library/DOM/Size';
  * @param {(string|HTMLElement[])} [options.snapTo]
  * @param {number} [options.minItemsToActivate=2]
  * @param {HTMLElement} [options.$offsetElement]
+ * @param {Object} [options.offset]
+ * @param {Number} [options.offset.top]
+ * @param {Number} [options.offset.left]
  * @param {ScrollSnap_Handler} [options.onSnapStart]
  * @param {ScrollSnap_Handler} [options.onSnapEnd]
  * @param {ScrollSnap_Handler} [options.onReachStart]
@@ -140,6 +143,7 @@ ScrollSnap = function($scroller, userOptions = {}) {
     const STATE_IDLE = 'idle';
     const STATE_MOVING = 'moving';
     const STATE_LOCKED = 'locked';
+    const SCROLL_END_TRESHOLD = 5;
 
     options = extend(defaultOptions, userOptions);
 
@@ -163,8 +167,19 @@ ScrollSnap = function($scroller, userOptions = {}) {
 
     scrollToHandler = new ScrollTo($scroller, options.direction, resetState);
 
+
+    function getScrollPositionInformation() {
+        let scrollPos = $scroller[ SCROLL_PROPERTY_NAME ];
+
+        return {
+            "scrollAtStart": scrollPos === 0,
+            "scrollAtEnd": scrollPos + scrollerSize >= $scroller[ SCROLL_SIZE_PROPERTY_NAME ] - SCROLL_END_TRESHOLD
+        }
+    }
+
     function resetState(snapItem, type) {
         state = STATE_IDLE;
+        touchended = true;
 
         currentSnapItem = snapItem;
 
@@ -176,7 +191,8 @@ ScrollSnap = function($scroller, userOptions = {}) {
                 snapItem,
                 type,
                 scrollerSize,
-                offsetSize
+                offsetSize,
+                ...getScrollPositionInformation()
             });
         }
 
@@ -212,6 +228,7 @@ ScrollSnap = function($scroller, userOptions = {}) {
         });
         cancelAutoScroll();
         state = STATE_IDLE;
+        touchended = true;
     }
 
     function handleInterruption() {
@@ -224,7 +241,7 @@ ScrollSnap = function($scroller, userOptions = {}) {
     /* Return true if the start or the end is reached */
     function processLimit( snapItem, type, fromResetState ) {
 
-        if ( $scroller[SCROLL_SIZE_PROPERTY_NAME] - $scroller[SCROLL_PROPERTY_NAME] <= scrollerSize ) {
+        if ( $scroller[SCROLL_PROPERTY_NAME] + scrollerSize >= $scroller[SCROLL_SIZE_PROPERTY_NAME] - SCROLL_END_TRESHOLD ) {
             if ( !fromResetState ) {
                 resetState(snapItem, type);
             }
@@ -235,7 +252,8 @@ ScrollSnap = function($scroller, userOptions = {}) {
                     snapItem,
                     type,
                     scrollerSize,
-                    offsetSize
+                    offsetSize,
+                    ...getScrollPositionInformation()
                 });
             }
             return true;
@@ -274,7 +292,8 @@ ScrollSnap = function($scroller, userOptions = {}) {
                 "snapItem": currentSnapItem,
                 "type":     TYPE_SCROLL,
                 scrollerSize,
-                offsetSize
+                offsetSize,
+                ...getScrollPositionInformation()
             });
         }
 
@@ -375,6 +394,7 @@ ScrollSnap = function($scroller, userOptions = {}) {
 
         if ($snapItems.length < minItemsToActivate) {
             state = STATE_LOCKED;
+            touchended = true;
             removeEvents();
             aClass($scroller, options.lockedClass);
             return;
@@ -383,12 +403,16 @@ ScrollSnap = function($scroller, userOptions = {}) {
         bindEvents();
 
         state = STATE_IDLE;
+        touchended = true;
         rClass($scroller, options.lockedClass);
 
         if (options.$offsetElement) {
             offsetSize =
                 prop(options.$offsetElement, 'margin-' + propPos) || 0;
             offsetSize = Math.round(parseFloat(offsetSize, 10));
+        }
+        else if ( options.offset ) {
+            offsetSize = options.offset[ propPos ] || 0;
         }
 
         scrollerSize = IS_VERTICAL_MODE ? height($scroller) : width($scroller);
@@ -398,6 +422,8 @@ ScrollSnap = function($scroller, userOptions = {}) {
             let snapItem = {
                 "coord": _position[propPos] - offsetSize,
                 "index": index,
+                "isFirst": index === 0,
+                "isLast": index === $snapItems.length - 1,
                 "$item": $item
             };
 
@@ -507,7 +533,8 @@ ScrollSnap = function($scroller, userOptions = {}) {
                 "snapItem": currentSnapItem,
                 "type":     TYPE_API,
                 scrollerSize,
-                offsetSize
+                offsetSize,
+                ...getScrollPositionInformation()
             });
         }
 
@@ -546,7 +573,8 @@ ScrollSnap = function($scroller, userOptions = {}) {
                 "snapItem": currentSnapItem,
                 "type":     TYPE_API,
                 scrollerSize,
-                offsetSize
+                offsetSize,
+                ...getScrollPositionInformation()
             });
         }
 
@@ -594,7 +622,8 @@ ScrollSnap = function($scroller, userOptions = {}) {
                 "snapItem": currentSnapItem,
                 "type":     TYPE_API,
                 scrollerSize,
-                offsetSize
+                offsetSize,
+                ...getScrollPositionInformation()
             });
         }
 
@@ -630,7 +659,8 @@ ScrollSnap = function($scroller, userOptions = {}) {
                 "snapItem": currentSnapItem,
                 "type":     TYPE_API,
                 scrollerSize,
-                offsetSize
+                offsetSize,
+                ...getScrollPositionInformation()
             });
         }
 
