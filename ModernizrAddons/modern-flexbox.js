@@ -1,1 +1,1 @@
-Modernizr.addTest('modernFlexbox', Modernizr.flexbox && Modernizr.flexwrap);
+Modernizr.addTest( 'modernFlexbox', Modernizr.flexbox && Modernizr.flexwrap );

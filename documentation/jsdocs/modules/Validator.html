@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>Documentation Namespace: globalState</title>
+	<title>Documentation Class: Validator</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,13 +86,13 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Namespace: globalState</h1>
+	<h1 class="page-title">Class: Validator</h1>
 <section>
 
 <header>
     
         <h2>
-        globalState
+        Validator
         </h2>
         
     
@@ -103,166 +103,9 @@
     <div class="container-overview">
     
         
-            <div class="description">Manage a global object that allow storing and sharing values among modules.</div>
-        
-
-        
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-        
-            <h3>Example</h3>
-            
-    <pre class="sunlight-highlight-javascript">// Use the default storage
-globalState.set( &#x27;PROP&#x27;, &#x27;VALUE&#x27; );
-globalState.get( &#x27;PROP&#x27; );
-
-// Use a storage with a specific name
-globalState.set( &#x27;MY_STORE&#x27;, &#x27;PROP&#x27;, &#x27;VALUE&#x27; );
-globalState.get( &#x27;MY_STORE&#x27;, &#x27;PROP&#x27; );
-
-// To use events on properties change
-globalState.activeEventsDispatch();
-globalState.registerOnEveryChange( (value, propertyName, storeName) =&gt; {} )
-globalState.registerOnStoreChange( (value, propertyName, storeName) =&gt; {}, &#x27;storeName&#x27; )
-globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {}, &#x27;storeName&#x27;, &#x27;myProperty&#x27; )</pre>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Members</h3>
-
-        <dl>
-            
-<hr>
-<dt class="name" id="DEFAULT_STORE_NAME">
-    <h4 id="DEFAULT_STORE_NAME"><span class="type-signature"></span>DEFAULT_STORE_NAME<span class="type-signature"> :String</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Name of the default store
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">String</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        </dl>
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        <dl>
-            
 <hr>
 <dt>
-    <h4 class="name" id="activeEventsDispatch"><span class="type-signature"></span>activeEventsDispatch(alwaysDispatch)</h4>
+    <h4 class="name" id="Validator"><span class="type-signature"></span>new Validator($form, userOptions)</h4>
     
     
 </dt>
@@ -270,7 +113,7 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
 
     
     <div class="description">
-        Active the dispatch of events when a property is change
+        Validate a form, a fieldset or whatever had inputs inside
     </div>
     
 
@@ -305,7 +148,520 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
 
         <tr>
             
-                <td class="name"><code>alwaysDispatch</code></td>
+                <td class="name"><code>$form</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>userOptions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6 class="method-params-label method-subparams-label">Properties</h6>
+                
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>fields</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    input,textarea,select
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>filter</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    input[type=\"button\"],input[type=\"submit\"],input[type=\"reset\"],input[type=\"image\"]
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>customErrorLabelPrefix</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    data-error-label
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>errorMessages</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>validatorsOptions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>onValidate</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Callback</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    data => {}
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>onInvalidate</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Callback</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    data => {}
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>extra/modules/validator.md for details</li>
+			</ul>
+	</dd>
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">let validator = new Validator( $form, options )
+
+on( $form, {
+     &quot;eventsName&quot;: &quot;submit&quot;,
+     &quot;callback&quot;: e =&gt; {
+        e.preventDefault();
+        validator
+                .validate()
+                .then( data =&gt; {
+                        console.log( &#x27;Valid&#x27;, data );
+                        $form.submit();
+                    }
+                )
+                .catch( data =&gt; {
+                        console.log( &#x27;Invalid&#x27;, data );
+                        data.errors.forEach( input =&gt; {
+                                console.log( input.getErrorMessages() );
+                            }
+                        )
+                    }
+                );
+    }
+});</pre>
+
+
+    
+</dd>
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<hr>
+<dt>
+    <h4 class="name" id="getAllFields"><span class="type-signature"></span>getAllFields(onlyValidated)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Get all handled fields (DOM elements)
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>onlyValidated</code></td>
             
 
             <td class="type">
@@ -322,159 +678,7 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
 
             
 
-            <td class="description last">If true, it will dispatch events even if the value in the store is the same as the value you try to set</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="get"><span class="type-signature"></span>get(arg1, arg2)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Get the value of a property. If there are only 2 arguments, the default store will be used.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>arg1</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Store ( or Property if 1 arguments are passed )</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>arg2</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Property if 2 arguments are passed</td>
+            <td class="description last">If true, remove all fields without validator</td>
         </tr>
 
     
@@ -545,7 +749,7 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
     </dt>
     <dd>
         
-<span class="param-type">*</span>
+<span class="param-type">Array.&lt;HTMLElement></span>
 
 
 
@@ -562,7 +766,7 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
             
 <hr>
 <dt>
-    <h4 class="name" id="registerOnEveryChange"><span class="type-signature"></span>registerOnEveryChange(callback)</h4>
+    <h4 class="name" id="getAllInputs"><span class="type-signature"></span>getAllInputs()</h4>
     
     
 </dt>
@@ -570,7 +774,7 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
 
     
     <div class="description">
-        Bind a function to be called on all properties change
+        Get all inputs (input objects, not DOM elements)
     </div>
     
 
@@ -579,56 +783,6 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
     
 
     
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">GlobalState_callback</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
     
 
     
@@ -682,6 +836,26 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;Input></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
@@ -690,7 +864,7 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
             
 <hr>
 <dt>
-    <h4 class="name" id="registerOnPropertyChange"><span class="type-signature"></span>registerOnPropertyChange(callback, storeName, propertyName)</h4>
+    <h4 class="name" id="getCheckedFields"><span class="type-signature"></span>getCheckedFields()</h4>
     
     
 </dt>
@@ -698,7 +872,7 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
 
     
     <div class="description">
-        Bind a function to be called on a specific property change in a specific store
+        Get only the fields (DOM elements) with at least one validator
     </div>
     
 
@@ -707,104 +881,6 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
     
 
     
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">GlobalState_callback</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>storeName</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>propertyName</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
     
 
     
@@ -858,6 +934,26 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;HTMLElement></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
@@ -866,7 +962,7 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
             
 <hr>
 <dt>
-    <h4 class="name" id="registerOnStoreChange"><span class="type-signature"></span>registerOnStoreChange(callback, storeName)</h4>
+    <h4 class="name" id="getCheckedInputs"><span class="type-signature"></span>getCheckedInputs()</h4>
     
     
 </dt>
@@ -874,7 +970,7 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
 
     
     <div class="description">
-        Bind a function to be called on all properties change for a specific store
+        Get all inputs (input objects, not DOM elements) with at least one validator
     </div>
     
 
@@ -883,80 +979,6 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
     
 
     
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">GlobalState_callback</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>storeName</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
     
 
     
@@ -1010,6 +1032,26 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;Input></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
@@ -1018,7 +1060,7 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
             
 <hr>
 <dt>
-    <h4 class="name" id="remove"><span class="type-signature"></span>remove(callback)</h4>
+    <h4 class="name" id="getFieldValidator"><span class="type-signature"></span>getFieldValidator($field)</h4>
     
     
 </dt>
@@ -1026,7 +1068,7 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
 
     
     <div class="description">
-        Unbind the registered function from all change events
+        Return the validator object of an input
     </div>
     
 
@@ -1061,13 +1103,13 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
 
         <tr>
             
-                <td class="name"><code>callback</code></td>
+                <td class="name"><code>$field</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">function</span>
+<span class="param-type">HTMLElement</span>
 
 
 
@@ -1079,182 +1121,6 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
             
 
             <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="set"><span class="type-signature"></span>set(arg1, arg2, value)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Set a value in a property. If there are only 2 arguments, the default store will be used
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>arg1</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Store ( or Property if 2 arguments are passed )</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>arg2</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">*</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Property ( or Value if 2 arguments are passed )</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>value</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">*</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Value if 3 arguments are passed</td>
         </tr>
 
     
@@ -1317,10 +1183,6 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
-    - Return the setted value
-</div>
-
 
 
 <dl>
@@ -1329,7 +1191,7 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
     </dt>
     <dd>
         
-<span class="param-type">*</span>
+<span class="param-type">Input</span>
 
 
 
@@ -1346,7 +1208,7 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
             
 <hr>
 <dt>
-    <h4 class="name" id="stopEventsDispatch"><span class="type-signature"></span>stopEventsDispatch()</h4>
+    <h4 class="name" id="update"><span class="type-signature"></span>update()</h4>
     
     
 </dt>
@@ -1354,7 +1216,7 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
 
     
     <div class="description">
-        Stop the dispatch of events
+        Bind or rebind all inputs
     </div>
     
 
@@ -1416,6 +1278,252 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
     
 
     
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="validate"><span class="type-signature"></span>validate()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Start the validation of all the form
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="validateField"><span class="type-signature"></span>validateField($field)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Validate one field
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>$field</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
@@ -1429,8 +1537,8 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
         <dl>
                 
 <hr>
-<dt class="name" id=".KeyboardHandler_Options">
-    <h4 id=".KeyboardHandler_Options">KeyboardHandler_Options</h4>
+<dt class="name" id=".Input">
+    <h4 id=".Input">Input</h4>
 
     
 </dt>
@@ -1442,7 +1550,7 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
         <ul>
             <li>
                 
-<span class="param-type">GlobalState_callback</span>
+<span class="param-type">Object</span>
 
 
 
@@ -1480,13 +1588,13 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
 
         <tr>
             
-                <td class="name"><code>value</code></td>
+                <td class="name"><code>$input</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">*</span>
+<span class="param-type">HTMLElement</span>
 
 
 
@@ -1504,13 +1612,13 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
 
         <tr>
             
-                <td class="name"><code>properyName</code></td>
+                <td class="name"><code>$label</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">HTMLElement</span>
 
 
 
@@ -1528,13 +1636,85 @@ globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {},
 
         <tr>
             
-                <td class="name"><code>storeName</code></td>
+                <td class="name"><code>getErrorMessages</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>getErrors</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>hasError</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>isValid</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
 
 
 

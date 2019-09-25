@@ -1,4 +1,4 @@
 Modernizr.addTest(
     'objectposition',
-    !!Modernizr.prefixed('objectPosition') && !!Modernizr.prefixed('objectFit')
+    !!Modernizr.prefixed( 'objectPosition' ) && !!Modernizr.prefixed( 'objectFit' )
 );

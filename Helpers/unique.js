@@ -1,8 +1,8 @@
 /**
  * Remove all duplicate from a list
  *
- * @param {Array} arr
- * @param {?Function} fnc - Optionnal, (currentItem, returnArray) => { should return true or false }
+ * @param {Array} list
+ * @param {Function} [filter] - Optionnal, (currentItem, returnArray) => { should return true or false }
  *
  * @example // Using the native includes function
  * modifiedArray = unique( array )
@@ -12,17 +12,17 @@
  *
  * @returns {Array}
  */
-export function unique(arr, fnc) {
-    let returnArr = []
+export function unique( list, filter ) {
+    let returnArr = [];
 
-    for (let i = 0; i < arr.length; i++) {
+    for ( let i = 0; i < list.length; i++ ) {
         if (
-            (fnc && fnc(arr[i], returnArr)) ||
-            (!fnc && !returnArr.includes(arr[i]))
+            ( filter && filter(list[ i ], returnArr ) ) ||
+            ( !filter && !returnArr.includes(list[ i ] ) )
         ) {
-            returnArr.push(arr[i])
+            returnArr.push( list[ i ] );
         }
     }
 
-    return returnArr
+    return returnArr;
 }

@@ -4,8 +4,8 @@ import { slice } from 'front-library/Helpers/slice';
  * @typedef {GlobalState_callback} KeyboardHandler_Options
  * @memberof globalState
  * @property {*} value
- * @property {string} properyName
- * @property {string} storeName
+ * @property {String} properyName
+ * @property {String} storeName
  */
 
 /*
@@ -21,114 +21,126 @@ function GlobalState() {
 
     // Store callback to be called on SPECIFIC changes
     const EVENTS_STORE = {
-        [DEFAULT_STORE_NAME]: {
-            functions: [],
-            props: {}
+        [ DEFAULT_STORE_NAME ]: {
+            "functions": [],
+            "props": {}
         }
     };
+
     stores = {};
+
 
     /**
      * Name of the default store
      *
      * @memberof globalState
      * @member DEFAULT_STORE_NAME
-     * @type {string}
+     * @instance
+     * @type {String}
      */
-    Object.defineProperty(this, 'DEFAULT_STORE_NAME', {
+    Object.defineProperty( this, 'DEFAULT_STORE_NAME', {
         get: function() {
             return DEFAULT_STORE_NAME;
         }
-    });
+    } );
 
 
-    function dispatch(value, property, store) {
+    function dispatch( value, property, store ) {
 
-        if (!EVENTS_STORE[store]) {
-            EVENTS_STORE[store] = {
-                functions: [],
-                props: {}
+        if ( !EVENTS_STORE[ store ] ) {
+            EVENTS_STORE[ store ] = {
+                "functions": [],
+                "props": {}
             };
         }
 
-        if (!EVENTS_STORE[store].props[property]) {
-            EVENTS_STORE[store].props[property] = [];
+        if ( !EVENTS_STORE[ store ].props[ property ] ) {
+            EVENTS_STORE[ store ].props[ property ] = [];
         }
 
         GLOBAL_EVENTS_STORE.forEach( fnc => {
-            fnc(value, property, store);
+            fnc( value, property, store );
         } );
 
-        EVENTS_STORE[store].functions.forEach( fnc => {
-            fnc(value, property, store);
+        EVENTS_STORE[ store ].functions.forEach( fnc => {
+            fnc( value, property, store );
         } );
 
-        EVENTS_STORE[store].props[property].forEach( fnc => {
-            fnc(value, property, store);
+        EVENTS_STORE[ store ].props[ property ].forEach( fnc => {
+            fnc( value, property, store );
         } );
     }
+
 
     /**
      * Active the dispatch of events when a property is change
      *
      * @memberof globalState
      * @function activeEventsDispatch
+     * @instance
      *
      * @param {Boolean} alwaysDispatch - If true, it will dispatch events even if the value in the store is the same as the value you try to set
      */
-    this.activeEventsDispatch = function(alwaysDispatch) {
+    this.activeEventsDispatch = function( alwaysDispatch ) {
         dispatchEvents = true;
         _alwaysDispatch = alwaysDispatch;
     }
+
 
     /**
      * Stop the dispatch of events
      *
      * @memberof globalState
      * @function stopEventsDispatch
+     * @instance
      */
     this.stopEventsDispatch = function() {
         dispatchEvents = false;
     }
+
 
     /**
      * Set a value in a property. If there are only 2 arguments, the default store will be used
      *
      * @memberof globalState
      * @function set
-     * @param {string} arg1 - Store ( or Property if 2 arguments are passed )
+     * @instance
+     *
+     * @param {String} arg1 - Store ( or Property if 2 arguments are passed )
      * @param {*} arg2 - Property ( or Value if 2 arguments are passed )
      * @param {*} value - Value if 3 arguments are passed
      *
      * @returns {*} - Return the setted value
      */
-    this.set = (...args) => {
+    this.set = ( ...args ) => {
         let store, property, value, length, previousValue;
 
         length = args.length;
 
-        if (length >= 3) {
-            store = args[0];
-            property = args[1];
-            value = args[2];
-        } else if (length === 2) {
+        if ( length >= 3 ) {
+            store = args[ 0 ];
+            property = args[ 1 ];
+            value = args[ 2 ];
+        }
+        else if ( length === 2 ) {
             store = DEFAULT_STORE_NAME;
-            property = args[0];
-            value = args[1];
-        } else {
+            property = args[ 0 ];
+            value = args[ 1 ];
+        }
+        else {
             return
         }
 
-        if (!stores[store]) {
-            stores[store] = {};
+        if ( !stores[ store ] ) {
+            stores[ store ] = {};
         }
 
-        previousValue = stores[store][property];
+        previousValue = stores[ store ][ property ];
 
-        stores[store][property] = value;
+        stores[ store ][ property]  = value;
 
-        if (dispatchEvents && (_alwaysDispatch || !_alwaysDispatch && previousValue !== value)) {
-            dispatch(value, property, store);
+        if ( dispatchEvents && ( _alwaysDispatch || !_alwaysDispatch && previousValue !== value ) ) {
+            dispatch( value, property, store );
         }
 
         return value;
@@ -140,27 +152,31 @@ function GlobalState() {
      *
      * @memberof globalState
      * @function get
-     * @param {string} arg1 - Store ( or Property if 1 arguments are passed )
-     * @param {string} arg2 - Property if 2 arguments are passed
+     * @instance
+     *
+     * @param {String} arg1 - Store ( or Property if 1 arguments are passed )
+     * @param {String} arg2 - Property if 2 arguments are passed
      *
      * @returns {*}
      */
-    this.get = (...args) => {
+    this.get = ( ...args ) => {
         let store, property, length;
 
         length = args.length;
 
-        if (length >= 2) {
-            store = args[0];
-            property = args[1];
-        } else if (length === 1) {
+        if ( length >= 2 ) {
+            store = args[ 0 ];
+            property = args[ 1 ];
+        }
+        else if ( length === 1 ) {
             store = DEFAULT_STORE_NAME;
-            property = args[0];
-        } else {
+            property = args[ 0 ];
+        }
+        else {
             return;
         }
 
-        return stores[store] ? stores[store][property] : undefined;
+        return stores[ store ] ? stores[ store ][ property ] : undefined;
     }
 
 
@@ -169,13 +185,15 @@ function GlobalState() {
      *
      * @memberof globalState
      * @function registerOnEveryChange
-     * @param {GlobalState_callback} func
+     * @instance
+     *
+     * @param {GlobalState_callback} callback
      */
-    this.registerOnEveryChange = (func) => {
-        if (!func) {
+    this.registerOnEveryChange = callback => {
+        if ( !callback ) {
             return;
         }
-        GLOBAL_EVENTS_STORE.push(func);
+        GLOBAL_EVENTS_STORE.push( callback );
     }
 
 
@@ -184,22 +202,24 @@ function GlobalState() {
      *
      * @memberof globalState
      * @function registerOnStoreChange
-     * @param {GlobalState_callback} func
-     * @param {string} storeName
+     * @instance
+     *
+     * @param {GlobalState_callback} callback
+     * @param {String} storeName
      */
-    this.registerOnStoreChange = (func, storeName) => {
-        if (!func || !storeName) {
+    this.registerOnStoreChange = ( callback, storeName ) => {
+        if ( !callback || !storeName ) {
             return;
         }
 
-        if (!EVENTS_STORE[storeName]) {
-            EVENTS_STORE[storeName] = {
-                functions: [],
-                props: {}
+        if ( !EVENTS_STORE[ storeName ] ) {
+            EVENTS_STORE[ storeName ] = {
+                "functions": [],
+                "props": {}
             };
         }
 
-        EVENTS_STORE[storeName].functions.push(func);
+        EVENTS_STORE[ storeName ].functions.push( callback );
     }
 
 
@@ -208,26 +228,28 @@ function GlobalState() {
      *
      * @memberof globalState
      * @function registerOnPropertyChange
-     * @param {GlobalState_callback} func
-     * @param {string} storeName
-     * @param {string} propertyName
+     * @instance
+     *
+     * @param {GlobalState_callback} callback
+     * @param {String} storeName
+     * @param {String} propertyName
      */
-    this.registerOnPropertyChange = (func, storeName, propertyName) => {
-        if (!func || !storeName || !propertyName) {
+    this.registerOnPropertyChange = ( callback, storeName, propertyName ) => {
+        if ( !callback || !storeName || !propertyName ) {
             return;
         }
-        if (!EVENTS_STORE[storeName]) {
-            EVENTS_STORE[storeName] = {
-                functions: [],
-                props: {}
+        if ( !EVENTS_STORE[ storeName ] ) {
+            EVENTS_STORE[ storeName ] = {
+                "functions": [],
+                "props": {}
             };
         }
 
-        if (!EVENTS_STORE[storeName].props[propertyName]) {
-            EVENTS_STORE[storeName].props[propertyName] = [];
+        if ( !EVENTS_STORE[ storeName ].props[ propertyName ] ) {
+            EVENTS_STORE[ storeName ].props[ propertyName ] = [];
         }
 
-        EVENTS_STORE[storeName].props[propertyName].push(func);
+        EVENTS_STORE[ storeName ].props[ propertyName ].push( callback );
     }
 
 
@@ -236,21 +258,23 @@ function GlobalState() {
      *
      * @memberof globalState
      * @function remove
-     * @param {Function} func
+     * @instance
+     *
+     * @param {Function} callback
      */
-    this.remove = (func) => {
-        if (!func) {
+    this.remove = callback => {
+        if ( !callback ) {
             return;
         }
 
-        slice(GLOBAL_EVENTS_STORE, func);
+        slice( GLOBAL_EVENTS_STORE, callback );
 
-        Object.keys(EVENTS_STORE).forEach(storeName => {
-            slice(EVENTS_STORE[storeName].functions, func);
-            Object.keys(EVENTS_STORE[storeName].props).forEach(propertyName => {
-                slice(EVENTS_STORE[storeName].props[propertyName], func);
-            });
-        });
+        Object.keys( EVENTS_STORE ).forEach( storeName => {
+            slice( EVENTS_STORE[ storeName ].functions, callback );
+            Object.keys( EVENTS_STORE[ storeName ].props).forEach( propertyName => {
+                slice( EVENTS_STORE[ storeName ].props[ propertyName ], callback );
+            } );
+        } );
     }
 }
 
@@ -273,6 +297,4 @@ function GlobalState() {
  * globalState.registerOnStoreChange( (value, propertyName, storeName) => {}, 'storeName' )
  * globalState.registerOnPropertyChange( (value, propertyName, storeName) => {}, 'storeName', 'myProperty' )
  */
-let globalState = new GlobalState()
-
-export { globalState }
+export const globalState = new GlobalState();

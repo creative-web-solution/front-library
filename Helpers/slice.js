@@ -8,18 +8,18 @@
  *
  * @returns {Array} - Modified list
  */
-export function slice(list, what) {
-    var index
+export function slice( list, what ) {
+    var index;
 
-    if (!list || !list.length) {
-        return
+    if ( !list || !list.length ) {
+        return;
     }
 
-    index = list.indexOf(what)
+    index = list.indexOf( what );
 
-    if (index > -1) {
-        list.splice(index, 1)
+    if ( index > -1 ) {
+        list.splice( index, 1 );
     }
 
-    return list
+    return list;
 }

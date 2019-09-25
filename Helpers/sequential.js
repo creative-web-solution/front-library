@@ -9,12 +9,12 @@ import { isArray } from 'front-library/Helpers/Type';
  *
  * @returns {Promise}
  */
-export function sequence(promisesArray) {
-    if (!promisesArray || !isArray(promisesArray)) {
-        throw new Error('First argument need to be an array of Promises')
+export function sequence( promisesArray ) {
+    if ( !promisesArray || !isArray( promisesArray ) ) {
+        throw new Error( 'First argument need to be an array of Promises' );
     }
 
-    return promisesArray.reduce((seqProm, item) => {
-        return seqProm.then(item)
-    }, Promise.resolve())
+    return promisesArray.reduce( ( seqProm, item ) => {
+        return seqProm.then( item );
+    }, Promise.resolve() );
 }

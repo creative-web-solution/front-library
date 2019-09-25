@@ -8,23 +8,23 @@ import { windowSize } from 'front-library/DOM/windowSize';
  * @memberof WindowEvents
  * @param {Object} info
  * @param {Object} info.windowInfo
- * @param {number} info.windowInfo.width
- * @param {number} info.windowInfo.height
+ * @param {Number} info.windowInfo.width
+ * @param {Number} info.windowInfo.height
  * @param {Object} info.scrollInfo
- * @param {number} info.scrollInfo.top
- * @param {number} info.scrollInfo.left
+ * @param {Number} info.scrollInfo.top
+ * @param {Number} info.scrollInfo.left
  * @param {Object} info.documentInfo
- * @param {number} info.documentInfo.width
- * @param {number} info.documentInfo.height
+ * @param {Number} info.documentInfo.width
+ * @param {Number} info.documentInfo.height
  * @param {Object} info.viewportInfo
- * @param {number} info.viewportInfo.top
- * @param {number} info.viewportInfo.left
- * @param {number} info.viewportInfo.bottom
- * @param {number} info.viewportInfo.right
- * @param {number} info.viewportInfo.width
- * @param {number} info.viewportInfo.height
- * @param {string} eventType - resize | scroll | force
- * @param {event} [originalEvent] - if available
+ * @param {Number} info.viewportInfo.top
+ * @param {Number} info.viewportInfo.left
+ * @param {Number} info.viewportInfo.bottom
+ * @param {Number} info.viewportInfo.right
+ * @param {Number} info.viewportInfo.width
+ * @param {Number} info.viewportInfo.height
+ * @param {String} eventType - resize | scroll | force
+ * @param {Event} [originalEvent] - if available
  */
 /**
  * Window events handler
@@ -32,10 +32,10 @@ import { windowSize } from 'front-library/DOM/windowSize';
  *
  * @example var w = new WindowEvents( window );
  *
- * let myFunction = ( { windowInfo, scrollInfo, documentInfo, viewportInfo }, type, event ) => {};
+ * let callback = ( { windowInfo, scrollInfo, documentInfo, viewportInfo }, type, event ) => {};
  *
- * w.register( myFunction, 'resize' ); // type = 'resize', 'scroll' or undefined for both
- * w.remove( myFunction, 'resize' );
+ * w.register( callback, 'resize' ); // type = 'resize', 'scroll' or undefined for both
+ * w.remove( callback, 'resize' );
  *
  * // Force refresh of all registered function
  * w.refresh( 'scroll' );
@@ -44,7 +44,7 @@ import { windowSize } from 'front-library/DOM/windowSize';
  * w.update();
  *
  * // Call the function
- * w.get( myFunction );
+ * w.get( callback );
  *
  * // Tools
  * { top, left } = w.scrollInfo;
@@ -63,26 +63,26 @@ export function WindowEvents($window) {
         resizeFunctionList,
         scrollFunctionList,
         isActive,
-        removeFromArray
+        removeFromArray;
 
-    const SELF = this
+    const SELF = this;
 
-    removeFromArray = slice
+    removeFromArray = slice;
 
-    resizeFunctionList = []
-    scrollFunctionList = []
+    resizeFunctionList = [];
+    scrollFunctionList = [];
 
-    $window = $window || window
+    $window = $window || window;
 
     // TOOLS
 
     // Call each registered function for resize event
     function updateResize( originalEvent ) {
-        if (!resizeFunctionList.length) {
-            return
+        if ( !resizeFunctionList.length ) {
+            return;
         }
 
-        resizeFunctionList.forEach(fcn => {
+        resizeFunctionList.forEach( fcn => {
             fcn( {
                     windowInfo,
                     scrollInfo,
@@ -92,16 +92,17 @@ export function WindowEvents($window) {
                 'resize',
                 originalEvent
             );
-        })
+        } );
     }
+
 
     // Call each registered function for scroll event
     function updateScroll( originalEvent ) {
-        if (!scrollFunctionList.length) {
-            return
+        if ( !scrollFunctionList.length ) {
+            return;
         }
 
-        scrollFunctionList.forEach(fcn => {
+        scrollFunctionList.forEach( fcn => {
             fcn( {
                     windowInfo,
                     scrollInfo,
@@ -111,16 +112,17 @@ export function WindowEvents($window) {
                 'scroll',
                 originalEvent
             );
-        })
+        } );
     }
 
-    function updateValue(type) {
-        if (!type || type === 'scroll') {
-            scrollInfo = windowScroll()
+
+    function updateValue( type ) {
+        if ( !type || type === 'scroll' ) {
+            scrollInfo = windowScroll();
         }
-        if (!type || type === 'resize') {
-            documentInfo = documentSize()
-            windowInfo = windowSize()
+        if ( !type || type === 'resize' ) {
+            documentInfo = documentSize();
+            windowInfo = windowSize();
         }
 
         viewportInfo = {
@@ -130,26 +132,26 @@ export function WindowEvents($window) {
             "right":    scrollInfo.left + windowInfo.width,
             "width":    windowInfo.width,
             "height":   windowInfo.height
-        }
+        };
     }
 
     // EVENT
 
-    function changeHandler(e) {
-        if (tick) {
-            return
+    function changeHandler( e ) {
+        if ( tick ) {
+            return;
         }
 
-        tick = true
+        tick = true;
 
         window.requestAnimationFrame(
-            (function(ev) {
+            ( function( ev ) {
                 return () => {
-                    updateValue(ev.type)
-                    SELF.refresh(ev.type, ev)
-                    tick = false
+                    updateValue( ev.type );
+                    SELF.refresh( ev.type, ev );
+                    tick = false;
                 }
-            })(e)
+            } )( e )
         )
     }
 
@@ -158,62 +160,79 @@ export function WindowEvents($window) {
     /**
      * Register a function on a type of event
      *
-     * @param {WindowEvents_Handler} fcn
-     * @param {string} type - resize | scroll | undefined (both)
+     * @param {WindowEvents_Handler} callback
+     * @param {String} type - resize | scroll | undefined (both)
+     *
+     * @returns {WindowEvents}
      */
-    this.register = (fcn, type) => {
-        if (!type || type === 'resize') {
-            resizeFunctionList.push(fcn)
+    this.register = ( callback, type ) => {
+        if ( !type || type === 'resize' ) {
+            resizeFunctionList.push( callback );
         }
 
-        if (!type || type === 'scroll') {
-            scrollFunctionList.push(fcn)
+        if ( !type || type === 'scroll' ) {
+            scrollFunctionList.push( callback );
         }
 
-        if (!isActive) {
-            $window.addEventListener('resize', changeHandler)
-            $window.addEventListener('scroll', changeHandler)
-            updateValue()
-            isActive = true
+        if ( !isActive ) {
+            $window.addEventListener( 'resize', changeHandler );
+            $window.addEventListener( 'scroll', changeHandler );
+            updateValue();
+            isActive = true;
         }
+
+        return this;
     }
+
 
     /**
      * Unregister a function for a type of event
      *
-     * @param {WindowEvents_Handler} fcn
-     * @param {string} type - resize | scroll | undefined (both)
+     * @param {WindowEvents_Handler} callback
+     * @param {String} type - resize | scroll | undefined (both)
+     *
+     * @returns {WindowEvents}
      */
-    this.remove = (fcn, type) => {
-        if (!type || type === 'resize') {
-            removeFromArray(resizeFunctionList, fcn)
+    this.remove = ( callback, type ) => {
+        if ( !type || type === 'resize' ) {
+            removeFromArray( resizeFunctionList, callback );
         }
 
-        if (!type || type === 'scroll') {
-            removeFromArray(scrollFunctionList, fcn)
+        if ( !type || type === 'scroll' ) {
+            removeFromArray( scrollFunctionList, callback );
         }
 
         // No function registered, no need to check
-        if (!resizeFunctionList.length && !scrollFunctionList.length) {
-            $window.removeEventListener('resize', changeHandler)
-            $window.removeEventListener('scroll', changeHandler)
-            isActive = false
+        if ( !resizeFunctionList.length && !scrollFunctionList.length ) {
+            $window.removeEventListener( 'resize', changeHandler );
+            $window.removeEventListener( 'scroll', changeHandler );
+            isActive = false;
         }
+
+        return this;
     }
+
 
     /**
      * Update all the stored data (window size, scroll position, ...)
      *
-     * @param {string} type - resize | scroll | undefined (both)
+     * @param {String} type - resize | scroll | undefined (both)
+     *
+     * @returns {WindowEvents}
      */
     this.update = type => {
-        updateValue(type)
+        updateValue( type );
+
+        return this;
     }
+
 
     /**
      * Refresh all the registered functions
      *
-     * @param {string} type - resize | scroll | undefined (both)
+     * @param {String} type - resize | scroll | undefined (both)
+     *
+     * @returns {WindowEvents}
      */
     this.refresh = ( type, _oe ) => {
         if (!type || type === 'resize') {
@@ -223,20 +242,27 @@ export function WindowEvents($window) {
         if (!type || type === 'scroll') {
             updateScroll( _oe );
         }
+
+        return this;
     }
+
 
     /**
      * Call a function with the last stored positions and sizes
      *
-     * @param {WindowEvents_Handler} fcn
+     * @param {WindowEvents_Handler} callback
+     *
+     * @returns {WindowEvents}
      */
-    this.get = fcn => {
-        fcn({
+    this.get = callback => {
+        callback({
             windowInfo,
             scrollInfo,
             documentInfo,
             viewportInfo
-        }, 'force')
+        }, 'force');
+
+        return this;
     }
 
 

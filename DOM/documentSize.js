@@ -1,7 +1,7 @@
 /**
- * @typedef {object} documentSize_Object
- * @property {number} width
- * @property {number} height
+ * @typedef {Object} documentSize_Object
+ * @property {Number} width
+ * @property {Number} height
 */
 /**
  * Get the current document size
@@ -12,7 +12,7 @@
  */
 export function documentSize() {
     return {
-        height: parseInt(document.documentElement.scrollHeight, 10),
-        width: parseInt(document.documentElement.scrollWidth, 10)
-    }
+        "height": parseInt( document.documentElement.scrollHeight, 10 ),
+        "width": parseInt( document.documentElement.scrollWidth, 10 )
+    };
 }

@@ -106,7 +106,7 @@
 
     
     <div class="description">
-        Manage mediaqueries events
+        Manage media queries events
     </div>
     
 
@@ -369,17 +369,25 @@ or
    }
 );
 
-// Register a function to be call on mediaquery change
-mquery.register( myFunction );
+// Register a function to be call when leaving any breakpoint
+mquery.register( callback, MediaQueriesEvents.TYPE_ON_LEAVE );
 
 // Remove a function to be called
-mquery.remove( myFunction );
+mquery.remove( callback );
 
-// Refresh all registered function
+// Bind a function to be call when entering the &quot;small&quot; breakpoint
+mquery.on( callback, &#x27;small&#x27; );
+// Same as
+mquery.on( callback, &#x27;small&#x27;, MediaQueriesEvents.TYPE_ON_ENTER );
+
+// Unbind the function
+mquery.off( callback, &#x27;small&#x27; );
+
+// Refresh all registered function for the current breakpoint
 mquery.refresh();
 
 // Call a function with the current breakpoint in parameters.
-mquery.get( myFunction );
+mquery.get( callback );
 
 // Return true if &#x60;breakpointName&#x60; is the name of the current breakpoint
 boolean = mquery.is( &#x27;desk&#x27; );
@@ -395,10 +403,10 @@ array = mquery.list;
 // Check if the current breakpoint is in a list.
 boolean = mquery.in([&#x27;mob&#x27;, &#x27;tab&#x27;]);
 
-// Pause mediaqueries watch
+// Pause media queries watch
 mquery.suspend();
 
-// Resume mediaqueries watch
+// Resume media queries watch
 mquery.resume();</pre>
 
 
@@ -425,7 +433,7 @@ mquery.resume();</pre>
             
 <hr>
 <dt class="name" id=".TYPE_ON_BOTH">
-    <h4 id=".TYPE_ON_BOTH"><span class="type-signature">&lt;static, readonly> </span>TYPE_ON_BOTH<span class="type-signature"> :number</span></h4>
+    <h4 id=".TYPE_ON_BOTH"><span class="type-signature">&lt;static, readonly> </span>TYPE_ON_BOTH<span class="type-signature"> :Number</span></h4>
 
     
 </dt>
@@ -441,7 +449,7 @@ mquery.resume();</pre>
         <ul>
             <li>
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -496,7 +504,7 @@ mquery.resume();</pre>
             
 <hr>
 <dt class="name" id=".TYPE_ON_ENTER">
-    <h4 id=".TYPE_ON_ENTER"><span class="type-signature">&lt;static, readonly> </span>TYPE_ON_ENTER<span class="type-signature"> :number</span></h4>
+    <h4 id=".TYPE_ON_ENTER"><span class="type-signature">&lt;static, readonly> </span>TYPE_ON_ENTER<span class="type-signature"> :Number</span></h4>
 
     
 </dt>
@@ -512,7 +520,7 @@ mquery.resume();</pre>
         <ul>
             <li>
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -567,7 +575,7 @@ mquery.resume();</pre>
             
 <hr>
 <dt class="name" id=".TYPE_ON_LEAVE">
-    <h4 id=".TYPE_ON_LEAVE"><span class="type-signature">&lt;static, readonly> </span>TYPE_ON_LEAVE<span class="type-signature"> :number</span></h4>
+    <h4 id=".TYPE_ON_LEAVE"><span class="type-signature">&lt;static, readonly> </span>TYPE_ON_LEAVE<span class="type-signature"> :Number</span></h4>
 
     
 </dt>
@@ -583,7 +591,7 @@ mquery.resume();</pre>
         <ul>
             <li>
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -638,7 +646,7 @@ mquery.resume();</pre>
             
 <hr>
 <dt class="name" id="currentBreakpoint">
-    <h4 id="currentBreakpoint"><span class="type-signature"></span>currentBreakpoint<span class="type-signature"> :False|Breakpoint</span></h4>
+    <h4 id="currentBreakpoint"><span class="type-signature">&lt;readonly> </span>currentBreakpoint<span class="type-signature"> :False|Breakpoint</span></h4>
 
     
 </dt>
@@ -712,7 +720,7 @@ mquery.resume();</pre>
             
 <hr>
 <dt class="name" id="list">
-    <h4 id="list"><span class="type-signature"></span>list<span class="type-signature"> :Array.&lt;Breakpoint></span></h4>
+    <h4 id="list"><span class="type-signature">&lt;readonly> </span>list<span class="type-signature"> :Array.&lt;Breakpoint></span></h4>
 
     
 </dt>
@@ -789,7 +797,7 @@ mquery.resume();</pre>
             
 <hr>
 <dt>
-    <h4 class="name" id="get"><span class="type-signature"></span>get(fnc)</h4>
+    <h4 class="name" id="get"><span class="type-signature"></span>get(callback)</h4>
     
     
 </dt>
@@ -832,7 +840,7 @@ mquery.resume();</pre>
 
         <tr>
             
-                <td class="name"><code>fnc</code></td>
+                <td class="name"><code>callback</code></td>
             
 
             <td class="type">
@@ -909,6 +917,26 @@ mquery.resume();</pre>
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="MediaQueriesEvents.html">MediaQueriesEvents</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
@@ -966,7 +994,7 @@ mquery.resume();</pre>
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;string></span>
+<span class="param-type">Array.&lt;String></span>
 
 
 
@@ -1048,7 +1076,7 @@ mquery.resume();</pre>
     </dt>
     <dd>
         
-<span class="param-type">boolean</span>
+<span class="param-type">Boolean</span>
 
 
 
@@ -1114,7 +1142,7 @@ mquery.resume();</pre>
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
 
@@ -1185,6 +1213,438 @@ mquery.resume();</pre>
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Boolean</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="off"><span class="type-signature"></span>off(callback, breakpointName)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Unbind a function to be called on a specific breakpoint
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Function to remove from the registered function list</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>breakpointName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Name of the breakpoint</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="MediaQueriesEvents.html">MediaQueriesEvents</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="on"><span class="type-signature"></span>on(callback, breakpointName [, type])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Bind a function to be called on a specific breakpoint
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">MediaQueriesEvents_Handler</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Callback</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>breakpointName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Name of the breakpoint</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    MediaQueriesEvents.TYPE_ON_ENTER
+                
+                </td>
+            
+
+            <td class="description last">Select when the function will be called: when entering the query, when leaving it, or on both</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="MediaQueriesEvents.html">MediaQueriesEvents</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
@@ -1263,6 +1723,26 @@ mquery.resume();</pre>
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="MediaQueriesEvents.html">MediaQueriesEvents</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
@@ -1271,7 +1751,7 @@ mquery.resume();</pre>
             
 <hr>
 <dt>
-    <h4 class="name" id="register"><span class="type-signature"></span>register(fcn [, type])</h4>
+    <h4 class="name" id="register"><span class="type-signature"></span>register(callback [, type])</h4>
     
     
 </dt>
@@ -1279,7 +1759,7 @@ mquery.resume();</pre>
 
     
     <div class="description">
-        Register a function to be called on mediaquery change
+        Register a function to be called on all media queries change
     </div>
     
 
@@ -1318,7 +1798,7 @@ mquery.resume();</pre>
 
         <tr>
             
-                <td class="name"><code>fcn</code></td>
+                <td class="name"><code>callback</code></td>
             
 
             <td class="type">
@@ -1447,6 +1927,26 @@ mquery.resume();</pre>
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="MediaQueriesEvents.html">MediaQueriesEvents</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
@@ -1455,7 +1955,7 @@ mquery.resume();</pre>
             
 <hr>
 <dt>
-    <h4 class="name" id="remove"><span class="type-signature"></span>remove(fcn)</h4>
+    <h4 class="name" id="remove"><span class="type-signature"></span>remove(callback)</h4>
     
     
 </dt>
@@ -1498,7 +1998,7 @@ mquery.resume();</pre>
 
         <tr>
             
-                <td class="name"><code>fcn</code></td>
+                <td class="name"><code>callback</code></td>
             
 
             <td class="type">
@@ -1575,6 +2075,26 @@ mquery.resume();</pre>
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="MediaQueriesEvents.html">MediaQueriesEvents</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
@@ -1591,7 +2111,7 @@ mquery.resume();</pre>
 
     
     <div class="description">
-        Active mediaqueries callback
+        Active media queries callback
     </div>
     
 
@@ -1653,6 +2173,26 @@ mquery.resume();</pre>
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="MediaQueriesEvents.html">MediaQueriesEvents</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
@@ -1669,7 +2209,7 @@ mquery.resume();</pre>
 
     
     <div class="description">
-        Stop mediaqueries callback
+        Stop media queries callback
     </div>
     
 
@@ -1731,6 +2271,26 @@ mquery.resume();</pre>
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="MediaQueriesEvents.html">MediaQueriesEvents</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
@@ -1902,7 +2462,7 @@ mquery.resume();</pre>
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
 
@@ -1932,7 +2492,7 @@ mquery.resume();</pre>
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">Object</span>
 
 
 
@@ -1962,7 +2522,7 @@ mquery.resume();</pre>
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -1994,7 +2554,7 @@ mquery.resume();</pre>
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -2126,7 +2686,7 @@ mquery.resume();</pre>
                 
 <hr>
 <dt>
-    <h4 class="name" id=".MediaQueriesEvents_Handler"><span class="type-signature"></span>MediaQueriesEvents_Handler(breakpoint)</h4>
+    <h4 class="name" id=".MediaQueriesEvents_Handler"><span class="type-signature"></span>MediaQueriesEvents_Handler(breakpoint, isMatching)</h4>
     
     
 </dt>
@@ -2183,6 +2743,30 @@ mquery.resume();</pre>
             
 
             <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>isMatching</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">True if we enter the query, false if we leave</td>
         </tr>
 
     
@@ -2294,7 +2878,7 @@ mquery.resume();</pre>
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
 	
-		on 2019-09-16T13:35:14+02:00
+		on 2019-09-25T16:36:46+02:00
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

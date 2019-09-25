@@ -2,24 +2,24 @@
  * Throttle
  *
  * @param {Function} callback
- * @param {number} [limit=100]
+ * @param {Number} [limit=100]
  *
  * @example throttledFunction = throttle( cbFunction, 200 )
  *
  * @returns {Function}
  */
-export function throttle(callback, limit = 100) {
-    let wait = false
+export function throttle( callback, limit = 100 ) {
+    let wait = false;
 
-    return function(...args) {
-        if (!wait) {
-            wait = true
+    return function( ...args ) {
+        if ( !wait ) {
+            wait = true;
 
-            callback.apply(this, args)
+            callback.apply( this, args );
 
-            setTimeout(() => {
-                wait = false
-            }, limit)
+            setTimeout( () => {
+                wait = false;
+            }, limit );
         }
     }
 }

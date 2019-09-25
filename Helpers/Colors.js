@@ -1,13 +1,13 @@
 /**
- * @typedef {object} Color_Object
- * @property {number} r
- * @property {number} g
- * @property {number} b
- * @property {number} a
- * @property {string} hr
- * @property {string} hg
- * @property {string} hb
- * @property {string} ha
+ * @typedef {Object} Color_Object
+ * @property {Number} r
+ * @property {Number} g
+ * @property {Number} b
+ * @property {Number} a
+ * @property {String} hr
+ * @property {String} hg
+ * @property {String} hb
+ * @property {String} ha
 */
 
 

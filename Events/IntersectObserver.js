@@ -41,11 +41,11 @@ import { slice } from 'front-library/Helpers/slice';
  *
  * @param {Object} options
  * @param {IntersectObserver_Handler} options.onIntersecting - Callback function
- * @param {boolean} [options.onlyOnce=false] - Execute the callback only once per $elements the first time it intersect the viewport
+ * @param {Boolean} [options.onlyOnce=false] - Execute the callback only once per $elements the first time it intersect the viewport
  * @param {Object} [options.ioOptions] - Native options to create to IntersectionObserver API
  * @param {HTMLElement} [options.ioOptions.root=null] - Element used as display. If null, use the screen viewport
- * @param {string} [options.ioOptions.rootMargin="0px"] - Margin around the viewport. Can be defined as margin css property: "10px 20px 30px 40px" (top, right, bottom, left)
- * @param {float|float[]} [options.ioOptions.threshold=0] - Percentage (0.0 to 1.0) of visibility needed to execute the callback function. To call the function when the visibility is at least 50%: threshold = 0.5. To call the function every 25%: threshold=[0, 0.25, 0.5, 0.75, 1]
+ * @param {String} [options.ioOptions.rootMargin="0px"] - Margin around the viewport. Can be defined as margin css property: "10px 20px 30px 40px" (top, right, bottom, left)
+ * @param {Float|Float[]} [options.ioOptions.threshold=0] - Percentage (0.0 to 1.0) of visibility needed to execute the callback function. To call the function when the visibility is at least 50%: threshold = 0.5. To call the function every 25%: threshold=[0, 0.25, 0.5, 0.75, 1]
  */
 export function IntersectObserver( options ) {
     const _options = extend( {
@@ -114,9 +114,13 @@ export function IntersectObserver( options ) {
      * @function add
      *
      * @param {HTMLElement|HTMLElement[]} $elements
+     *
+     * @returns {IntersectObserver}
      */
     this.add = $elements => {
         toggle( $elements, true );
+
+        return this;
     }
 
 
@@ -127,9 +131,13 @@ export function IntersectObserver( options ) {
      * @function remove
      *
      * @param {HTMLElement|HTMLElement[]} $elements
+     *
+     * @returns {IntersectObserver}
      */
     this.remove = $elements => {
         toggle( $elements, false );
+
+        return this;
     }
 
 
@@ -138,14 +146,18 @@ export function IntersectObserver( options ) {
      *
      * @instance
      * @function clear
+     *
+     * @returns {IntersectObserver}
      */
     this.clear = () => {
         if ( !ELEMENT_OBSERVER.length ) {
-            return;
+            return this;
         }
 
         toggle( ELEMENT_OBSERVER, false );
 
         ELEMENT_OBSERVER.length = 0;
+
+        return this;
     }
 }

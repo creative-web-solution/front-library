@@ -4,7 +4,7 @@ import { defer } from 'front-library/Helpers/defer';
  * Return a promise and wait for 'waitFor' millisecond to resolve it.
  * If 'waitFor' < 0 => wait for an animation frame
  *
- * @param {number} [waitFor=-1] - In ms
+ * @param {Number} [waitFor=-1] - In ms
  *
  * @example // Wait for an animation frame (using requestAnimationFrame)
  * wait().then( ... )
@@ -19,23 +19,23 @@ import { defer } from 'front-library/Helpers/defer';
  *
  * @returns {Promise} - a promise with a .kill() function to cancel the waiting
  */
-export function wait(waitFor = -1) {
+export function wait( waitFor = -1 ) {
     let timeoutId;
     let deferred = defer();
 
-    if (waitFor < 0) {
-        timeoutId = window.requestAnimationFrame(deferred.resolve);
+    if ( waitFor < 0 ) {
+        timeoutId = window.requestAnimationFrame( deferred.resolve );
 
         deferred.kill = () => {
-            window.cancelAnimationFrame(timeoutId);
+            window.cancelAnimationFrame( timeoutId );
         };
         return deferred;
     }
 
-    timeoutId = setTimeout(deferred.resolve, waitFor);
+    timeoutId = setTimeout( deferred.resolve, waitFor );
 
     deferred.kill = () => {
-        clearTimeout(timeoutId);
+        clearTimeout( timeoutId );
     };
 
     return deferred;

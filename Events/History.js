@@ -5,15 +5,15 @@ import { slice } from 'front-library/Helpers/slice';
 /**
  * @typedef {object} state_Object
  * @memberof HistoryController
- * @property {string} url
- * @property {object} state - Native browser state object
- * @property {string} title
+ * @property {String} url
+ * @property {Object} state - Native browser state object
+ * @property {String} title
  */
 /**
  * @callback HistoryController_Callback
  * @memberof HistoryController
- * @param {string} url
- * @param {object} state - Native browser state object
+ * @param {String} url
+ * @param {oOject} state - Native browser state object
  */
 /**
  * Manage history pushState and popstate event
@@ -38,27 +38,27 @@ import { slice } from 'front-library/Helpers/slice';
  *
  * @param {string} defaultTitle - Default page title
  */
-export function HistoryController(defaultTitle) {
+export function HistoryController( defaultTitle ) {
     let $window,
         hasPushstate,
         hasPopStateEvent,
         currentState,
-        registeredFunctionList
+        registeredFunctionList;
 
-    $window = window
-    hasPushstate = !!$window.history.pushState
-    hasPopStateEvent = 'onpopstate' in $window
+    $window = window;
+    hasPushstate = !!$window.history.pushState;
+    hasPopStateEvent = 'onpopstate' in $window;
 
     registeredFunctionList = []
 
-    defaultTitle = defaultTitle || document.querySelector('title').textContent
-    defaultTitle = encodeURIComponent(defaultTitle)
+    defaultTitle = defaultTitle || document.querySelector( 'title' ).textContent;
+    defaultTitle = encodeURIComponent( defaultTitle );
 
     currentState = {
-        url: new UrlParser(window.location),
-        state: {},
-        title: defaultTitle
-    }
+        "url": new UrlParser(window.location),
+        "state": {},
+        "title": defaultTitle
+    };
 
 
     /**
@@ -74,87 +74,97 @@ export function HistoryController(defaultTitle) {
 
 
     // Call each registered function for popstate event
-    function callRegisteredFunction(url, state) {
-        if (!registeredFunctionList.length) {
-            return
+    function callRegisteredFunction( url, state ) {
+        if ( !registeredFunctionList.length ) {
+            return;
         }
 
-        registeredFunctionList.forEach(handler => handler(url, state))
+        registeredFunctionList.forEach( handler => handler( url, state ) );
     }
 
     // popState handler
-    function popStateHandler(e) {
-        let state
+    function popStateHandler( e ) {
+        let state;
 
-        state = e.state
+        state = e.state;
 
-        if (!state) {
-            return
+        if ( !state ) {
+            return;
         }
 
         currentState = {
-            url: new UrlParser(document.location),
-            state: state
-        }
+            "url": new UrlParser( document.location ),
+            state
+        };
 
-        callRegisteredFunction(currentState.url, state)
+        callRegisteredFunction( currentState.url, state );
     }
+
 
     /**
      * Push a new state in the history
      *
-     * @param {object} state - Native browser state object
-     * @param {string} title
-     * @param {string} url
+     * @param {Object} state - Native browser state object
+     * @param {String} title
+     * @param {String} url
+     *
+     * @returns {HistoryController}
      */
-    this.pushState = (state, title, url) => {
-        if (!hasPushstate) {
-            return
+    this.pushState = ( state, title, url ) => {
+        if ( !hasPushstate ) {
+            return this;
         }
 
-        url =
-            url instanceof UrlParser ? url : new UrlParser(url)
+        url = url instanceof UrlParser ? url : new UrlParser( url );
 
         currentState = {
-            url: url,
-            state: state,
-            title: title ? encodeURIComponent(title) : defaultTitle
-        }
+            url,
+            state,
+            "title": title ? encodeURIComponent( title ) : defaultTitle
+        };
 
         try {
             $window.history.pushState(
                 state,
                 currentState.title,
                 currentState.url.absolute2
-            )
-        } catch (e) {
-            console.log(e)
+            );
         }
+        catch ( e ) {
+            console.log( e );
+        }
+
+        return this;
     }
 
 
     /**
      * Update the anchor of the current url
      *
-     * @param {string} anchor
+     * @param {String} anchor
+     *
+     * @returns {HistoryController}
      */
     this.updateAnchor = anchor => {
-        if (!hasPushstate) {
+        if ( !hasPushstate ) {
             return
         }
 
-        anchor = anchor.indexOf('#') === -1 ? anchor : anchor.slice(1)
+        anchor = anchor.indexOf( '#' ) === -1 ? anchor : anchor.slice( 1 );
 
         try {
-            currentState.url.setAnchor(anchor)
+            currentState.url.setAnchor( anchor );
             $window.history.pushState(
                 currentState.state,
                 currentState.title,
                 currentState.url.absolute2
-            )
-        } catch (e) {
-            console.log(e)
+            );
         }
+        catch ( e ) {
+            console.log( e );
+        }
+
+        return this;
     }
 
 
@@ -162,9 +172,13 @@ export function HistoryController(defaultTitle) {
      * Register an handler for popState
      *
      * @param {HistoryController_Callback} handler
+     *
+     * @returns {HistoryController}
      */
     this.register = handler => {
-        registeredFunctionList.push(handler)
+        registeredFunctionList.push( handler );
+
+        return this;
     }
 
 
@@ -172,16 +186,20 @@ export function HistoryController(defaultTitle) {
      * Remove a registered handler for popState
      *
      * @param {Function} handler
+     *
+     * @returns {HistoryController}
      */
     this.remove = handler => {
-        slice(registeredFunctionList, handler)
+        slice( registeredFunctionList, handler );
+
+        return this;
     }
 
 
-    if (hasPopStateEvent) {
-        on($window, {
-            eventsName: "popstate",
-            callback: popStateHandler
-        });
+    if ( hasPopStateEvent ) {
+        on( $window, {
+            "eventsName": "popstate",
+            "callback": popStateHandler
+        } );
     }
 }

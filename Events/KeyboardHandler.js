@@ -5,7 +5,7 @@ import { extend } from 'front-library/Helpers/Extend';
  * @callback KeyboardHandler_Callback
  * @description Called when a key is pressed
  * @memberof KeyboardHandler
- * @param {event} event
+ * @param {Event} event
  * @param {HTMLElement} $context - Targeted DOM element
  *
  */
@@ -15,8 +15,8 @@ import { extend } from 'front-library/Helpers/Extend';
  *
  * @param {HTMLElement} $element
  * @param {Object} userOptions
- * @param {string} [userOptions.selector] - Used for event delegation
- * @param {boolean} [userOptions.preventDefault=false] - Prevent default on all key pressed, except TAB
+ * @param {String} [userOptions.selector] - Used for event delegation
+ * @param {Boolean} [userOptions.preventDefault=false] - Prevent default on all key pressed, except TAB
  * @param {KeyboardHandler_Callback} [userOptions.onEnter]
  * @param {KeyboardHandler_Callback} [userOptions.onSpace]
  * @param {KeyboardHandler_Callback} [userOptions.onSelect] - Called when pressing ENTER or SPACE
@@ -40,94 +40,107 @@ import { extend } from 'front-library/Helpers/Extend';
  * // To cancel events watching
  * keyboardControls.off();
  */
-export function KeyboardHandler($element, userOptions = {}) {
+export function KeyboardHandler( $element, userOptions = {} ) {
     let defaultOptions = {
-        preventDefault: true
-    }
+        "preventDefault": true
+    };
 
-    let options
+    let options;
 
-    const LEFT_KEY_CODE = 37
-    const UP_KEY_CODE = 38
-    const RIGHT_KEY_CODE = 39
-    const DOWN_KEY_CODE = 40
-    const TAB_KEY_CODE = 9
-    const PAGE_UP_KEY_CODE = 33
-    const PAGE_DOWN_KEY_CODE = 34
-    const ENTER_KEY_CODE = 13
-    const SPACE_KEY_CODE = 32
-    const ESCAPE_KEY_CODE = 27
-    const R_KEY_CODE = 82
-    const P_KEY_CODE = 80
-    const F5_KEY_CODE = 116
+    const LEFT_KEY_CODE = 37;
+    const UP_KEY_CODE = 38;
+    const RIGHT_KEY_CODE = 39;
+    const DOWN_KEY_CODE = 40;
+    const TAB_KEY_CODE = 9;
+    const PAGE_UP_KEY_CODE = 33;
+    const PAGE_DOWN_KEY_CODE = 34;
+    const ENTER_KEY_CODE = 13;
+    const SPACE_KEY_CODE = 32;
+    const ESCAPE_KEY_CODE = 27;
+    const R_KEY_CODE = 82;
+    const P_KEY_CODE = 80;
+    const F5_KEY_CODE = 116;
 
-    options = extend(defaultOptions, userOptions)
+    options = extend( defaultOptions, userOptions );
 
-    function handleCallbacks(event, $context, callbacks) {
-        callbacks.forEach(cb => {
-            if (options[cb]) {
-                options[cb].call($context, event, $context)
+    function handleCallbacks( event, $context, callbacks ) {
+        callbacks.forEach( cb => {
+            if ( options[ cb ] ) {
+                options[ cb ].call( $context, event, $context );
             }
-        })
+        } );
     }
 
-    function onKeypress(e) {
-        let keyCode = e.which
+    function onKeypress( e ) {
+        let keyCode = e.which;
 
         // Block all key except tab, CTRL R, CMD R or F5
-        if (options.preventDefault &&
+        if ( options.preventDefault &&
                 keyCode !== TAB_KEY_CODE &&
                 keyCode !== F5_KEY_CODE &&
-                !(keyCode === R_KEY_CODE && (e.ctrlKey || e.metaKey)) &&
-                !(keyCode === P_KEY_CODE && (e.ctrlKey || e.metaKey))
+                !( keyCode === R_KEY_CODE && ( e.ctrlKey || e.metaKey ) ) &&
+                !( keyCode === P_KEY_CODE && ( e.ctrlKey || e.metaKey ) )
 
         ) {
             e.preventDefault();
         }
 
-        handleCallbacks(e, e.target, ['onKey'])
+        handleCallbacks( e, e.target, [ 'onKey' ] );
 
-        if (ENTER_KEY_CODE === keyCode) {
-            handleCallbacks(e, e.target, ['onEnter', 'onSelect'])
-        } else if (SPACE_KEY_CODE === keyCode) {
-            handleCallbacks(e, e.target, ['onSpace', 'onSelect'])
-        } else if (ESCAPE_KEY_CODE === keyCode) {
-            handleCallbacks(e, e.target, ['onEscape'])
-        } else if (RIGHT_KEY_CODE === keyCode) {
-            handleCallbacks(e, e.target, ['onRight', 'onNext'])
-        } else if (LEFT_KEY_CODE === keyCode) {
-            handleCallbacks(e, e.target, ['onLeft', 'onPrevious'])
-        } else if (UP_KEY_CODE === keyCode) {
-            handleCallbacks(e, e.target, ['onUp', 'onNext'])
-        } else if (DOWN_KEY_CODE === keyCode) {
-            handleCallbacks(e, e.target, ['onDown', 'onPrevious'])
-        } else if (PAGE_UP_KEY_CODE === keyCode) {
-            handleCallbacks(e, e.target, ['onPageUp'])
-        } else if (PAGE_DOWN_KEY_CODE === keyCode) {
-            handleCallbacks(e, e.target, ['onPageDown'])
-        } else if (TAB_KEY_CODE === keyCode) {
-            if (e.shiftKey && options['onTabReverse']) {
-                handleCallbacks(e, e.target, ['onTabReverse'])
+        if ( ENTER_KEY_CODE === keyCode ) {
+            handleCallbacks( e, e.target, [ 'onEnter', 'onSelect' ] );
+        }
+        else if ( SPACE_KEY_CODE === keyCode ) {
+            handleCallbacks( e, e.target, [ 'onSpace', 'onSelect' ] );
+        }
+        else if ( ESCAPE_KEY_CODE === keyCode ) {
+            handleCallbacks( e, e.target, [ 'onEscape' ] );
+        }
+        else if ( RIGHT_KEY_CODE === keyCode ) {
+            handleCallbacks( e, e.target, [ 'onRight', 'onNext' ] );
+        }
+        else if ( LEFT_KEY_CODE === keyCode ) {
+            handleCallbacks( e, e.target, [ 'onLeft', 'onPrevious' ] );
+        }
+        else if ( UP_KEY_CODE === keyCode ) {
+            handleCallbacks( e, e.target, [ 'onUp', 'onNext' ] );
+        }
+        else if ( DOWN_KEY_CODE === keyCode ) {
+            handleCallbacks( e, e.target, [ 'onDown', 'onPrevious' ] );
+        }
+        else if ( PAGE_UP_KEY_CODE === keyCode ) {
+            handleCallbacks( e, e.target, [ 'onPageUp' ] );
+        }
+        else if (PAGE_DOWN_KEY_CODE === keyCode) {
+            handleCallbacks( e, e.target, [ 'onPageDown' ] );
+        }
+        else if ( TAB_KEY_CODE === keyCode ) {
+            if ( e.shiftKey && options[ 'onTabReverse' ] ) {
+                handleCallbacks( e, e.target, [ 'onTabReverse' ] );
                 return
             }
-            handleCallbacks(e, e.target, ['onTab'])
+            handleCallbacks( e, e.target, [ 'onTab' ] );
         }
     }
 
     /**
      * Remove the binding
+     *
+     * @returns {IntersectObserver}
      */
     this.off = () => {
-        off($element, {
+        off( $element, {
             "eventsName": "keydown",
             "callback": onKeypress
-        });
+        } );
+
+        return this;
     }
 
 
-    on($element, {
+    on( $element, {
         "eventsName": "keydown",
         "selector": options.selector,
         "callback": onKeypress
-    });
+    } );
 }

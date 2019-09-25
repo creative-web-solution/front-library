@@ -1,5 +1,5 @@
 import { getValue } from 'front-library/Helpers/getValue';
-import { validatorTools, addValidator } from 'front-library/Modules/Validator';
+import { standardValidation, addValidator, isRadioListChecked, isEmpty } from 'front-library/Modules/Validator';
 
 /**
  * Check for a group of field if at least x are checked (or filled) and maximum y
@@ -8,66 +8,65 @@ import { validatorTools, addValidator } from 'front-library/Modules/Validator';
  * on other field of the group :    data-multirequired-group="myGroup"
  *
  */
-addValidator('multirequired', '[data-multirequired]', ($input, value) => {
-    let $group, arrayData, count, data, groupName, nbRequiredMax, nbRequiredMin
+addValidator( 'multirequired', '[data-multirequired]', ( $input, value ) => {
+    let $group, arrayData, count, data, groupName, nbRequiredMax, nbRequiredMin;
 
-    data = $input.getAttribute('data-multirequired')
-    count = 0
+    data = $input.getAttribute( 'data-multirequired' );
+    count = 0;
 
-    if (data.indexOf('|') === -1) {
-        return validatorTools.standardValidation(
+    if ( data.indexOf( '|' ) === -1 ) {
+        return standardValidation(
             $input,
             value,
             true,
             'multirequired'
-        )
+        );
     }
 
-    arrayData = data.split('|')
-    groupName = arrayData[0]
+    arrayData = data.split( '|' );
+    groupName = arrayData[ 0 ];
 
-    $group = document.querySelectorAll(
-        '[data-multirequired-group^="' + groupName + '"]'
-    )
+    $group = document.querySelectorAll( `[data-multirequired-group^="${ groupName }"]` );
 
-    if (!$group.length) {
-        return validatorTools.standardValidation(
+    if ( !$group.length ) {
+        return standardValidation(
             $input,
             value,
             true,
             'multirequired'
-        )
+        );
     }
 
-    nbRequiredMin = parseInt(arrayData[1], 10) || 0
+    nbRequiredMin = parseInt( arrayData[ 1 ], 10 ) || 0
 
-    if (arrayData.length > 2) {
-        nbRequiredMax = parseInt(arrayData[2], 10)
-    } else {
-        nbRequiredMax = 10000
+    if ( arrayData.length > 2 ) {
+        nbRequiredMax = parseInt( arrayData[ 2 ], 10 );
+    }
+    else {
+        nbRequiredMax = 10000;
     }
 
-    $group = Array.prototype.slice.call($group, 0)
+    $group = Array.prototype.slice.call( $group, 0 );
 
-    $group.push($input)
+    $group.push( $input );
 
-    $group.forEach($elem => {
+    $group.forEach( $elem => {
         if (
-            ($elem.type === 'checkbox' && $elem.checked) ||
-            ($elem.type === 'radio' &&
-                validatorTools.isRadioListChecked($elem.__$radioGroup)) ||
-            ($elem.type !== 'checkbox' &&
+            ( $elem.type === 'checkbox' && $elem.checked ) ||
+            ( $elem.type === 'radio' &&
+                isRadioListChecked( $elem.__$radioGroup ) ) ||
+            ( $elem.type !== 'checkbox' &&
                 $elem.type !== 'radio' &&
-                !validatorTools.isEmpty(getValue($elem)))
+                !isEmpty( getValue( $elem ) ) )
         ) {
             count++
         }
-    })
+    } );
 
-    return validatorTools.standardValidation(
+    return standardValidation(
         $input,
         value,
         nbRequiredMin <= count && count <= nbRequiredMax,
         'multirequired'
-    )
-})
+    );
+} );

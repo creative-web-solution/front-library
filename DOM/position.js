@@ -1,7 +1,7 @@
 /**
- * @typedef {object} position_Object
- * @property {number} top
- * @property {number} left
+ * @typedef {Object} position_Object
+ * @property {Number} top
+ * @property {Number} left
 */
 /**
  * Return the position of an element
@@ -12,9 +12,9 @@
  *
  * @returns {position_Object} - the coordinate of the object
  */
-export function position($element) {
+export function position( $element ) {
     return {
-        top: parseInt($element.offsetTop, 10),
-        left: parseInt($element.offsetLeft, 10)
-    }
+        "top": parseInt( $element.offsetTop, 10 ),
+        "left": parseInt( $element.offsetLeft, 10 )
+    };
 }

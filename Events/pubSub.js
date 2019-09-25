@@ -1,5 +1,88 @@
 import { on, off, fire } from 'front-library/Events/EventsManager';
 
+
+function PubSub() {
+    const EVENTS_STORE = {}
+
+    /**
+     * Initialize all events name
+     *
+     * @memberof pubSub
+     * @param {Object} eventsNames
+     *
+     * @returns {PubSub}
+     */
+    this.init = eventsNames => {
+        for ( let key in eventsNames ) {
+            if ( !Object.prototype.hasOwnProperty.call( eventsNames, key) || this[ key ] ) {
+                return;
+            }
+
+            this[ key ] = eventsNames[ key ];
+        }
+
+        return this;
+    }
+
+
+    /**
+     * Fire an event
+     *
+     * @memberof pubSub
+     * @param {String} eventName
+     * @param {Object} [data] - Data to be send to the callback functions
+     *
+     * @returns {PubSub}
+     */
+    this.fire = ( eventName, data ) => {
+        fire(EVENTS_STORE, {
+            "eventsName": eventName,
+            "detail": data
+        });
+
+        return this;
+    }
+
+
+    /**
+     * Bind an event
+     *
+     * @memberof pubSub
+     * @param {String} eventName
+     * @param {Function} callback - (data) => {}
+     *
+     * @returns {PubSub}
+     */
+    this.on = (eventName, callback) => {
+        on( EVENTS_STORE, {
+            "eventsName": eventName,
+            "callback": callback
+        } );
+
+        return this;
+    }
+
+
+    /**
+     * Unbind an event
+     *
+     * @memberof pubSub
+     * @param {String} eventName
+     * @param {Function} callback
+     *
+     * @returns {PubSub}
+     */
+    this.off = (eventName, callback) => {
+        off( EVENTS_STORE, {
+            "eventsName": eventName,
+            "callback": callback
+        } );
+
+        return this;
+    }
+}
+
+
 /**
  * Publish / Suscribe event system
  * @namespace pubSub
@@ -22,73 +105,8 @@ import { on, off, fire } from 'front-library/Events/EventsManager';
  * } );
  *
  * pubSub.fire( pubSub.MY_EVENT_2, {myProp: 'test'} );
- */
-let pubSub;
+*/
+let pubSub = new PubSub();
 
-{
-    function PubSub() {
-        const EVENTS_STORE = {}
 
-        /**
-         * Initialize all events name
-         *
-         * @memberof pubSub
-         * @param {object} eventsNames
-         */
-        this.init = eventsNames => {
-            for (let key in eventsNames) {
-                if (!Object.prototype.hasOwnProperty.call( eventsNames, key) || this[key]) {
-                    return
-                }
-
-                this[key] = eventsNames[key]
-            }
-        }
-
-        /**
-         * Fire an event
-         *
-         * @memberof pubSub
-         * @param {string} eventName
-         * @param {object} [data] - Data to be send to the callback functions
-         */
-        this.fire = (eventName, data) => {
-            fire(EVENTS_STORE, {
-                "eventsName": eventName,
-                "detail": data
-            })
-        }
-
-        /**
-         * Bind an event
-         *
-         * @memberof pubSub
-         * @param {string} eventName
-         * @param {Function} callback - (data) => {}
-         */
-        this.on = (eventName, callback) => {
-            on(EVENTS_STORE, {
-                "eventsName": eventName,
-                "callback": callback
-            })
-        }
-
-        /**
-         * Unbind an event
-         *
-         * @memberof pubSub
-         * @param {string} eventName
-         * @param {Function} callback
-         */
-        this.off = (eventName, callback) => {
-            off(EVENTS_STORE, {
-                "eventsName": eventName,
-                "callback": callback
-            })
-        }
-    }
-
-    pubSub = new PubSub()
-}
-
-export { pubSub }
+export { pubSub };

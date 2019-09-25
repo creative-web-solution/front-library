@@ -3,8 +3,9 @@ import { slice } from 'front-library/Helpers/slice';
 let passiveSupported = false, DOMRegistry = [], ObjectRegistry = [], createEvt;
 
 (function () {
-
-    if ( typeof window.CustomEvent === "function" ) return false;
+    if ( typeof window.CustomEvent === "function" ) {
+        return false;
+    }
 
     function CustomEvent ( event, params ) {
       params = params || { bubbles: false, cancelable: false, detail: undefined };
@@ -16,74 +17,76 @@ let passiveSupported = false, DOMRegistry = [], ObjectRegistry = [], createEvt;
     CustomEvent.prototype = window.Event.prototype;
 
     window.CustomEvent = CustomEvent;
-  })();
+} )();
+
 
 (function () {
     try {
-        if (new window.CustomEvent('test')) {
-            createEvt = function(eventName, options) {
-                return new window.CustomEvent(eventName, {
+        if ( new window.CustomEvent( 'test' ) ) {
+            createEvt = function( eventName, options ) {
+                return new window.CustomEvent( eventName, {
                     "bubbles": typeof options.bubbles !== 'undefined' ? options.bubbles : true,
                     "cancelable": typeof options.cancelable !== 'undefined' ? options.cancelable : true,
                     "detail": options.detail
-                });
+                } );
             }
         }
     }
-    catch(err) {
-        createEvt = function(eventName, options) {
-            return window.CustomEvent(eventName, {
+    catch( err ) {
+        createEvt = function( eventName, options ) {
+            return window.CustomEvent( eventName, {
                 "bubbles": typeof options.bubbles !== 'undefined' ? options.bubbles : true,
                 "cancelable": typeof options.cancelable !== 'undefined' ? options.cancelable : true,
                 "detail": options.detail
-            });
+            } );
         }
     }
-}());
+}() );
+
 
 (function () {
     try {
-        let options = Object.defineProperty({}, "passive", {
-            get: () => {
+        let options = Object.defineProperty( {}, "passive", {
+            "get": () => {
                 passiveSupported = true;
                 return true;
             }
-        });
+        } );
 
-        window.addEventListener("test", options, options);
-        window.removeEventListener("test", options, options);
+        window.addEventListener( "test", options, options );
+        window.removeEventListener( "test", options, options );
     }
-    catch(err) {
+    catch( err ) {
         passiveSupported = false;
     }
-}());
+}() );
 
 
-function getDelegation($element, selector, callback, isOneTimeBinding) {
-    return (e) => {
-        let $target = e.target.closest(selector);
+function getDelegation( $element, selector, callback, isOneTimeBinding ) {
+    return e => {
+        let $target = e.target.closest( selector );
 
-        if (!$target || !$element.contains($target)) {
+        if ( !$target || !$element.contains( $target ) ) {
             return;
         }
 
-        if (isOneTimeBinding) {
-            callback.call($target, e, $element);
+        if ( isOneTimeBinding ) {
+            callback.call( $target, e, $element );
         }
         else {
-            callback.call($target, e);
+            callback.call( $target, e );
         }
     };
 }
 
 
 function exists( $element, eventName, options ) {
-    return ($element instanceof Element ? DOMRegistry : ObjectRegistry).find( item => {
+    return ( $element instanceof Element ? DOMRegistry : ObjectRegistry ).find( item => {
         return item.$element === $element &&
                 item.eventName === eventName &&
                 item.options.callback === options.callback &&
-                (!options.selector || options.selector === item.options.selector);
-    });
+                ( !options.selector || options.selector === item.options.selector );
+    } );
 }
 
 
@@ -96,9 +99,10 @@ function normalizeElements( $elements ) {
 }
 
 
-function _useNativeDOMEvents($element) {
+function _useNativeDOMEvents( $element ) {
     return 'addEventListener' in $element;
 }
+
 
 /**
  * Indicate if the browser natively support passive event
@@ -115,17 +119,16 @@ export const handlePassiveEvents = passiveSupported;
  *
  * @param { HTMLElement|Object|HTMLElement[]|Object[] } $elements
  * @param { Object } options
- * @param { string } options.eventsName - Name of events separate by a space
- * @param { callback } options.callback - Callback function
- * @param { string } [options.selector] - Css selector used for event delegation
- * @param { boolean } [options.capture] - Active or not capture event.
+ * @param { String } options.eventsName - Name of events separate by a space
+ * @param { Function } options.callback - Callback function
+ * @param { String } [options.selector] - Css selector used for event delegation
+ * @param { Boolean } [options.capture] - Active or not capture event.
  * @param { Object } [options.eventOptions] - Native addEventListener options. Priority to options.capture if it's present.
- * @param { boolean } [options.eventOptions.capure]
- * @param { boolean } [options.eventOptions.once]
- * @param { boolean } [options.eventOptions.passive]
- *
+ * @param { Boolean } [options.eventOptions.capure]
+ * @param { Boolean } [options.eventOptions.once]
+ * @param { Boolean } [options.eventOptions.passive]
  */
-export const on = function($elements, options) {
+export const on = function( $elements, options ) {
     let eventOptions;
 
     $elements = normalizeElements( $elements );
@@ -145,13 +148,13 @@ export const on = function($elements, options) {
         eventOptions = passiveSupported ? options.eventOptions : options.capture;
     }
 
-    options.eventsName.split(' ').forEach(eventName => {
+    options.eventsName.split( ' ' ).forEach( eventName => {
         $elements.forEach( $element => {
             if ( exists( $element, eventName, options ) ) {
                 return;
             }
 
-            let useNativeDOMEvents = _useNativeDOMEvents($element);
+            let useNativeDOMEvents = _useNativeDOMEvents( $element );
             let cbFunction = options._internalCallback || options.callback;
 
             let data = {
@@ -160,9 +163,9 @@ export const on = function($elements, options) {
                 options
             };
 
-            if (useNativeDOMEvents) {
-                if (options.selector) {
-                    data.delegate = getDelegation($element, options.selector, cbFunction, data._internalCallback);
+            if ( useNativeDOMEvents ) {
+                if ( options.selector ) {
+                    data.delegate = getDelegation( $element, options.selector, cbFunction, data._internalCallback );
 
                     $element.addEventListener( eventName, data.delegate, eventOptions );
                 }
@@ -174,8 +177,8 @@ export const on = function($elements, options) {
             else {
                 ObjectRegistry.push(data);
             }
-        });
-    });
+        } );
+    } );
 };
 
 
@@ -186,27 +189,27 @@ export const on = function($elements, options) {
  *
  * @param { HTMLElement|Object|HTMLElement[]|Object[] } $elements
  * @param { Object } options
- * @param { string } options.eventsName - Name of events separate by a space
- * @param { string } [options.selector] - Css selector used for event delegation
- * @param { callback } options.callback - Callback function
- * @param { boolean } [options.capture] - Active or not capture event.
+ * @param { String } options.eventsName - Name of events separate by a space
+ * @param { String } [options.selector] - Css selector used for event delegation
+ * @param { Functio } options.callback - Callback function
+ * @param { Boolean } [options.capture] - Active or not capture event.
  * @param { Object } [options.eventOptions] - Native addEventListener options. Priority to options.capture if it's present.
- * @param { boolean } [options.eventOptions.capure]
- * @param { boolean } [options.eventOptions.once]
- * @param { boolean } [options.eventOptions.passive]
+ * @param { Boolean } [options.eventOptions.capure]
+ * @param { Boolean } [options.eventOptions.once]
+ * @param { Boolean } [options.eventOptions.passive]
  *
  */
-export const one = function($elements, options) {
+export const one = function( $elements, options ) {
 
-    function _internalCallback(e, $delegatedElement) {
-        off($delegatedElement || this, options);
-        options.callback.call(this, e);
+    function _internalCallback( e, $delegatedElement ) {
+        off( $delegatedElement || this, options );
+        options.callback.call( this, e );
     }
 
-    on($elements, {
+    on( $elements, {
         ...options,
         _internalCallback
-    });
+    } );
 };
 
 
@@ -217,43 +220,44 @@ export const one = function($elements, options) {
  *
  * @param { HTMLElement|Object|HTMLElement[]|Object[] } $elements
  * @param { Object } options
- * @param { string } options.eventsName - Name of events separate by space
- * @param { callback } [options.callback] - Callback function
+ * @param { String } options.eventsName - Name of events separate by space
+ * @param { Function } [options.callback] - Callback function
  *
  */
-export const off = function($elements, options) {
+export const off = function( $elements, options ) {
     $elements = normalizeElements( $elements );
 
-    options.eventsName.split(' ').forEach(eventName => {
+    options.eventsName.split( ' ' ).forEach( eventName => {
         $elements.forEach( $element => {
-            let useNativeDOMEvents = _useNativeDOMEvents($element);
+            let useNativeDOMEvents = _useNativeDOMEvents( $element );
             let registry = useNativeDOMEvents ? DOMRegistry : ObjectRegistry;
             let removedItem = [];
 
             registry.forEach( item => {
                 let callback = item.delegate || item.options._internalCallback || item.options.callback;
 
-                if (!options.callback || options.callback === item.options.callback) {
-                    if (useNativeDOMEvents) {
+                if ( !options.callback || options.callback === item.options.callback ) {
+                    if ( useNativeDOMEvents ) {
                         $element.removeEventListener( eventName, callback );
                     }
-                    removedItem.push(item);
+                    removedItem.push( item );
                 }
-            });
+            } );
 
             removedItem.forEach( item => {
-                registry = slice(registry, item);
-            });
+                registry = slice( registry, item );
+            } );
 
-            if (useNativeDOMEvents) {
+            if ( useNativeDOMEvents ) {
                 DOMRegistry = registry;
             }
             else {
                 ObjectRegistry = registry;
             }
-        })
-    });
+        } )
+    } );
 };
+
 
 /**
  * Fire an event
@@ -262,29 +266,29 @@ export const off = function($elements, options) {
  *
  * @param { HTMLElement|Object|HTMLElement[]|Object[] } $elements
  * @param { Object } options
- * @param { string } options.eventsName - Name of events separate by space
+ * @param { String } options.eventsName - Name of events separate by space
  * @param { Object } [options.detail] - Object to send with the event
  * @param { Boolean } [options.bubbles=true] - Only used for DOMM
  * @param { Boolean } [options.cancelable=true] - Only used for DOMM
  *
  */
-export const fire = function($elements, options) {
+export const fire = function( $elements, options ) {
     $elements = normalizeElements( $elements );
 
-    options.eventsName.split(' ').forEach(eventName => {
+    options.eventsName.split(' ').forEach( eventName => {
         $elements.forEach( $element => {
-            let useNativeDOMEvents = _useNativeDOMEvents($element);
+            let useNativeDOMEvents = _useNativeDOMEvents( $element );
 
-            if (useNativeDOMEvents) {
-                $element.dispatchEvent(createEvt(eventName, options));
+            if ( useNativeDOMEvents ) {
+                $element.dispatchEvent( createEvt( eventName, options ) );
                 return;
             }
 
-            let eventData = ObjectRegistry.filter(reg => reg.$element === $element && reg.eventName === eventName );
+            let eventData = ObjectRegistry.filter( reg => reg.$element === $element && reg.eventName === eventName );
 
-            eventData.forEach(reg => {
-                reg.options[ reg.options._internalCallback ? '_internalCallback' : 'callback' ].call(reg.$element, options.detail);
-            });
-        });
-    });
+            eventData.forEach( reg => {
+                reg.options[ reg.options._internalCallback ? '_internalCallback' : 'callback' ].call( reg.$element, options.detail );
+            } );
+        } );
+    } );
 }

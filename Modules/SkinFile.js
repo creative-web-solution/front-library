@@ -2,6 +2,68 @@ import { extend } from 'front-library/Helpers/Extend';
 import { strToDOM } from 'front-library/DOM/strToDOM';
 import { insertAfter, append } from 'front-library/DOM/Manipulation';
 
+
+const defaultOptions = {
+    "wrap": "<div class=\"file-skin\"></div>",
+    "fileInfo": "<div class=\"file-info\"></div>"
+}
+
+function SkinFile( $input, userOptions = {} ) {
+    let $fileInfo, $wrap, fileInfoId, originalFileInfoText, options;
+
+    options = extend( defaultOptions, userOptions );
+
+    originalFileInfoText = '';
+
+    function changeState() {
+        let aValue;
+
+        if ( !$input.value ) {
+            $fileInfo.innerHTML = originalFileInfoText;
+
+            if ( !originalFileInfoText ) {
+                $fileInfo.style.display = 'none';
+            }
+
+            return;
+        }
+
+        aValue = $input.value.split( /(\\|\/)/ );
+
+        $fileInfo.innerHTML = aValue[ aValue.length - 1 ];
+        $fileInfo.style.display = '';
+    }
+
+    function changeHandler() {
+        changeState();
+    }
+
+    $wrap = strToDOM( options.wrap );
+
+    insertAfter( $wrap, $input );
+
+    append( $input, $wrap );
+
+    if ( $input.hasAttribute( 'data-file-info' ) ) {
+        fileInfoId = $input.getAttribute( 'data-file-info' );
+        $fileInfo = document.getElementById( fileInfoId );
+    }
+
+    if ( $fileInfo ) {
+        originalFileInfoText = $fileInfo.innerHTML;
+        originalFileInfoText = originalFileInfoText.trim();
+    }
+    else {
+        $fileInfo = strToDOM( options.fileInfo );
+        append( $fileInfo, $wrap );
+    }
+
+    $input.addEventListener( 'change', changeHandler );
+
+    changeState();
+}
+
+
 /**
  * Skin an input file DOM element
  *
@@ -16,8 +78,11 @@ import { insertAfter, append } from 'front-library/DOM/Manipulation';
  *   "wrap": "<div class=\"file-skin\"></div>",
  *   "fileInfo": "<div class=\"file-info\"></div>"
  * } );
- */
-let skinInputFile;
+*/
+export function skinInputFile( $input, options ) {
+    return new SkinFile( $input, options );
+}
+
 
 
 /**
@@ -34,86 +99,17 @@ let skinInputFile;
  *   "wrap": "<div class=\"file-skin\"></div>",
  *   "fileInfo": "<div class=\"file-info\"></div>"
  * } );
- */
-let skinInputFileAll;
+*/
+export function  skinInputFileAll( $wrapper, options ) {
+    let $inputs, list;
 
-{
-    const defaultOptions = {
-        wrap: '<div class="file-skin"></div>',
-        fileInfo: '<div class="file-info"></div>'
-    }
+    list = [];
 
-    function SkinFile($input, userOptions = {}) {
-        let $fileInfo, $wrap, fileInfoId, originalFileInfoText, options
+    $inputs = $wrapper.querySelectorAll( 'input[type="file"]' );
 
-        options = extend(defaultOptions, userOptions)
+    $inputs.forEach( $input => {
+        list.push( new SkinFile( $input, options ) );
+    } );
 
-        originalFileInfoText = ''
-
-        function changeState() {
-            let aValue
-
-            if (!$input.value) {
-                $fileInfo.innerHTML = originalFileInfoText
-
-                if (!originalFileInfoText) {
-                    $fileInfo.style.display = 'none'
-                }
-
-                return
-            }
-
-            aValue = $input.value.split(/(\\|\/)/)
-
-            $fileInfo.innerHTML = aValue[aValue.length - 1]
-            $fileInfo.style.display = ''
-        }
-
-        function changeHandler() {
-            changeState()
-        }
-
-        $wrap = strToDOM(options.wrap)
-
-        insertAfter($wrap, $input)
-
-        append($input, $wrap)
-
-        if ($input.hasAttribute('data-file-info')) {
-            fileInfoId = $input.getAttribute('data-file-info')
-            $fileInfo = document.getElementById(fileInfoId)
-        }
-
-        if ($fileInfo) {
-            originalFileInfoText = $fileInfo.innerHTML
-            originalFileInfoText = originalFileInfoText.trim()
-        } else {
-            $fileInfo = strToDOM(options.fileInfo)
-            append($fileInfo, $wrap)
-        }
-
-        $input.addEventListener('change', changeHandler)
-
-        changeState()
-    }
-
-    skinInputFile = function($input, options) {
-        return new SkinFile($input, options)
-    }
-
-    skinInputFileAll = function($wrapper, options) {
-        let $inputs, list
-
-        list = []
-
-        $inputs = $wrapper.querySelectorAll('input[type="file"]')
-
-        $inputs.forEach($input => {
-            list.push(new SkinFile($input, options))
-        })
-
-        return list
-    }
+    return list;
 }
-
-export { skinInputFile, skinInputFileAll }

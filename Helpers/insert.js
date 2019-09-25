@@ -3,32 +3,32 @@
  *
  * @param {Array} list
  * @param {*} what
- * @param {number} where - Index
+ * @param {Number} where - Index
  *
  * @example modifiedArray = insert( array, obj, 2 )
  *
  * @returns {Array} - Modified array
  */
-export function insert(list, what, indexWhere) {
-    let listLength, arrStart, arrEnd
+export function insert( list, what, indexWhere ) {
+    let listLength, arrStart, arrEnd;
 
-    listLength = list.length
+    listLength = list.length;
 
-    if (!listLength) {
-        return list
+    if ( !listLength ) {
+        return list;
     }
 
-    if (indexWhere <= 0) {
-        return [what, ...list]
+    if ( indexWhere <= 0 ) {
+        return [ what, ...list ];
     }
 
-    if (indexWhere >= listLength) {
-        list.push(what)
-        return list
+    if ( indexWhere >= listLength ) {
+        list.push( what );
+        return list;
     }
 
-    arrStart = list.slice(0, indexWhere)
-    arrEnd = list.slice(indexWhere, list.length)
+    arrStart = list.slice( 0, indexWhere );
+    arrEnd = list.slice( indexWhere, list.length );
 
-    return [...arrStart, what, ...arrEnd]
+    return [...arrStart, what, ...arrEnd ];
 }

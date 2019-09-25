@@ -8,8 +8,9 @@
  * @returns {HTMLElement}
  */
 export function next($element) {
-    return $element.nextElementSibling
+    return $element.nextElementSibling;
 }
+
 
 /**
  * Return the previous element in the DOM
@@ -21,8 +22,9 @@ export function next($element) {
  * @returns {HTMLElement}
  */
 export function previous($element) {
-    return $element.previousElementSibling
+    return $element.previousElementSibling;
 }
+
 
 /**
  * Return all the children of a DOM element
@@ -33,14 +35,14 @@ export function previous($element) {
  *
  * @returns {HTMLElement[]}
  */
-export function children($element) {
-    let childrenArray = []
+export function children( $element ) {
+    let childrenArray = [];
 
-    $element.childNodes.forEeach($child => {
-        if ($child && $child.nodeType === 1) {
-            childrenArray.push($child)
+    $element.childNodes.forEeach( $child => {
+        if ( $child && $child.nodeType === 1 ) {
+            childrenArray.push($child);
         }
-    })
+    } );
 
-    return childrenArray
+    return childrenArray;
 }

@@ -5,7 +5,7 @@ let hasStorage;
  *
  * @example hasStorage = hasLocalStorage();
  *
- * @returns {boolean}
+ * @returns {Boolean}
  */
 export function hasLocalStorage() {
     if ( typeof hasStorage !== 'undefined' ) {

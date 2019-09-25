@@ -1,17 +1,17 @@
-import { validatorTools, addValidator } from 'front-library/Modules/Validator';
+import { standardValidation, isDate, addValidator } from 'front-library/Modules/Validator';
 
 /**
  * Date validation
  */
-addValidator('date', '[data-date-control]', ($input, value) => {
-    return validatorTools.standardValidation(
+addValidator( 'date', '[data-date-control]', ( $input, value ) => {
+    return standardValidation(
         $input,
         value,
         value === '' ||
-            validatorTools.isDate(
+            isDate(
                 value,
-                $input.getAttribute('data-date-control')
+                $input.getAttribute( 'data-date-control' )
             ),
         'date'
     );
-});
+} );

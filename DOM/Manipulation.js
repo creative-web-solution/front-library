@@ -8,10 +8,10 @@
  *
  * @returns {HTMLElement} - Appened element
  */
-export function append($what, $where) {
-    $where.append($what)
+export function append( $what, $where ) {
+    $where.append( $what );
 
-    return $what
+    return $what;
 }
 
 /**
@@ -24,10 +24,10 @@ export function append($what, $where) {
  *
  * @returns {HTMLElement} - Prepened element
  */
-export function prepend($what, $where) {
-    $where.prepend($what)
+export function prepend( $what, $where ) {
+    $where.prepend( $what );
 
-    return $what
+    return $what;
 }
 
 /**
@@ -40,10 +40,10 @@ export function prepend($what, $where) {
  *
  * @returns {HTMLElement} - Inserted element
  */
-export function insertBefore($what, $where) {
-    $where.before($what)
+export function insertBefore( $what, $where ) {
+    $where.before( $what );
 
-    return $what
+    return $what;
 }
 
 /**
@@ -56,10 +56,10 @@ export function insertBefore($what, $where) {
  *
  * @returns {HTMLElement} - Inserted element
  */
-export function insertAfter($what, $where) {
-    $where.after($what)
+export function insertAfter( $what, $where ) {
+    $where.after( $what );
 
-    return $what
+    return $what;
 }
 
 /**
@@ -71,8 +71,8 @@ export function insertAfter($what, $where) {
  *
  * @returns {HTMLElement} - Cloned element
  */
-export function clone($element) {
-    return $element.cloneNode(true)
+export function clone( $element ) {
+    return $element.cloneNode( true );
 }
 
 
@@ -87,14 +87,14 @@ export function clone($element) {
  *
  * @returns {HTMLElement} - Removed element
  */
-export function remove($element, $parent) {
-    if (!$parent) {
-        $parent = $element.parentNode
+export function remove( $element, $parent ) {
+    if ( !$parent ) {
+        $parent = $element.parentNode;
     }
 
-    if ($parent) {
-        $parent.removeChild($element)
+    if ( $parent ) {
+        $parent.removeChild( $element );
     }
 
-    return $element
+    return $element;
 }

@@ -10,6 +10,14 @@
 * Add function to export in `front-library` project hosted on GitHub
 * General files and folders renaming
 
+### ScrollSnap
+
+* Add new refresh options
+
+### Mediaqueries events
+
+* Add `on` and `off` function to bind specific breakpoint
+
 
 ## 5.2.14
 

@@ -31,16 +31,9 @@
 		<ul class="nav navbar-nav">
 			
 			<li class="dropdown">
-				<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
-				<ul class="dropdown-menu ">
-					<li><a href="cookie.html">cookie</a></li>
-				</ul>
-			</li>
-			
-			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="UrlParser.html">UrlParser</a></li>
+					<li><a href="Cookie.html">Cookie</a></li><li><a href="UrlParser.html">UrlParser</a></li>
 				</ul>
 			</li>
 			
@@ -209,7 +202,7 @@
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">Object</span>
 
 
 
@@ -291,7 +284,7 @@
     </dt>
     <dd>
         
-<span class="param-type">object</span>
+<span class="param-type">Object</span>
 
 
 
@@ -643,7 +636,7 @@
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -930,7 +923,7 @@ It doesn't modify the target object.
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">Object</span>
 
 
 
@@ -962,7 +955,7 @@ It doesn't modify the target object.
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">Object</span>
 
 
 
@@ -1054,7 +1047,7 @@ It doesn't modify the target object.
     </dt>
     <dd>
         
-<span class="param-type">object</span>
+<span class="param-type">Object</span>
 
 
 
@@ -1520,10 +1513,10 @@ It doesn't modify the target object.
     </dt>
     <dd>
         
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 |
 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -1627,7 +1620,7 @@ It doesn't modify the target object.
     </dt>
     <dd>
         
-<span class="param-type">boolean</span>
+<span class="param-type">Boolean</span>
 
 
 
@@ -1902,7 +1895,7 @@ hexToRgba( &#x27;#F5B3D8&#x27; );</pre>
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -2142,7 +2135,7 @@ hexToRgba( &#x27;#F5B3D8&#x27; );</pre>
     </dt>
     <dd>
         
-<span class="param-type">boolean</span>
+<span class="param-type">Boolean</span>
 
 
 
@@ -2296,7 +2289,7 @@ hexToRgba( &#x27;#F5B3D8&#x27; );</pre>
     </dt>
     <dd>
         
-<span class="param-type">boolean</span>
+<span class="param-type">Boolean</span>
 
 
 
@@ -2606,7 +2599,7 @@ isHexColor( &#x27;#55CC66FF&#x27; );</pre>
     </dt>
     <dd>
         
-<span class="param-type">boolean</span>
+<span class="param-type">Boolean</span>
 
 
 
@@ -2915,7 +2908,7 @@ isRGBA( &#x27;rgba(125 ,233, 105, 0.25)&#x27; );</pre>
     </dt>
     <dd>
         
-<span class="param-type">boolean</span>
+<span class="param-type">Boolean</span>
 
 
 
@@ -3011,7 +3004,7 @@ isRGBA( &#x27;rgba(125 ,233, 105, 0.25)&#x27; );</pre>
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
 
@@ -3097,7 +3090,7 @@ isRGBA( &#x27;rgba(125 ,233, 105, 0.25)&#x27; );</pre>
     </dt>
     <dd>
         
-<span class="param-type">boolean</span>
+<span class="param-type">Boolean</span>
 
 
 
@@ -4554,7 +4547,7 @@ splitRGBA( &#x27;rgba(125 ,233, 105, 0.75)&#x27; );</pre>
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -4675,7 +4668,7 @@ splitRGBA( &#x27;rgba(125 ,233, 105, 0.75)&#x27; );</pre>
             
 <hr>
 <dt>
-    <h4 class="name" id="unique"><span class="type-signature"></span>unique(arr, fnc)</h4>
+    <h4 class="name" id="unique"><span class="type-signature"></span>unique(list [, filter])</h4>
     
     
 </dt>
@@ -4720,7 +4713,7 @@ splitRGBA( &#x27;rgba(125 ,233, 105, 0.75)&#x27; );</pre>
 
         <tr>
             
-                <td class="name"><code>arr</code></td>
+                <td class="name"><code>list</code></td>
             
 
             <td class="type">
@@ -4752,7 +4745,7 @@ splitRGBA( &#x27;rgba(125 ,233, 105, 0.75)&#x27; );</pre>
 
         <tr>
             
-                <td class="name"><code>fnc</code></td>
+                <td class="name"><code>filter</code></td>
             
 
             <td class="type">
@@ -4768,9 +4761,9 @@ splitRGBA( &#x27;rgba(125 ,233, 105, 0.75)&#x27; );</pre>
             
                 <td class="attributes">
                 
-
+                    &lt;optional><br>
                 
-                    &lt;nullable><br>
+
                 
 
                 
@@ -4931,7 +4924,7 @@ If 'waitFor' < 0 => wait for an animation frame
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -5083,7 +5076,7 @@ promise.kill()</pre>
         <ul>
             <li>
                 
-<span class="param-type">object</span>
+<span class="param-type">Object</span>
 
 
 
@@ -5127,7 +5120,7 @@ promise.kill()</pre>
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -5151,7 +5144,7 @@ promise.kill()</pre>
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -5175,7 +5168,7 @@ promise.kill()</pre>
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -5199,7 +5192,7 @@ promise.kill()</pre>
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -5223,7 +5216,7 @@ promise.kill()</pre>
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
 
@@ -5247,7 +5240,7 @@ promise.kill()</pre>
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
 
@@ -5271,7 +5264,7 @@ promise.kill()</pre>
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
 
@@ -5295,7 +5288,7 @@ promise.kill()</pre>
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
 
@@ -5403,7 +5396,7 @@ promise.kill()</pre>
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
 	
-		on 2019-09-16T13:35:14+02:00
+		on 2019-09-25T16:36:45+02:00
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

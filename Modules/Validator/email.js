@@ -1,13 +1,13 @@
-import { validatorTools, addValidator } from 'front-library/Modules/Validator';
+import { standardValidation, isEmail, addValidator } from 'front-library/Modules/Validator';
 
 /**
  * Email validation
  */
-addValidator('email', '[type="email"]', ($input, value) => {
-    return validatorTools.standardValidation(
+addValidator( 'email', '[type="email"]', ( $input, value ) => {
+    return standardValidation(
         $input,
         value,
-        value === '' || validatorTools.isEmail(value),
+        value === '' || isEmail( value ),
         'email'
-    )
-})
+    );
+} );

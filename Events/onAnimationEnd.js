@@ -1,5 +1,25 @@
 import { defer } from 'front-library/Helpers/defer';
 
+const animationendEventName = ( function() {
+    let el, animation;
+
+    el = document.createElement( 'fakeelement' );
+
+    animation = {
+        "animation": "animationend",
+        "OAnimation": "oAnimationEnd",
+        "MozAnimation": "animationend",
+        "WebkitAnimation": "webkitAnimationEnd"
+    };
+
+    for ( let t in animation ) {
+        if ( el.style[ t ] !== undefined ) {
+            return animation[ t ];
+        }
+    }
+} )();
+
+
 /**
  * Bind a one time animationend event on a DOM object
  * @function onAnimationEnd
@@ -16,51 +36,26 @@ import { defer } from 'front-library/Helpers/defer';
  *
  * @returns {Promise} - Return a standard Promise + an .off() function to cancel event
  */
-let onAnimationEnd;
+export function onAnimationEnd( $elem ) {
+    let deferred = defer();
 
-{
-    const animationendEventName = (function() {
-        let el, animation;
+    function remove() {
+        $elem.removeEventListener( animationendEventName, onAnimationEnd );
+    }
 
-        el = document.createElement('fakeelement');
-
-        animation = {
-            animation: 'animationend',
-            OAnimation: 'oAnimationEnd',
-            MozAnimation: 'animationend',
-            WebkitAnimation: 'webkitAnimationEnd'
-        };
-
-        for (let t in animation) {
-            if (el.style[t] !== undefined) {
-                return animation[t];
-            }
-        }
-    })();
-
-    onAnimationEnd = function($elem) {
-        let deferred = defer();
-
-        function remove() {
-            $elem.removeEventListener(animationendEventName, onAnimationEnd);
+    function onAnimationEnd( e ) {
+        if ( e.target !== $elem ) {
+            return;
         }
 
-        function onAnimationEnd(e) {
-            if (e.target !== $elem) {
-                return;
-            }
+        remove();
 
-            remove();
+        deferred.resolve();
+    }
 
-            deferred.resolve();
-        }
+    $elem.addEventListener( animationendEventName, onAnimationEnd, false );
 
-        $elem.addEventListener(animationendEventName, onAnimationEnd, false);
+    deferred.off = remove;
 
-        deferred.off = remove;
-
-        return deferred;
-    };
+    return deferred;
 }
-
-export { onAnimationEnd };

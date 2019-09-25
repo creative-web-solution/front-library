@@ -224,10 +224,10 @@
         
     <pre class="sunlight-highlight-javascript">var w = new WindowEvents( window );
 
-let myFunction = ( { windowInfo, scrollInfo, documentInfo, viewportInfo }, type, event ) =&gt; {};
+let callback = ( { windowInfo, scrollInfo, documentInfo, viewportInfo }, type, event ) =&gt; {};
 
-w.register( myFunction, &#x27;resize&#x27; ); // type = &#x27;resize&#x27;, &#x27;scroll&#x27; or undefined for both
-w.remove( myFunction, &#x27;resize&#x27; );
+w.register( callback, &#x27;resize&#x27; ); // type = &#x27;resize&#x27;, &#x27;scroll&#x27; or undefined for both
+w.remove( callback, &#x27;resize&#x27; );
 
 // Force refresh of all registered function
 w.refresh( &#x27;scroll&#x27; );
@@ -236,7 +236,7 @@ w.refresh( &#x27;scroll&#x27; );
 w.update();
 
 // Call the function
-w.get( myFunction );
+w.get( callback );
 
 // Tools
 { top, left } = w.scrollInfo;
@@ -561,7 +561,7 @@ So, its top and left are the scroll position and its width and height are the wi
             
 <hr>
 <dt>
-    <h4 class="name" id="get"><span class="type-signature"></span>get(fcn)</h4>
+    <h4 class="name" id="get"><span class="type-signature"></span>get(callback)</h4>
     
     
 </dt>
@@ -604,7 +604,7 @@ So, its top and left are the scroll position and its width and height are the wi
 
         <tr>
             
-                <td class="name"><code>fcn</code></td>
+                <td class="name"><code>callback</code></td>
             
 
             <td class="type">
@@ -681,6 +681,26 @@ So, its top and left are the scroll position and its width and height are the wi
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="WindowEvents.html">WindowEvents</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
@@ -738,7 +758,7 @@ So, its top and left are the scroll position and its width and height are the wi
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
 
@@ -809,6 +829,26 @@ So, its top and left are the scroll position and its width and height are the wi
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="WindowEvents.html">WindowEvents</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
@@ -817,7 +857,7 @@ So, its top and left are the scroll position and its width and height are the wi
             
 <hr>
 <dt>
-    <h4 class="name" id="register"><span class="type-signature"></span>register(fcn, type)</h4>
+    <h4 class="name" id="register"><span class="type-signature"></span>register(callback, type)</h4>
     
     
 </dt>
@@ -860,7 +900,7 @@ So, its top and left are the scroll position and its width and height are the wi
 
         <tr>
             
-                <td class="name"><code>fcn</code></td>
+                <td class="name"><code>callback</code></td>
             
 
             <td class="type">
@@ -890,7 +930,7 @@ So, its top and left are the scroll position and its width and height are the wi
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
 
@@ -961,6 +1001,26 @@ So, its top and left are the scroll position and its width and height are the wi
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="WindowEvents.html">WindowEvents</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
@@ -969,7 +1029,7 @@ So, its top and left are the scroll position and its width and height are the wi
             
 <hr>
 <dt>
-    <h4 class="name" id="remove"><span class="type-signature"></span>remove(fcn, type)</h4>
+    <h4 class="name" id="remove"><span class="type-signature"></span>remove(callback, type)</h4>
     
     
 </dt>
@@ -1012,7 +1072,7 @@ So, its top and left are the scroll position and its width and height are the wi
 
         <tr>
             
-                <td class="name"><code>fcn</code></td>
+                <td class="name"><code>callback</code></td>
             
 
             <td class="type">
@@ -1042,7 +1102,7 @@ So, its top and left are the scroll position and its width and height are the wi
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
 
@@ -1113,6 +1173,26 @@ So, its top and left are the scroll position and its width and height are the wi
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="WindowEvents.html">WindowEvents</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
@@ -1170,7 +1250,7 @@ So, its top and left are the scroll position and its width and height are the wi
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
 
@@ -1241,6 +1321,26 @@ So, its top and left are the scroll position and its width and height are the wi
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="WindowEvents.html">WindowEvents</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
@@ -1396,7 +1496,7 @@ So, its top and left are the scroll position and its width and height are the wi
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -1420,7 +1520,7 @@ So, its top and left are the scroll position and its width and height are the wi
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -1494,7 +1594,7 @@ So, its top and left are the scroll position and its width and height are the wi
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -1518,7 +1618,7 @@ So, its top and left are the scroll position and its width and height are the wi
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -1592,7 +1692,7 @@ So, its top and left are the scroll position and its width and height are the wi
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -1616,7 +1716,7 @@ So, its top and left are the scroll position and its width and height are the wi
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -1690,7 +1790,7 @@ So, its top and left are the scroll position and its width and height are the wi
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -1714,7 +1814,7 @@ So, its top and left are the scroll position and its width and height are the wi
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -1738,7 +1838,7 @@ So, its top and left are the scroll position and its width and height are the wi
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -1762,7 +1862,7 @@ So, its top and left are the scroll position and its width and height are the wi
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -1786,7 +1886,7 @@ So, its top and left are the scroll position and its width and height are the wi
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -1810,7 +1910,7 @@ So, its top and left are the scroll position and its width and height are the wi
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
 
@@ -1848,7 +1948,7 @@ So, its top and left are the scroll position and its width and height are the wi
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
 
@@ -1880,7 +1980,7 @@ So, its top and left are the scroll position and its width and height are the wi
             <td class="type">
             
                 
-<span class="param-type">event</span>
+<span class="param-type">Event</span>
 
 
 
@@ -2013,7 +2113,7 @@ So, its top and left are the scroll position and its width and height are the wi
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
 	
-		on 2019-09-16T13:35:14+02:00
+		on 2019-09-25T16:36:46+02:00
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
