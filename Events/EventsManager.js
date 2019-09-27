@@ -62,7 +62,7 @@ let passiveSupported = false, DOMRegistry = [], ObjectRegistry = [], createEvt;
 }() );
 
 
-function getDelegation( $element, selector, callback, isOneTimeBinding ) {
+function getDelegation( $element, selector, callback ) {
     return e => {
         let $target = e.target.closest( selector );
 
@@ -70,12 +70,7 @@ function getDelegation( $element, selector, callback, isOneTimeBinding ) {
             return;
         }
 
-        if ( isOneTimeBinding ) {
-            callback.call( $target, e, $element );
-        }
-        else {
-            callback.call( $target, e );
-        }
+        callback.call( $target, e );
     };
 }
 
@@ -165,7 +160,7 @@ export const on = function( $elements, options ) {
 
             if ( useNativeDOMEvents ) {
                 if ( options.selector ) {
-                    data.delegate = getDelegation( $element, options.selector, cbFunction, data._internalCallback );
+                    data.delegate = getDelegation( $element, options.selector, cbFunction );
 
                     $element.addEventListener( eventName, data.delegate, eventOptions );
                 }
@@ -175,7 +170,7 @@ export const on = function( $elements, options ) {
                 DOMRegistry.push( data );
             }
             else {
-                ObjectRegistry.push(data);
+                ObjectRegistry.push( data );
             }
         } );
     } );
@@ -201,8 +196,8 @@ export const on = function( $elements, options ) {
  */
 export const one = function( $elements, options ) {
 
-    function _internalCallback( e, $delegatedElement ) {
-        off( $delegatedElement || this, options );
+    function _internalCallback( e ) {
+        off( $elements || this, options );
         options.callback.call( this, e );
     }
 
