@@ -18,6 +18,10 @@
 
 * Add `on` and `off` function to bind specific breakpoint
 
+### EventsManager
+
+* Fix the auto unbind of the `one` function
+
 
 ## 5.2.14
 
