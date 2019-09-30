@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 6.0.1
+
+* Add notification module
+
+
 ## 6.0.0
 
 **Not compatible with 5.x.x version**
