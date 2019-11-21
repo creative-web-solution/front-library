@@ -1,5 +1,9 @@
 import { getValue } from 'front-library/Helpers/getValue';
-import { standardValidation, addValidator, isRadioListChecked, isEmpty } from 'front-library/Modules/Validator';
+import { standardValidation } from 'front-library/Modules/Validator/Tools/ValidationState';
+import isEmpty from 'front-library/Modules/Validator/Tools/isEmpty';
+import { addValidator } from 'front-library/Modules/Validator';
+import { isRadioListChecked } from 'front-library/Modules/Validator/Tools/RadioButton';
+
 
 /**
  * Check for a group of field if at least x are checked (or filled) and maximum y
@@ -8,7 +12,7 @@ import { standardValidation, addValidator, isRadioListChecked, isEmpty } from 'f
  * on other field of the group :    data-multirequired-group="myGroup"
  *
  */
-addValidator( 'multirequired', '[data-multirequired]', ( $input, value ) => {
+addValidator( 'multirequired', '[data-multirequired]', ( $input, value, isLiveValidation ) => {
     let $group, arrayData, count, data, groupName, nbRequiredMax, nbRequiredMin;
 
     data = $input.getAttribute( 'data-multirequired' );
@@ -19,7 +23,9 @@ addValidator( 'multirequired', '[data-multirequired]', ( $input, value ) => {
             $input,
             value,
             true,
-            'multirequired'
+            'multirequired',
+            undefined,
+            isLiveValidation
         );
     }
 
@@ -33,7 +39,9 @@ addValidator( 'multirequired', '[data-multirequired]', ( $input, value ) => {
             $input,
             value,
             true,
-            'multirequired'
+            'multirequired',
+            undefined,
+            isLiveValidation
         );
     }
 
@@ -67,6 +75,8 @@ addValidator( 'multirequired', '[data-multirequired]', ( $input, value ) => {
         $input,
         value,
         nbRequiredMin <= count && count <= nbRequiredMax,
-        'multirequired'
+        'multirequired',
+        undefined,
+        isLiveValidation
     );
 } );

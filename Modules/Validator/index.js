@@ -2,359 +2,31 @@ import { getValue } from 'front-library/Helpers/getValue';
 import { extend } from 'front-library/Helpers/Extend';
 import { defer } from 'front-library/Helpers/defer';
 import { unique } from 'front-library/Helpers/unique';
+import { on, off } from 'front-library/Events/EventsManager';
+import { getRadioList } from 'front-library/Modules/Validator/Tools/RadioButton';
+
 
 const defaultOptions = {
-    "fields":               "input,textarea,select",
-    "filter":               "input[type=\"button\"],input[type=\"submit\"],input[type=\"reset\"],input[type=\"image\"]",
-    "onValidate":           null,
-    "onInvalidate":         null,
-    "validatorsOptions":    null,
-    "customErrorLabelPrefix": "data-error-label",
-    "errorMessages":        {}
+    "fields":                   "input,textarea,select",
+    "filter":                   "input[type=\"button\"],input[type=\"submit\"],input[type=\"reset\"],input[type=\"image\"]",
+    "onValidate":               null,
+    "onInvalidate":             null,
+    "validatorsOptions":        null,
+    "customErrorLabelPrefix":   "data-error-label",
+    "errorMessages":            {},
+    "liveValidation": {
+        "onValidate":           null,
+        "onInvalidate":         null,
+        "eventsName": {
+            "optin":            "change",
+            "select":           "change",
+            "inputText":        "change"
+        },
+        "eventsHook":           null
+    }
 };
 
-const numRe                               = /^-?[0-9]*(\.[0-9]+)?$/;
 
-// http://net.tutsplus.com/tutorials/other/8-regular-expressions-you-should-know/
-const emailRe                             = /^([a-z0-9_\.\-\+]+)@([\da-z\.\-]+)\.([a-z\.]{2,6})$/i;
-const urlRe                               = /^(https?:\/\/)?[\da-z\.\-]+\.[a-z\.]{2,6}[#&+_\?\/\w \.\-=]*$/i;
-const emptyRe                             = /(^$)|(^[\s]*$)/i;
-
-/**
- * All validator tools
- * @namespace ValidatorTools
- *
- * @example
- * import { addValidator } from 'front-library/Modules/Validator'
- */
-
-/**
- * Get all radio with the same name
- *
- * @function getRadioList
- * @memberof ValidatorTools
- * @instance
- *
- * @param {HTMLElement|string} inputRadioOrInputName
- * @param {Object} userOptions
- * @param {String} [userOptions.selector=input[name="{NAME}"]] - css selector of the elements with a {GROUP_NAME} tag that will be replace by groupName var.
- * @param {Boolean} [userOptions.othersOnly=false] - if true, return the list without the element in `inputRadioOrInputName`. If `inputRadioOrInputName` is a string (input name), return all radio
- *
- * @see extra/modules/validator.md for details
- *
- * @returns {HTMLElement[]} Return all elements
- */
-export function getRadioList( inputRadioOrInputName, userOptions ) {
-    let $radioList, $currentInput, options;
-
-    options = {
-        "othersOnly":   false
-    };
-
-    if ( typeof userOptions === 'string' ) {
-        options.selector = userOptions;
-    }
-    else {
-        options = extend( options, {
-            "selector":     "input[name=\"{NAME}\"]"
-        }, userOptions );
-    }
-
-
-    if ( inputRadioOrInputName instanceof HTMLElement ) {
-        $currentInput = inputRadioOrInputName;
-
-        if ( $currentInput.__$radioGroup ) {
-            $radioList = $currentInput.__$radioGroup;
-        }
-        else {
-            $radioList = document.querySelectorAll( options.selector.replace('{NAME}', $currentInput.name) );
-        }
-    }
-    else {
-        $radioList = document.querySelectorAll( options.selector.replace('{NAME}', inputRadioOrInputName) );
-    }
-
-    if ( !options.othersOnly || !$currentInput ) {
-        return $radioList;
-    }
-
-    return Array.from( $radioList ).filter( $rd => {
-        return $rd !== $currentInput;
-    } );
-}
-
-
-/**
- * Get the selected radio button from a list.
- *
- * @function isRadioListChecked
- * @memberof ValidatorTools
- * @instance
- *
- * @param {HTMLElement[]|HTMLElement} $iputRadioOrRadioList
- *
- * @see extra/modules/validator.md for details
- *
- * @return {false|HTMLElement} Return the selected radio button from a group or false
- */
-export function isRadioListChecked( $iputRadioOrRadioList ) {
-    let $list = ( $iputRadioOrRadioList instanceof NodeList || $iputRadioOrRadioList instanceof Array ) ? $iputRadioOrRadioList : getRadioList( $iputRadioOrRadioList );
-
-    for ( let i = 0, len = $list.length; i < len; ++i ) {
-        if ( $list[i].checked ) {
-            return $list[ i ];
-        }
-    }
-    return false;
-}
-
-
-/**
- * Get the label of an input
- *
- * @function getLabelElement
- * @memberof ValidatorTools
- * @instance
- *
- * @param {HTMLElement} $input
- * @param {HTMLElement} [$wrapper=document.body]
- *
- * @see extra/modules/validator.md for details
- *
- * @return {HTMLElement|HTMLElement[]|null} Return the label, if there is only one, the list of labels if many or null if none
-*/
-export function getLabelElement( $input, $wrapper = document.body ) {
-    let $labels = $wrapper.querySelectorAll( `label[for="${ $input.id }"]` );
-
-    if ( !$labels.length ) {
-        return null;
-    }
-    if ( $labels.length === 1 ) {
-        return $labels[ 0 ];
-    }
-
-    return $labels;
-}
-
-
-/**
- * Get the text of a label's input
- *
- * @function getLabel
- * @memberof ValidatorTools
- * @instance
- *
- * @param {HTMLElement} $input
- * @param {HTMLElement} [$wrapper=document.body]
- *
- * @see extra/modules/validator.md for details
- *
- * @return {string|string[]} Return the label, if there is only one, the list of labels if many or '' if none
-*/
-export function getLabel( $input, $wrapper = document.body ) {
-    let $labels = getLabelElement( $input, $wrapper );
-
-    if ( !$labels ) {
-        return '';
-    }
-    else if ( $labels instanceof NodeList ) {
-        return Array.from( $labels ).map( $label => $label.textContent );
-    }
-
-    return $labels.textContent;
-}
-
-
-/**
- * @typedef {Object} Validator_State
- * @memberof ValidatorTools
- *
- * @property {HTMLElement} $input
- * @property {String|Number} value
- * @property {Boolean} isValid
- * @property {String} validatorName
- * @property {*} data
- */
-/**
- * Create a basic state object that will be return as parameter in promises
- *
- * @function createState
- * @memberof ValidatorTools
- * @instance
- *
- * @param {HTMLElement} $input
- * @param {String|Number} value
- * @param {Boolean} isValid
- * @param {String} validatorName
- * @param {*} data
- *
- * @see extra/modules/validator.md for details
- *
- * @returns {Validator_State}
- */
-export function createState( $input, value, isValid, validatorName, data ) {
-    return {
-        $input,
-        value,
-        isValid,
-        "label": validatorName,
-        data
-    };
-}
-
-
-/**
- * Helper for basic (synchronous) validation system
- *
- * @function standardValidation
- * @memberof ValidatorTools
- * @instance
- *
- * @param {HTMLElement} $input
- * @param {String} value
- * @param {Boolean} isValid
- * @param {String} validatorName
- *
- * @see extra/modules/validator.md for details
- *
- * @returns {Promise}
- */
-export function standardValidation( $input, value, isValid, validatorName ) {
-    let deferred, state;
-
-    deferred = defer();
-    state = createState( $input, value, isValid, validatorName );
-
-    deferred.resolve( state );
-
-    return deferred;
-}
-
-
-/**
- * Test if there is a value
- *
- * @function isEmpty
- * @memberof ValidatorTools
- * @instance
- *
- * @param {String} value
- *
- * @see extra/modules/validator.md for details
- *
- * @returns {Boolean}
- */
-export function isEmpty( value ) {
-    return emptyRe.test( value );
-}
-
-
-/**
- * Test if the value is a number
- *
- * @function isNumber
- * @memberof ValidatorTools
- * @instance
- *
- * @param {String} value
- *
- * @see extra/modules/validator.md for details
- *
- * @returns {Boolean}
- */
-export function isNumber( value ) {
-    return numRe.test( value );
-}
-
-
-/**
- * Test if the value is an email
- *
- * @function isEmail
- * @memberof ValidatorTools
- * @instance
- *
- * @param {String} value
- *
- * @see extra/modules/validator.md for details
- *
- * @returns {Boolean}
- */
-export function isEmail( value ) {
-    return emailRe.test( value );
-}
-
-
-/**
- * Test if the value is an url
- *
- * @function isUrl
- * @memberof ValidatorTools
- * @instance
- *
- * @param {String} value
- *
- * @see extra/modules/validator.md for details
- *
- * @returns {Boolean}
- */
-export function isUrl( value ) {
-    return urlRe.test( value );
-}
-
-
-/**
- * Test if the value is a date
- *
- * @function isDate
- * @memberof ValidatorTools
- * @instance
- *
- * @param {String} value
- * @param {String} [format="d/m/y"]
- *
- * @see extra/modules/validator.md for details
- *
- * @returns {Boolean}
- */
-export function isDate( value, format = 'd/m/y' ) {
-    var date,
-        splittedValues,
-        splittedFormat,
-        SEPARATOR,
-        yIndex,
-        mIndex,
-        dIndex,
-        y,
-        m,
-        d;
-
-    SEPARATOR = format.indexOf( '/' ) > -1 ? '/' : '-';
-
-    splittedFormat = format.split( SEPARATOR );
-    splittedValues = value.split( SEPARATOR );
-
-    if ( splittedValues.length !== splittedFormat.length ) {
-        return false;
-    }
-
-    yIndex = splittedFormat.indexOf( 'y' );
-    mIndex = splittedFormat.indexOf( 'm' );
-    dIndex = splittedFormat.indexOf( 'd' );
-
-    y = +splittedValues[ yIndex ];
-    m = +splittedValues[ mIndex ] - 1;
-    d = +splittedValues[ dIndex ];
-
-    date = new Date( y, m, d );
-
-    return (
-        date.getDate() === d &&
-        date.getMonth() === m &&
-        date.getFullYear() === y
-    );
-}
 
 /*
  * Used to make one validation on one input
@@ -379,7 +51,7 @@ function InputValidator( $input, validatorParams, validatorOptions ) {
     /*
      * Validate the current input with one validator
      */
-    this.validate = () => {
+    this.validate = ( isLiveValidation ) => {
         let value, prom;
 
         value = getValue( $input );
@@ -389,7 +61,7 @@ function InputValidator( $input, validatorParams, validatorOptions ) {
         this.extraErrorMessages.length = 0;
         this.data = null;
 
-        validateFunc( $input, value, validatorOptions ).then( _state => {
+        validateFunc( $input, value, isLiveValidation, validatorOptions ).then( _state => {
             state = _state;
 
             SELF.extraMessages = _state.extraMessages || SELF.extraMessages;
@@ -490,14 +162,29 @@ export const addValidator = validatorFunctions.addValidator;
  */
 function Input( $input, options ) {
     let isRadio,
+        inputType,
         inputId,
         $group,
         validators,
         _hasValidator,
         validatorsInErrors,
-        inlineCustomErrorMessages;
+        inlineCustomErrorMessages,
+        liveHookFunctionHash;
 
     const SELF = this;
+
+    if ( $input.type === 'radio' || $input.type === 'checkbox' ) {
+        inputType = 'optin';
+    }
+    else if ( $input.type === 'hidden' ) {
+        inputType = 'hidden';
+    }
+    else if ( $input.nodeName === 'SELECT' ) {
+        inputType = 'select';
+    }
+    else {
+        inputType = 'inputText';
+    }
 
     isRadio = $input.type === 'radio';
     inputId = $input.id;
@@ -530,7 +217,7 @@ function Input( $input, options ) {
     })
 
     // Cache all radio button with the same name attribute
-    if ( _hasValidator && isRadio ) {
+    if ( isRadio ) {
         $group = getRadioList( $input );
         this.$radioGroup = $group;
         this.$otherRadioOfGroup = Array.from( $group ).filter( $rd => {
@@ -550,14 +237,42 @@ function Input( $input, options ) {
     this.hasValidator = _hasValidator;
     this.hasError = false;
 
+
+    if ( _hasValidator && options.hasLiveValidation && inputType !== 'hidden' ) {
+        on( isRadio ? $group : $input, {
+            "eventsName":   options.liveValidation.eventsName[ inputType ],
+            "callback":     onLiveValidation
+        } );
+    }
+
+    // Add extra listener (focus, blur, ...) on the input
+    if ( options.liveValidation.eventsHook ) {
+        liveHookFunctionHash = {};
+
+        Object
+            .keys( options.liveValidation.eventsHook )
+            .forEach( key => {
+                liveHookFunctionHash[ key ] = () => {
+                    options.liveValidation.eventsHook[ key ]( SELF, event );
+                }
+
+                on( isRadio ? $group : $input, {
+                    "eventsName":   key,
+                    "callback":     liveHookFunctionHash[ key ]
+                } );
+            } );
+    }
+
+
     /*
      * Validate this input
      */
-    function validate() {
+    function validate( isLiveValidation ) {
         let promArray;
 
         validatorsInErrors = null;
         SELF.hasError = false;
+        SELF.isLiveValidation = isLiveValidation;
 
         // This input has no (known) validation
         if ( !_hasValidator ) {
@@ -568,7 +283,7 @@ function Input( $input, options ) {
 
         // Call all validators
         validators.forEach( validator => {
-            promArray.push( validator.validate() )
+            promArray.push( validator.validate( isLiveValidation ) )
         } );
 
         return Promise.all( promArray ).then(() => {
@@ -579,6 +294,7 @@ function Input( $input, options ) {
             } );
         } );
     }
+
 
     /*
      * Return an array of validator in error
@@ -600,6 +316,7 @@ function Input( $input, options ) {
 
         return validatorsInErrors;
     }
+
 
     function labelToMessage( validatorName, _locale, avoidDefaultMessage ) {
         let customInlineDefaultMessage,
@@ -648,6 +365,7 @@ function Input( $input, options ) {
         );
     }
 
+
     /*
      * Return an array of error messages and labels
      */
@@ -690,12 +408,14 @@ function Input( $input, options ) {
         } );
     }
 
+
     /*
      * Return a promise
      */
     this.isValid = () => {
-        return validate();
+        return validate( false );
     }
+
 
     this.getData = () => {
         let dataArray;
@@ -722,6 +442,48 @@ function Input( $input, options ) {
 
         return dataArray;
     }
+
+
+    /*
+     * Remove events binding from the field
+     */
+    this.destroy = () => {
+        off( isRadio ? $group : $input, {
+            "eventsName":   options.liveValidation.eventsName[ inputType ],
+            "callback":     onLiveValidation
+        } );
+
+
+        if ( options.liveValidation.eventsHook && liveHookFunctionHash ) {
+            Object
+                .keys( options.liveValidation.eventsHook )
+                .forEach( key => {
+                    off( isRadio ? $group : $input, {
+                        "eventsName":   key,
+                        "callback":     liveHookFunctionHash[ key ]
+                    } );
+                } );
+        }
+    };
+
+
+    function onLiveValidation( event ) {
+        validate( true )
+            .then( () => {
+                if ( SELF.hasError && options.liveValidation.onInvalidate ) {
+                    options.liveValidation.onInvalidate( SELF, event );
+                }
+                else if ( !SELF.hasError && options.liveValidation.onValidate ) {
+                    options.liveValidation.onValidate( SELF, event );
+                }
+            } )
+            .catch( err => {
+                if ( window.$$DEBUG$$ ) {
+                    console.log( err );
+                }
+            } );
+    }
+
 }
 
 /**
@@ -733,6 +495,7 @@ function Input( $input, options ) {
  * @property {Function} getErrors
  * @property {Boolean} hasError
  * @property {Function} isValid
+ * @property {Boolean} isLiveValidation
  */
 /**
  * Validate a form, a fieldset or whatever had inputs inside
@@ -741,12 +504,20 @@ function Input( $input, options ) {
  * @param {HTMLElement} $form
  * @param {Object} userOptions
  * @param {String} [userOptions.fields=input,textarea,select]
- * @param {String} [userOptions.filter=input[type=\"button\"],input[type=\"submit\"],input[type=\"reset\"],input[type=\"image\"]]
+ * @param {String} [userOptions.filter=input[type=\"button\"], input[type=\"submit\"], input[type=\"reset\"], input[type=\"image\"]]
  * @param {String} [userOptions.customErrorLabelPrefix=data-error-label]
  * @param {Object} [userOptions.errorMessages={}]
  * @param {Object} [userOptions.validatorsOptions]
  * @param {Callback} [userOptions.onValidate=data => {}]
  * @param {Callback} [userOptions.onInvalidate=data => {}]
+ * @param {Object} [userOptions.liveValidation]
+ * @param {Function} [userOptions.liveValidation.onValidate]
+ * @param {Function} [userOptions.liveValidation.onInvalidate]
+ * @param {Object} [userOptions.liveValidation.eventsName]
+ * @param {String} [userOptions.liveValidation.eventsName.optin]
+ * @param {String} [userOptions.liveValidation.eventsName.select]
+ * @param {String} [userOptions.liveValidation.eventsName.inputText]
+ * @param {Object} [userOptions.liveValidation.eventsHook]
  *
  * @see extra/modules/validator.md for details
  *
@@ -783,6 +554,7 @@ export function Validator( $form, userOptions = {} ) {
         STATE_VALIDATING;
 
     options = extend( defaultOptions, userOptions );
+    options.hasLiveValidation = options.liveValidation.onValidate || options.liveValidation.onInvalidate;
     inputsList = [];
     radioDuplicateHash = {};
 
@@ -815,6 +587,7 @@ export function Validator( $form, userOptions = {} ) {
      * Call the function cleanup of all inputs and empty the list
      */
     function cleanup() {
+        inputsList.forEach( input => input.destroy() );
         inputsList.length = 0;
         radioDuplicateHash = {};
     }

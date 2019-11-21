@@ -1,9 +1,12 @@
-import { standardValidation, isRadioListChecked, isEmpty, addValidator } from 'front-library/Modules/Validator';
+import { standardValidation } from 'front-library/Modules/Validator/Tools/ValidationState';
+import isEmpty from 'front-library/Modules/Validator/Tools/isEmpty';
+import { addValidator } from 'front-library/Modules/Validator';
+import { isRadioListChecked } from 'front-library/Modules/Validator/Tools/RadioButton';
 
 /**
  * Required validation
  */
-addValidator( 'required', '[required]', ( $input, value ) => {
+addValidator( 'required', '[required]', ( $input, value, isLiveValidation ) => {
     let isValid;
 
     if ( $input.type === 'checkbox' ) {
@@ -16,5 +19,12 @@ addValidator( 'required', '[required]', ( $input, value ) => {
         isValid = !isEmpty( value );
     }
 
-    return standardValidation( $input, value, isValid, 'required' );
+    return standardValidation(
+        $input,
+        value,
+        isValid,
+        'required',
+        undefined,
+        isLiveValidation
+    );
 } );

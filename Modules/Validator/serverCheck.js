@@ -1,5 +1,6 @@
 import { defer } from 'front-library/Helpers/defer';
-import { createState, addValidator } from 'front-library/Modules/Validator';
+import { createState } from 'front-library/Modules/Validator/Tools/ValidationState';
+import { addValidator } from 'front-library/Modules/Validator';
 
 /**
  * Server validation
@@ -16,15 +17,16 @@ import { createState, addValidator } from 'front-library/Modules/Validator';
  * {
  * 		"beforeCall": function( $input, value ),
  * 		"afterCall": function( $input, value ),
- * 		"normalize": fuction( response ){ return { "isValid": true|false } }
+ * 		"normalize": fuction( response ){ return { "isValid": true|false } },
  * 		"onFail": function( $input, value ),
+ * 		"allowLiveValidation": true|false,
  * }
  */
 addValidator(
     'servercheck',
     '[data-servercheck]',
     true,
-    ( $input, value, options = {} ) => {
+    ( $input, value, isLiveValidation, options = {} ) => {
         let paramName, prom, url, method, data, myHeaders;
 
         let { beforeCall, afterCall, normalize, onFail } = options;
@@ -34,6 +36,19 @@ addValidator(
         }
 
         prom = defer();
+
+
+        if ( isLiveValidation && !options.allowLiveValidation ) {
+            return prom.resolve( createState(
+                $input,
+                value,
+                true,
+                'servercheck',
+                undefined,
+                isLiveValidation
+            ) );
+        }
+
         paramName = $input.getAttribute( 'name' );
         url = $input.getAttribute( 'data-servercheck' );
         method = $input.getAttribute( 'data-servercheck-method' ) || 'GET';
@@ -51,7 +66,9 @@ addValidator(
                 $input,
                 value,
                 isValid,
-                'servercheck'
+                'servercheck',
+                undefined,
+                isLiveValidation
             );
         }
 

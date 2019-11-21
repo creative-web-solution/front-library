@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## 6.0.2
+
+* Validator
+    * Add live validation system
+    * Add getQueryFromForm function
+    * Update validator scaffolding. Split everything that was in `import { validatorTools } from 'front-library/Modules/Validator';` in the `front-library/Modules/Validator/Tools` folder.
+
+
 ## 6.0.1
 
 * Add notification module

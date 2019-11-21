@@ -1,10 +1,12 @@
 import { getValue } from 'front-library/Helpers/getValue';
-import { standardValidation, addValidator } from 'front-library/Modules/Validator';
+import { standardValidation } from 'front-library/Modules/Validator/Tools/ValidationState';
+import { addValidator } from 'front-library/Modules/Validator';
+
 
 /**
  * "Two fields equals" validation
  */
-addValidator( 'equals', '[data-equals]', ( $input, value ) => {
+addValidator( 'equals', '[data-equals]', ( $input, value, isLiveValidation ) => {
     let $target, name;
 
     name = $input.getAttribute( 'data-equals' );
@@ -14,6 +16,8 @@ addValidator( 'equals', '[data-equals]', ( $input, value ) => {
         $input,
         value,
         !$target || value === getValue( $target ),
-        'email'
+        'email',
+        undefined,
+        isLiveValidation
     );
 } );

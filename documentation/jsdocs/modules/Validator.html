@@ -33,7 +33,7 @@
 			<li class="dropdown">
 				<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="globalState.html">globalState</a></li><li><a href="ValidatorTools.html">ValidatorTools</a></li>
+					<li><a href="globalState.html">globalState</a></li>
 				</ul>
 			</li>
 			
@@ -54,7 +54,7 @@
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="global.html#loadGMap">loadGMap</a></li><li><a href="global.html#skinCheckbox">skinCheckbox</a></li><li><a href="global.html#skinCheckboxAll">skinCheckboxAll</a></li><li><a href="global.html#skinInputFile">skinInputFile</a></li><li><a href="global.html#skinInputFileAll">skinInputFileAll</a></li><li><a href="global.html#skinRadio">skinRadio</a></li><li><a href="global.html#skinRadioAll">skinRadioAll</a></li><li><a href="global.html#skinRadioGroup">skinRadioGroup</a></li><li><a href="global.html#skinSelect">skinSelect</a></li><li><a href="global.html#skinSelectAll">skinSelectAll</a></li><li><a href="global.html#template">template</a></li>
+					<li><a href="global.html#createState">createState</a></li><li><a href="global.html#getLabel">getLabel</a></li><li><a href="global.html#getLabelElement">getLabelElement</a></li><li><a href="global.html#getQueryFromForm">getQueryFromForm</a></li><li><a href="global.html#getRadioList">getRadioList</a></li><li><a href="global.html#isDate">isDate</a></li><li><a href="global.html#isEmail">isEmail</a></li><li><a href="global.html#isEmpty">isEmpty</a></li><li><a href="global.html#isNumber">isNumber</a></li><li><a href="global.html#isRadioListChecked">isRadioListChecked</a></li><li><a href="global.html#isUrl">isUrl</a></li><li><a href="global.html#loadGMap">loadGMap</a></li><li><a href="global.html#skinCheckbox">skinCheckbox</a></li><li><a href="global.html#skinCheckboxAll">skinCheckboxAll</a></li><li><a href="global.html#skinInputFile">skinInputFile</a></li><li><a href="global.html#skinInputFileAll">skinInputFileAll</a></li><li><a href="global.html#skinRadio">skinRadio</a></li><li><a href="global.html#skinRadioAll">skinRadioAll</a></li><li><a href="global.html#skinRadioGroup">skinRadioGroup</a></li><li><a href="global.html#skinSelect">skinSelect</a></li><li><a href="global.html#skinSelectAll">skinSelectAll</a></li><li><a href="global.html#standardValidation">standardValidation</a></li><li><a href="global.html#template">template</a></li>
 				</ul>
 			</li>
 			
@@ -275,8 +275,6 @@
             
                 <td class="attributes">
                 
-                    &lt;optional><br>
-                
 
                 
 
@@ -287,12 +285,12 @@
             
                 <td class="default">
                 
-                    input[type=\"button\"],input[type=\"submit\"],input[type=\"reset\"],input[type=\"image\"]
+                    input[type=\"button\"],
                 
                 </td>
             
 
-            <td class="description last"></td>
+            <td class="description last">input[type=\"submit\"], input[type=\"reset\"], input[type=\"image\"]]</td>
         </tr>
 
     
@@ -491,6 +489,338 @@
             
 
             <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>liveValidation</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">
+                <h6 class="method-params-label method-subparams-label">Properties</h6>
+                
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>onValidate</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>onInvalidate</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>eventsName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">
+                <h6 class="method-params-label method-subparams-label">Properties</h6>
+                
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>optin</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>select</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>inputText</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>eventsHook</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -1729,6 +2059,30 @@ on( $form, {
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>isLiveValidation</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
     </tbody>
 </table>
 </dl>
@@ -1822,7 +2176,7 @@ on( $form, {
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
 	
-		on 2019-09-30T14:04:02+02:00
+		on 2019-11-21T18:06:50+01:00
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
