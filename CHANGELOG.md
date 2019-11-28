@@ -1,13 +1,18 @@
 # CHANGELOG
 
 
+## 6.0.3
+
+* Popin
+    * Add function to programmatically open and close the loading layer
+
+
 ## 6.0.2
 
 * Validator
     * Add live validation system
     * Add getQueryFromForm function
     * Update validator scaffolding. Split everything that was in `import { validatorTools } from 'front-library/Modules/Validator';` in the `front-library/Modules/Validator/Tools` folder.
-
 
 ## 6.0.1
 

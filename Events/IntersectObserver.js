@@ -110,6 +110,7 @@ export function IntersectObserver( options ) {
     /**
      * Add elements to be observed
      *
+     * @memberof IntersectObserver
      * @instance
      * @function add
      *
@@ -127,6 +128,7 @@ export function IntersectObserver( options ) {
     /**
      * Stop some elements to be observed
      *
+     * @memberof IntersectObserver
      * @instance
      * @function remove
      *
@@ -144,6 +146,7 @@ export function IntersectObserver( options ) {
     /**
      * Stop all elements to be observed
      *
+     * @memberof IntersectObserver
      * @instance
      * @function clear
      *

@@ -705,6 +705,34 @@ export function Popin( userOptions = {}, $popin ) {
 
 
     /**
+     * Open the popin loading
+     *
+     * @function openLoading
+     * @memberof Popin
+     * @instance
+     *
+     * @return {Promise}
+     */
+    this.openLoading = () => {
+        return openLoader()
+    };
+
+
+    /**
+     * Close the popin loading
+     *
+     * @function closeLoading
+     * @memberof Popin
+     * @instance
+     *
+     * @return {Promise}
+     */
+    this.closeLoading = () => {
+        return closeLoader()
+    };
+
+
+    /**
      * Remove all events, css class or inline styles
      *
      * @function destroy

@@ -103,6 +103,7 @@ function _useNativeDOMEvents( $element ) {
  * Indicate if the browser natively support passive event
  *
  * @name handlePassiveEvents
+ * @type {Boolean}
  */
 export const handlePassiveEvents = passiveSupported;
 

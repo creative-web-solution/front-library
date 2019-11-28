@@ -8,6 +8,7 @@ function PubSub() {
      * Initialize all events name
      *
      * @memberof pubSub
+     * @function init
      * @param {Object} eventsNames
      *
      * @returns {PubSub}
@@ -29,6 +30,7 @@ function PubSub() {
      * Fire an event
      *
      * @memberof pubSub
+     * @function fire
      * @param {String} eventName
      * @param {Object} [data] - Data to be send to the callback functions
      *
@@ -48,6 +50,7 @@ function PubSub() {
      * Bind an event
      *
      * @memberof pubSub
+     * @function on
      * @param {String} eventName
      * @param {Function} callback - (data) => {}
      *
@@ -67,6 +70,7 @@ function PubSub() {
      * Unbind an event
      *
      * @memberof pubSub
+     * @function off
      * @param {String} eventName
      * @param {Function} callback
      *
