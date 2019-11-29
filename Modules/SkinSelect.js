@@ -5,6 +5,7 @@ import { template } from 'front-library/Modules/template';
 import { wrap } from 'front-library/DOM/wrap';
 import { strToDOM } from 'front-library/DOM/strToDOM';
 import { index } from 'front-library/DOM/index';
+import { hClass, aClass } from 'front-library/DOM/Class';
 
 
 const defaultOptions = {
@@ -231,16 +232,23 @@ function SelectSkin( $select, userOptions = {} ) {
     }
 
     // Create skin
-    wrap(
-        $select,
-        `<span class="${ options.className } ${ extraClass }"></span>`
-    );
+    if ( !hClass( $select.parentNode, options.className ) ) {
+        wrap(
+            $select,
+            `<span class="${ options.className } ${ extraClass }"></span>`
+        );
+
+    }
 
     $parent = $select.parentNode;
 
-    $span = document.createElement( 'SPAN' );
-    $span.classList.add( options.selectWrapClassName );
-    $parent.appendChild( $span );
+    $span = $parent.querySelector( `.${ options.selectWrapClassName }`);
+
+    if ( !$span ) {
+        $span = document.createElement( 'SPAN' );
+        aClass( $span, options.selectWrapClassName );
+        $parent.appendChild( $span );
+    }
 
     this.updateTitle();
 

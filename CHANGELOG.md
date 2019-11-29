@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## 6.0.4
+
+* Select element skin
+    * Improve init when skin elements already exist in the DOM
+
+
 ## 6.0.3
 
 * Popin
