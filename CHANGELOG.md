@@ -1,6 +1,20 @@
 # CHANGELOG
 
 
+## 6.0.5
+
+* Add new Accordion module
+* Add new Tabs module
+* Select element skin
+    * Update the updateOptions function
+    * Add setValid/setInvalid function
+* Add function to compute the distance between 2 coordinates
+* Rename history to HistoryController
+* Update input file skin
+* Add quick template module
+* ScrollSnap: Fix bug which occurs when you just tap into the element without moving
+
+
 ## 6.0.4
 
 * Select element skin
@@ -19,6 +33,7 @@
     * Add live validation system
     * Add getQueryFromForm function
     * Update validator scaffolding. Split everything that was in `import { validatorTools } from 'front-library/Modules/Validator';` in the `front-library/Modules/Validator/Tools` folder.
+
 
 ## 6.0.1
 

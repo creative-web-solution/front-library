@@ -10,7 +10,19 @@ const defaultOptions = {
 }
 
 
-function CheckboxSkin( $checkbox, userOptions = {} ) {
+/**
+ * Skin an HTML input checkbox element.
+ * You can access the skin API in the __skinAPI property of the $checkbox HTMLElement or its wrapper.
+ * @class
+ *
+ * @param {HTMLElement} $checkbox
+ * @param {Object} userOptions
+ * @param {String} [userOptions.wrap=<span class="cb-skin"></span>]
+ * @param {String} [userOptions.invalidClass=invalid]
+ * @param {String} [userOptions.disabledClass=disabled]
+ * @param {String} [userOptions.checkedClass=checked]
+ */
+function SkinCheckbox( $checkbox, userOptions = {} ) {
     let $parent, options;
 
     // Already skinned
@@ -37,11 +49,17 @@ function CheckboxSkin( $checkbox, userOptions = {} ) {
     }
 
 
+    /**
+     * Force the checkbox to be check
+     */
     this.check = () => {
         checkUncheck( 'add', true );
     }
 
 
+    /**
+     * Force the checkbox to be uncheck
+     */
     this.uncheck = () => {
         checkUncheck( 'remove', false );
     }
@@ -53,11 +71,17 @@ function CheckboxSkin( $checkbox, userOptions = {} ) {
     }
 
 
+    /**
+     * Force the checkbox to be enable
+     */
     this.enable = () => {
         enableDisable( 'remove', false );
     };
 
 
+    /**
+     * Force the checkbox to be disable
+     */
     this.disable = () => {
         enableDisable( 'add', true );
     };
@@ -68,11 +92,17 @@ function CheckboxSkin( $checkbox, userOptions = {} ) {
     }
 
 
+    /**
+     * Force the state of the checkbox to invalid
+     */
     this.setInvalid = () => {
         validInvalid( 'add' );
     };
 
 
+    /**
+     * Force the state of the checkbox to valid
+     */
     this.setValid = () => {
         validInvalid( 'remove' );
     };
@@ -113,9 +143,11 @@ function CheckboxSkin( $checkbox, userOptions = {} ) {
  *   "disabledClass": "disabled",
  *   "checkedClass": "checked"
  * });
+ *
+ * @returns {SkinCheckbox}
 */
 export function skinCheckbox( $checkbox, options ) {
-    new CheckboxSkin( $checkbox, options );
+    return new SkinCheckbox( $checkbox, options );
 }
 
 
@@ -124,8 +156,9 @@ export function skinCheckbox( $checkbox, options ) {
  *
  * @function
  * @param {HTMLElement} $wrapper
- * @param {Object} options
+ * @param {Object} [options]
  * @param {String} [options.wrap=<span class="cb-skin"></span>]
+ * @param {String} [options.selector='input[type="checkbox"]']
  * @param {String} [options.invalidClass=invalid]
  * @param {String} [options.disabledClass=disabled]
  * @param {String} [options.checkedClass=checked]
@@ -137,11 +170,19 @@ export function skinCheckbox( $checkbox, options ) {
  *   "disabledClass": "disabled",
  *   "checkedClass": "checked"
  * });
+ *
+ * @returns {SkinCheckbox[]}
 */
-export function skinCheckboxAll( $wrapper, options ) {
-    let $checkboxes = $wrapper.querySelectorAll( 'input[type="checkbox"]' );
+export function skinCheckboxAll( $wrapper, options = {} ) {
+    let $checkboxes, skinList;
+
+    $checkboxes = $wrapper.querySelectorAll( options.selector || 'input[type="checkbox"]' );
+
+    skinList = [];
 
     $checkboxes.forEach( $checkbox => {
-        skinCheckbox( $checkbox, options );
+        skinList.push( skinCheckbox( $checkbox, options ) );
     } );
+
+    return skinList;
 }

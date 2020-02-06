@@ -31,6 +31,13 @@
 		<ul class="nav navbar-nav">
 			
 			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="SkinCheckbox.html">SkinCheckbox</a></li><li><a href="SkinFile.html">SkinFile</a></li><li><a href="SkinRadio.html">SkinRadio</a></li><li><a href="SkinSelect.html">SkinSelect</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
 					<li><a href="global.html#skinCheckbox">skinCheckbox</a></li><li><a href="global.html#skinCheckboxAll">skinCheckboxAll</a></li><li><a href="global.html#skinInputFile">skinInputFile</a></li><li><a href="global.html#skinInputFileAll">skinInputFileAll</a></li><li><a href="global.html#skinRadio">skinRadio</a></li><li><a href="global.html#skinRadioAll">skinRadioAll</a></li><li><a href="global.html#skinRadioGroup">skinRadioGroup</a></li><li><a href="global.html#skinSelect">skinSelect</a></li><li><a href="global.html#skinSelectAll">skinSelectAll</a></li>
@@ -480,6 +487,26 @@
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="SkinCheckbox.html">SkinCheckbox</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
         <h5>Example</h5>
@@ -500,7 +527,7 @@ skinCheckbox( $input, {
             
 <hr>
 <dt>
-    <h4 class="name" id="skinCheckboxAll"><span class="type-signature"></span>skinCheckboxAll($wrapper, options)</h4>
+    <h4 class="name" id="skinCheckboxAll"><span class="type-signature"></span>skinCheckboxAll($wrapper [, options])</h4>
     
     
 </dt>
@@ -531,6 +558,8 @@ skinCheckbox( $input, {
         <th>Type</th>
 
         
+        <th>Argument</th>
+        
 
         
 
@@ -557,6 +586,14 @@ skinCheckbox( $input, {
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
@@ -580,6 +617,16 @@ skinCheckbox( $input, {
             
             </td>
 
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
             
 
             
@@ -643,6 +690,46 @@ skinCheckbox( $input, {
                 <td class="default">
                 
                     &lt;span class="cb-skin">&lt;/span>
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>selector</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'input[type="checkbox"]'
                 
                 </td>
             
@@ -834,6 +921,26 @@ skinCheckbox( $input, {
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;<a href="SkinCheckbox.html">SkinCheckbox</a>></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
         <h5>Example</h5>
@@ -854,7 +961,7 @@ skinCheckboxAll( $wrapper,
             
 <hr>
 <dt>
-    <h4 class="name" id="skinInputFile"><span class="type-signature"></span>skinInputFile($input, options)</h4>
+    <h4 class="name" id="skinInputFile"><span class="type-signature"></span>skinInputFile($input [, options])</h4>
     
     
 </dt>
@@ -885,6 +992,8 @@ skinCheckboxAll( $wrapper,
         <th>Type</th>
 
         
+        <th>Argument</th>
+        
 
         
 
@@ -911,6 +1020,14 @@ skinCheckboxAll( $wrapper,
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
@@ -934,6 +1051,16 @@ skinCheckboxAll( $wrapper,
             
             </td>
 
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
             
 
             
@@ -968,13 +1095,13 @@ skinCheckboxAll( $wrapper,
 
         <tr>
             
-                <td class="name"><code>wrap</code></td>
+                <td class="name"><code>selector</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
 
@@ -996,7 +1123,87 @@ skinCheckboxAll( $wrapper,
             
                 <td class="default">
                 
-                    &lt;span class="cb-skin">&lt;/span>
+                    ".file-skin"
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>wrap</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    &lt;div class="file-skin">&lt;/div>
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fileInfoSelector</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    ".file-info"
                 
                 </td>
             
@@ -1014,7 +1221,7 @@ skinCheckboxAll( $wrapper,
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
 
@@ -1037,6 +1244,246 @@ skinCheckboxAll( $wrapper,
                 <td class="default">
                 
                     &lt;div class="file-info">&lt;/div>
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>autoHideFileInfo</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>resetButtonSelector</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    ".file-reset"
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>resetButton</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    &lt;span class="file-reset">&amp;times;&lt;/span>
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>disabledClass</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    disabled
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>invalidClass</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    invalid
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>selectedClass</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    selected
                 
                 </td>
             
@@ -1108,14 +1555,42 @@ skinCheckboxAll( $wrapper,
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="SkinFile.html">SkinFile</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
         <h5>Example</h5>
         
     <pre class="sunlight-highlight-javascript">// Call with default options:
 skinInputFile( $input, {
-  &quot;wrap&quot;: &quot;&lt;div class=\&quot;file-skin\&quot;&gt;&lt;/div&gt;&quot;,
-  &quot;fileInfo&quot;: &quot;&lt;div class=\&quot;file-info\&quot;&gt;&lt;/div&gt;&quot;
+ &quot;selector&quot;: &quot;.file-skin&quot;,
+ &quot;wrap&quot;: &quot;&lt;div class=\&quot;file-skin\&quot;&gt;&lt;/div&gt;&quot;,
+ &quot;fileInfoSelector&quot;: &quot;.file-info&quot;,
+ &quot;fileInfo&quot;: &quot;&lt;div class=\&quot;file-info\&quot;&gt;&lt;/div&gt;&quot;,
+ &quot;autoHideFileInfo&quot;: true,
+ &quot;resetButtonSelector&quot;: &quot;.file-reset&quot;,
+ &quot;resetButton&quot;: &quot;&lt;span class=\&quot;file-reset\&quot;&gt;&amp;times;&lt;/span&gt;&quot;,
+ &quot;disabledClass&quot;: &quot;disabled&quot;,
+ &quot;invalidClass&quot;: &quot;invalid&quot;,
+ &quot;selectedClass&quot;: &quot;selected&quot;
 } );</pre>
 
 
@@ -1126,7 +1601,7 @@ skinInputFile( $input, {
             
 <hr>
 <dt>
-    <h4 class="name" id="skinInputFileAll"><span class="type-signature"></span>skinInputFileAll($wrapper, options)</h4>
+    <h4 class="name" id="skinInputFileAll"><span class="type-signature"></span>skinInputFileAll($wrapper [, options])</h4>
     
     
 </dt>
@@ -1157,6 +1632,8 @@ skinInputFile( $input, {
         <th>Type</th>
 
         
+        <th>Argument</th>
+        
 
         
 
@@ -1183,6 +1660,14 @@ skinInputFile( $input, {
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
@@ -1206,6 +1691,16 @@ skinInputFile( $input, {
             
             </td>
 
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
             
 
             
@@ -1240,13 +1735,13 @@ skinInputFile( $input, {
 
         <tr>
             
-                <td class="name"><code>wrap</code></td>
+                <td class="name"><code>selector</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
 
@@ -1268,7 +1763,87 @@ skinInputFile( $input, {
             
                 <td class="default">
                 
-                    &lt;span class="cb-skin">&lt;/span>
+                    ".file-skin"
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>wrap</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    &lt;div class="file-skin">&lt;/div>
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fileInfoSelector</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    ".file-info"
                 
                 </td>
             
@@ -1286,7 +1861,7 @@ skinInputFile( $input, {
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
 
@@ -1309,6 +1884,246 @@ skinInputFile( $input, {
                 <td class="default">
                 
                     &lt;div class="file-info">&lt;/div>
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>autoHideFileInfo</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>resetButtonSelector</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    ".file-reset"
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>resetButton</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    &lt;span class="file-reset">&amp;times;&lt;/span>
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>disabledClass</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    disabled
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>invalidClass</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    invalid
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>selectedClass</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    selected
                 
                 </td>
             
@@ -1380,14 +2195,42 @@ skinInputFile( $input, {
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;<a href="SkinFile.html">SkinFile</a>></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
         <h5>Example</h5>
         
     <pre class="sunlight-highlight-javascript">// Call with default options:
 skinInputFileAll( $wrapper, {
-  &quot;wrap&quot;: &quot;&lt;div class=\&quot;file-skin\&quot;&gt;&lt;/div&gt;&quot;,
-  &quot;fileInfo&quot;: &quot;&lt;div class=\&quot;file-info\&quot;&gt;&lt;/div&gt;&quot;
+ &quot;selector&quot;: &quot;.file-skin&quot;,
+ &quot;wrap&quot;: &quot;&lt;div class=\&quot;file-skin\&quot;&gt;&lt;/div&gt;&quot;,
+ &quot;fileInfoSelector&quot;: &quot;.file-info&quot;,
+ &quot;fileInfo&quot;: &quot;&lt;div class=\&quot;file-info\&quot;&gt;&lt;/div&gt;&quot;,
+ &quot;autoHideFileInfo&quot;: true,
+ &quot;resetButtonSelector&quot;: &quot;.file-reset&quot;,
+ &quot;resetButton&quot;: &quot;&lt;span class=\&quot;file-reset\&quot;&gt;&amp;times;&lt;/span&gt;&quot;,
+ &quot;disabledClass&quot;: &quot;disabled&quot;,
+ &quot;invalidClass&quot;: &quot;invalid&quot;,
+ &quot;selectedClass&quot;: &quot;selected&quot;
 } );</pre>
 
 
@@ -1540,7 +2383,7 @@ skinInputFileAll( $wrapper, {
             
                 <td class="default">
                 
-                    &lt;span class="cb-skin">&lt;/span>
+                    &lt;span class="rb-skin">&lt;/span>
                 
                 </td>
             
@@ -1732,13 +2575,33 @@ skinInputFileAll( $wrapper, {
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="SkinRadio.html">SkinRadio</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
         <h5>Example</h5>
         
     <pre class="sunlight-highlight-javascript">// Call with default options:
 skinRadio( $radio, {
- &quot;wrap&quot;:  &quot;&lt;span class=\&quot;cb-skin\&quot;&gt;&lt;/span&gt;&quot;,
+ &quot;wrap&quot;:  &quot;&lt;span class=\&quot;rb-skin\&quot;&gt;&lt;/span&gt;&quot;,
  &quot;invalidClass&quot;: &quot;invalid&quot;,
  &quot;disabledClass&quot;: &quot;disabled&quot;,
  &quot;checkedClass&quot;: &quot;checked&quot;
@@ -1752,7 +2615,7 @@ skinRadio( $radio, {
             
 <hr>
 <dt>
-    <h4 class="name" id="skinRadioAll"><span class="type-signature"></span>skinRadioAll($wrapper, options)</h4>
+    <h4 class="name" id="skinRadioAll"><span class="type-signature"></span>skinRadioAll($wrapper [, options])</h4>
     
     
 </dt>
@@ -1783,6 +2646,8 @@ skinRadio( $radio, {
         <th>Type</th>
 
         
+        <th>Argument</th>
+        
 
         
 
@@ -1809,6 +2674,14 @@ skinRadio( $radio, {
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
@@ -1832,6 +2705,16 @@ skinRadio( $radio, {
             
             </td>
 
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
             
 
             
@@ -1894,7 +2777,47 @@ skinRadio( $radio, {
             
                 <td class="default">
                 
-                    &lt;span class="cb-skin">&lt;/span>
+                    &lt;span class="rb-skin">&lt;/span>
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>selector</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'input[type="radio"]'
                 
                 </td>
             
@@ -2086,13 +3009,34 @@ skinRadio( $radio, {
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;<a href="SkinRadio.html">SkinRadio</a>></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
         <h5>Example</h5>
         
     <pre class="sunlight-highlight-javascript">// Call with default options:
 skinRadioAll( $wrapper, {
- &quot;wrap&quot;:  &quot;&lt;span class=\&quot;cb-skin\&quot;&gt;&lt;/span&gt;&quot;,
+ &quot;wrap&quot;:  &quot;&lt;span class=\&quot;rb-skin\&quot;&gt;&lt;/span&gt;&quot;,
+ &quot;selector&quot;: &quot;input[type=\&quot;radio\&quot;]&quot;,
  &quot;invalidClass&quot;: &quot;invalid&quot;,
  &quot;disabledClass&quot;: &quot;disabled&quot;,
  &quot;checkedClass&quot;: &quot;checked&quot;
@@ -2106,7 +3050,7 @@ skinRadioAll( $wrapper, {
             
 <hr>
 <dt>
-    <h4 class="name" id="skinRadioGroup"><span class="type-signature"></span>skinRadioGroup($radio, options)</h4>
+    <h4 class="name" id="skinRadioGroup"><span class="type-signature"></span>skinRadioGroup($radioButtonOrInputName [, options])</h4>
     
     
 </dt>
@@ -2137,6 +3081,8 @@ skinRadioAll( $wrapper, {
         <th>Type</th>
 
         
+        <th>Argument</th>
+        
 
         
 
@@ -2149,19 +3095,30 @@ skinRadioAll( $wrapper, {
 
         <tr>
             
-                <td class="name"><code>$radio</code></td>
+                <td class="name"><code>$radioButtonOrInputName</code></td>
             
 
             <td class="type">
             
                 
 <span class="param-type">HTMLElement</span>
+|
+
+<span class="param-type">String</span>
 
 
 
             
             </td>
 
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
             
 
             
@@ -2186,6 +3143,16 @@ skinRadioAll( $wrapper, {
             
             </td>
 
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
             
 
             
@@ -2248,7 +3215,7 @@ skinRadioAll( $wrapper, {
             
                 <td class="default">
                 
-                    &lt;span class="cb-skin">&lt;/span>
+                    &lt;span class="rb-skin">&lt;/span>
                 
                 </td>
             
@@ -2440,13 +3407,33 @@ skinRadioAll( $wrapper, {
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;<a href="SkinRadio.html">SkinRadio</a>></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
         <h5>Example</h5>
         
     <pre class="sunlight-highlight-javascript">// Call with default options:
 skinRadioGroup( $radio, {
- &quot;wrap&quot;:  &quot;&lt;span class=\&quot;cb-skin\&quot;&gt;&lt;/span&gt;&quot;,
+ &quot;wrap&quot;:  &quot;&lt;span class=\&quot;rb-skin\&quot;&gt;&lt;/span&gt;&quot;,
  &quot;invalidClass&quot;: &quot;invalid&quot;,
  &quot;disabledClass&quot;: &quot;disabled&quot;,
  &quot;checkedClass&quot;: &quot;checked&quot;
@@ -2460,7 +3447,7 @@ skinRadioGroup( $radio, {
             
 <hr>
 <dt>
-    <h4 class="name" id="skinSelect"><span class="type-signature"></span>skinSelect($select, options)</h4>
+    <h4 class="name" id="skinSelect"><span class="type-signature"></span>skinSelect($select [, options])</h4>
     
     
 </dt>
@@ -2491,6 +3478,8 @@ skinRadioGroup( $radio, {
         <th>Type</th>
 
         
+        <th>Argument</th>
+        
 
         
 
@@ -2517,6 +3506,14 @@ skinRadioGroup( $radio, {
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
@@ -2540,6 +3537,16 @@ skinRadioGroup( $radio, {
             
             </td>
 
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
             
 
             
@@ -2894,6 +3901,46 @@ skinRadioGroup( $radio, {
 
         <tr>
             
+                <td class="name"><code>invalidClass</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    invalid
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>loadingClass</code></td>
             
 
@@ -3032,6 +4079,26 @@ skinRadioGroup( $radio, {
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="SkinSelect.html">SkinSelect</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
         <h5>Example</h5>
@@ -3068,7 +4135,7 @@ skinSelect( $select, {
             
 <hr>
 <dt>
-    <h4 class="name" id="skinSelectAll"><span class="type-signature"></span>skinSelectAll($wrapper, options)</h4>
+    <h4 class="name" id="skinSelectAll"><span class="type-signature"></span>skinSelectAll($wrapper [, options])</h4>
     
     
 </dt>
@@ -3099,6 +4166,8 @@ skinSelect( $select, {
         <th>Type</th>
 
         
+        <th>Argument</th>
+        
 
         
 
@@ -3125,6 +4194,14 @@ skinSelect( $select, {
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
@@ -3148,6 +4225,16 @@ skinSelect( $select, {
             
             </td>
 
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
             
 
             
@@ -3502,6 +4589,46 @@ skinSelect( $select, {
 
         <tr>
             
+                <td class="name"><code>invalidClass</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    invalid
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>loadingClass</code></td>
             
 
@@ -3640,6 +4767,26 @@ skinSelect( $select, {
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;<a href="SkinSelect.html">SkinSelect</a>></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
         <h5>Example</h5>
@@ -3699,9 +4846,9 @@ skinSelectAll( $wrapper, options )</pre>
 
 
 <span class="jsdoc-message">
-	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on 2019-11-28T09:54:52+01:00
+		on 2020-02-06T17:54:05+01:00
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

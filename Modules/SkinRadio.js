@@ -1,5 +1,6 @@
 import { extend } from 'front-library/Helpers/Extend';
 import { wrap } from 'front-library/DOM/wrap';
+import { isString } from 'front-library/Helpers/Type';
 
 
 const defaultOptions = {
@@ -9,8 +10,27 @@ const defaultOptions = {
     "checkedClass": "checked"
 };
 
-
-function RadioSkin( $radio, userOptions = {} ) {
+/**
+ * Skin an HTML input radio element.
+ * You can access the skin API in the __skinAPI property of the $radio HTMLElement or its wrapper.
+ * @class
+ *
+ * @param {HTMLElement} $radio
+ * @param {Object} userOptions
+ * @param {String} [userOptions.wrap=<span class="rb-skin"></span>]
+ * @param {String} [userOptions.invalidClass=invalid]
+ * @param {String} [userOptions.disabledClass=disabled]
+ * @param {String} [userOptions.checkedClass=checked]
+ *
+ * @example // Call with default options:
+ * skinRadio( $radio, {
+ *  "wrap":  "<span class=\"rb-skin\"></span>",
+ *  "invalidClass": "invalid",
+ *  "disabledClass": "disabled",
+ *  "checkedClass": "checked"
+ * } );
+ */
+function SkinRadio( $radio, userOptions = {} ) {
     let $parent, $rdGroup, rdName, options;
 
     // Already skinned
@@ -44,7 +64,10 @@ function RadioSkin( $radio, userOptions = {} ) {
     }
 
 
-    this.check = function check() {
+    /**
+     * Force the radio button to be check
+     */
+    this.check = () => {
         $rdGroup.forEach( $r => {
             $r.checked = $r === $radio;
             $r.parentNode.classList[ $r === $radio ? 'add' : 'remove' ]( options.checkedClass );
@@ -52,6 +75,9 @@ function RadioSkin( $radio, userOptions = {} ) {
     };
 
 
+    /**
+     * Force the radio button to be uncheck
+     */
     this.uncheck = () => {
         $radio.checked = false;
         $radio.parentNode.classList.remove( options.checkedClass );
@@ -66,11 +92,17 @@ function RadioSkin( $radio, userOptions = {} ) {
     }
 
 
+    /**
+     * Force the radio button to be enable
+     */
     this.enable = () => {
         enableDisable( 'remove', false );
     };
 
 
+    /**
+     * Force the radio button to be disable
+     */
     this.disable = () => {
         enableDisable( 'add', true );
     };
@@ -83,11 +115,17 @@ function RadioSkin( $radio, userOptions = {} ) {
     }
 
 
+    /**
+     * Force the state of the radio button to invalid
+     */
     this.setInvalid = () => {
         validInvalid( 'add' );
     };
 
 
+    /**
+     * Force the state of the radio button to valid
+     */
     this.setValid = () => {
         validInvalid( 'remove' );
     };
@@ -114,21 +152,23 @@ function RadioSkin( $radio, userOptions = {} ) {
  * @function
  * @param {HTMLElement} $radio
  * @param {Object} options
- * @param {String} [options.wrap=<span class="cb-skin"></span>]
+ * @param {String} [options.wrap=<span class="rb-skin"></span>]
  * @param {String} [options.invalidClass=invalid]
  * @param {String} [options.disabledClass=disabled]
  * @param {String} [options.checkedClass=checked]
  *
  * @example // Call with default options:
  * skinRadio( $radio, {
- *  "wrap":  "<span class=\"cb-skin\"></span>",
+ *  "wrap":  "<span class=\"rb-skin\"></span>",
  *  "invalidClass": "invalid",
  *  "disabledClass": "disabled",
  *  "checkedClass": "checked"
  * } );
+ *
+ * @returns {SkinRadio}
 */
-export function skinRadio( $radio ) {
-    new RadioSkin( $radio );
+export function skinRadio( $radio, options ) {
+    return new SkinRadio( $radio, options );
 }
 
 
@@ -137,24 +177,33 @@ export function skinRadio( $radio ) {
  *
  * @function
  * @param {HTMLElement} $wrapper
- * @param {Object} options
- * @param {String} [options.wrap=<span class="cb-skin"></span>]
+ * @param {Object} [options]
+ * @param {String} [options.wrap=<span class="rb-skin"></span>]
+ * @param {String} [options.selector='input[type="radio"]']
  * @param {String} [options.invalidClass=invalid]
  * @param {String} [options.disabledClass=disabled]
  * @param {String} [options.checkedClass=checked]
  *
  * @example // Call with default options:
  * skinRadioAll( $wrapper, {
- *  "wrap":  "<span class=\"cb-skin\"></span>",
+ *  "wrap":  "<span class=\"rb-skin\"></span>",
+ *  "selector": "input[type=\"radio\"]",
  *  "invalidClass": "invalid",
  *  "disabledClass": "disabled",
  *  "checkedClass": "checked"
  * } );
+ *
+ * @returns {SkinRadio[]}
 */
-export function skinRadioAll( $wrapper ) {
-    let $radioButtons = $wrapper.querySelectorAll( 'input[type="radio"]' );
+export function skinRadioAll( $wrapper, options = {} ) {
+    let skinList, $radioButtons;
 
-    $radioButtons.forEach( $radio => { skinRadio( $radio ) } );
+    $radioButtons = $wrapper.querySelectorAll( options.selector || 'input[type="radio"]' );
+    skinList = [];
+
+    $radioButtons.forEach( $radio => { skinList.push( skinRadio( $radio, options ) ) } );
+
+    return skinList;
 }
 
 
@@ -162,25 +211,34 @@ export function skinRadioAll( $wrapper ) {
  * Select all radio input of the same group (same name)
  *
  * @function
- * @param {HTMLElement} $radio
- * @param {Object} options
- * @param {String} [options.wrap=<span class="cb-skin"></span>]
+ * @param {HTMLElement|String} $radioButtonOrInputName
+ * @param {Object} [options]
+ * @param {String} [options.wrap=<span class="rb-skin"></span>]
  * @param {String} [options.invalidClass=invalid]
  * @param {String} [options.disabledClass=disabled]
  * @param {String} [options.checkedClass=checked]
  *
  * @example // Call with default options:
  * skinRadioGroup( $radio, {
- *  "wrap":  "<span class=\"cb-skin\"></span>",
+ *  "wrap":  "<span class=\"rb-skin\"></span>",
  *  "invalidClass": "invalid",
  *  "disabledClass": "disabled",
  *  "checkedClass": "checked"
  * } );
+ *
+ * @returns {SkinRadio[]}
 */
-export function skinRadioGroup( $radio ) {
-    let $radioGroup = document.querySelectorAll( `input[type="radio"][name="${ $radio.getAttribute( 'name' ) }"]` );
+export function skinRadioGroup( $radioButtonOrInputName, options ) {
+    let skinList, $radioGroup, inputName;
+
+    inputName = isString( $radioButtonOrInputName ) ? $radioButtonOrInputName : $radioButtonOrInputName.getAttribute( 'name' );
+
+    $radioGroup = document.querySelectorAll( `input[type="radio"][name="${ inputName }"]` );
+    skinList = [];
 
     $radioGroup.forEach( $rd => {
-        skinRadio( $rd );
+        skinList.push( skinRadio( $rd, options ) );
     } );
+
+    return skinList;
 }

@@ -22,7 +22,7 @@ import { position } from 'front-library/DOM/position';
  * @param {String} userOptions.url
  * @param {String} [userOptions.cssPositionning=false] - Use CSS or Javascript for the position of the layer
  * @param {boolean} [userOptions.updateOnSelect=true] - Update or not the text field with the selected value
- * @param {Callback} [userOptions.onSelect] - ( option, query, resultsList ) => {}
+ * @param {Callback} [userOptions.onSelect] - ({ item, query, resultsList }) => {}
  * @param {Callback} [userOptions.queryParams=query => { return { "search": query } }]
  * @param {Function} [userOptions.normalize=data => data ] - Conver the ajax response in the good JSON format => {success, results}
  * @param {Function} [userOptions.renderFieldValue=({item, query, resultList}) => item.name] - Allow to manipulate the displayed value of items

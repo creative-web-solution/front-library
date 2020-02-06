@@ -66,6 +66,8 @@ function ScrollTo( $element, direction, callback ) {
     }
 
     this.scrollTo = ( item, type, _duration ) => {
+        let delta;
+
         if ( !item ) {
             return;
         }
@@ -74,7 +76,20 @@ function ScrollTo( $element, direction, callback ) {
         snapItem = item;
         snapItemType = type;
         startPosition = $element[ scrollPropName ];
-        duration = typeof _duration !== 'undefined' ? _duration : Math.abs( snapItem.coord - startPosition ); // ms
+
+        delta = Math.abs( snapItem.coord - startPosition );
+
+        if ( !delta ) {
+            if ( typeof callback === 'function' ) {
+                window.requestAnimationFrame( () => {
+                    callback( snapItem, snapItemType );
+                } );
+            }
+            return;
+        }
+
+        duration = typeof _duration !== 'undefined' ? _duration : delta; // ms
+
 
         animationFrame = window.requestAnimationFrame( step );
     }
@@ -144,7 +159,8 @@ export function ScrollSnap( $scroller, userOptions = {} ) {
         hasSwipe,
         touchended,
         currentSnapItem,
-        areEventsBinded;
+        areEventsBinded,
+        lastTouchPosition;
 
     const TIMEOUT_DELAY = 100;
     const STATE_IDLE = 'idle';
@@ -525,18 +541,21 @@ export function ScrollSnap( $scroller, userOptions = {} ) {
     }
 
 
-    function onTouchstart() {
+    function onTouchstart( e, $targetElement, position ) {
         if ( state === STATE_MOVING ) {
             interuptAnimation();
         }
         hasSwipe = false;
         touchended = false;
+        lastTouchPosition = position;
         cancelAutoScroll();
     }
 
 
-    function onTouchend() {
-        if ( state === STATE_MOVING ) {
+    function onTouchend( e, $targetElement, position ) {
+        let deltaX = Math.abs( lastTouchPosition.pageX - position.pageX );
+
+        if ( state === STATE_MOVING || deltaX < 2  ) {
             return;
         }
 

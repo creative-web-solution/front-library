@@ -17,6 +17,7 @@ const defaultOptions = {
     "openedListClass": "show",
     "activeOptionClass": "on",
     "disabledClass": "disabled",
+    "invalidClass": "invalid",
     "loadingClass": "loading",
     "listTpl": [
         '<div class="select-layer">',
@@ -32,7 +33,26 @@ const defaultOptions = {
 };
 
 
-function SelectSkin( $select, userOptions = {} ) {
+/**
+ * Skin an HTML select element. If options.full is set to true, also skin the options list.
+ * You can access the skin API in the __skinAPI property of the $select HTMLElement or its wrapper.
+ * @class
+ *
+ * @param {HTMLElement} $select
+ * @param {Object} [userOptions]
+ * @param {Boolean} [userOptions.full=false] - if true, skin event the option list
+ * @param {Array} [userOptions.extraClass=[]]
+ * @param {String} [userOptions.className=select-skin]
+ * @param {String} [userOptions.itemClassName=select-itm]
+ * @param {String} [userOptions.selectWrapClassName=select]
+ * @param {String} [userOptions.openedListClass=show]
+ * @param {String} [userOptions.activeOptionClass=on]
+ * @param {String} [userOptions.disabledClass=disabled]
+ * @param {String} [userOptions.invalidClass=invalid]
+ * @param {String} [userOptions.loadingClass=loading]
+ * @param {String} [userOptions.listTpl]
+ */
+function SkinSelect( $select, userOptions = {} ) {
     var $parent,
         extraClass,
         $span,
@@ -94,32 +114,68 @@ function SelectSkin( $select, userOptions = {} ) {
     }
 
 
+    /**
+     * Force the select to be enable
+     */
     this.enable = () => {
         enableDisable( 'remove', false );
     }
 
 
+    /**
+     * Force the select to be disable
+     */
     this.disable = () => {
         enableDisable( 'add', true );
     }
 
 
-    function loadingNotLoding( fnName, isLoading ) {
+    function loadingStatus( fnName, isLoading ) {
         loading = isLoading;
         $parent.classList[ fnName ]( options.loadingClass );
     }
 
 
+    /**
+     * Add the loading css class to the main element
+     */
     this.setLoading = () => {
-        loadingNotLoding( 'add', true );
+        loadingStatus( 'add', true );
     }
 
 
+    /**
+     * Remove the loading css class to the main element
+     */
     this.unsetLoading = () => {
-        loadingNotLoding( 'remove', false );
+        loadingStatus( 'remove', false );
     }
 
 
+    function validInvalid( fnName ) {
+        $parent.classList[ fnName ]( options.invalidClass );
+    }
+
+
+    /**
+     * Force the state of the select to invalid
+     */
+    this.setInvalid = () => {
+        validInvalid( 'add' );
+    };
+
+
+    /**
+     * Force the state of the select to valid
+     */
+    this.setValid = () => {
+        validInvalid( 'remove' );
+    };
+
+
+    /**
+     * Force the update of title with the currently selected element text
+     */
     this.updateTitle = () => {
         let title;
 
@@ -137,19 +193,24 @@ function SelectSkin( $select, userOptions = {} ) {
     }
 
 
+    /**
+     * Select an option
+     *
+     * @param {HTMLElement|Number} optionOrIndex
+     */
     this.select = optionOrIndex => {
-        let _index, option;
+        let _index, option, isParameterANumber;
 
         if ( $select.disabled || loading ) {
             return;
         }
 
-        if ( isNumber( optionOrIndex ) ) {
+        isParameterANumber = isNumber( optionOrIndex );
+
+        if ( isParameterANumber ) {
             _index = optionOrIndex;
-            option = $parent.querySelectorAll( `.${ options.itemClassName }` )[ _index ];
         }
         else {
-            option = optionOrIndex;
             _index = index( optionOrIndex );
         }
 
@@ -159,15 +220,17 @@ function SelectSkin( $select, userOptions = {} ) {
 
         $select.options[ _index ].selected = true;
 
-        // this.updateTitle();
+        if ( options.full ) {
+            option = $parent.querySelectorAll( `.${ options.itemClassName }` )[ _index ];
 
-        if ( lastOption ) {
-            lastOption.classList.remove( options.activeOptionClass );
-        }
+            if ( lastOption ) {
+                lastOption.classList.remove( options.activeOptionClass );
+            }
 
-        if ( option ) {
-            option.classList.add( options.activeOptionClass );
-            lastOption = option;
+            if ( option ) {
+                option.classList.add( options.activeOptionClass );
+                lastOption = option;
+            }
         }
 
         fire( $select, {
@@ -176,25 +239,49 @@ function SelectSkin( $select, userOptions = {} ) {
     }
 
 
-    function setSelectOptions(data) {
+    function setSelectOptions( data ) {
+        let normalizedData, hasSelectedOption;
+
         $select.options.length = 0;
 
-        data.forEach( ( optionData, index ) => {
+        normalizedData = data.map( dt => {
+            if ( dt.selected ) {
+                hasSelectedOption = true;
+            }
+
+            return {
+                "text":     dt.text || dt.nm,
+                "value":    dt.value || dt.vl,
+                "selected": dt.selected || false
+            }
+        } );
+
+        if ( !hasSelectedOption ) {
+            normalizedData[ 0 ].selected = true;
+        }
+
+        normalizedData.forEach( ( optionData ) => {
             $select.options.add(
-                new Option( optionData.nm, optionData.vl, false, index === 0 )
+                new Option( optionData.text, optionData.value, false, optionData.selected )
             );
         } );
     }
 
 
-    // Set new options
-    this.updateOptions = data => {
+    /**
+     * Update the options list. If optionsArray is not set, only update the html of the skinned options list.
+     *
+     * @param {Array} [optionsArray]
+     *
+     * @example selectAPI.updateOptions( [{"text": "Option 1", "value": "value 1", "selected": true}, ...] )
+     */
+    this.updateOptions = optionsArray => {
         let htmlList;
 
         lastOption = null;
 
-        if (data) {
-            setSelectOptions( data );
+        if ( optionsArray ) {
+            setSelectOptions( optionsArray );
             SELF.updateTitle();
         }
 
@@ -209,7 +296,7 @@ function SelectSkin( $select, userOptions = {} ) {
             $layer.parentNode.removeChild( $layer );
         }
 
-        htmlList = template( options.listTpl, { list: $select.options } );
+        htmlList = template( options.listTpl, { "list": $select.options } );
         $parent.appendChild( strToDOM( htmlList ) );
 
         $layer = $parent.querySelector( '.select-layer' );
@@ -275,7 +362,7 @@ function SelectSkin( $select, userOptions = {} ) {
  *
  * @function
  * @param {HTMLElement} $select
- * @param {Object} options
+ * @param {Object} [options]
  * @param {Boolean} [options.full=false] - if true, skin event the option list
  * @param {Array} [options.extraClass=[]]
  * @param {String} [options.className=select-skin]
@@ -284,6 +371,7 @@ function SelectSkin( $select, userOptions = {} ) {
  * @param {String} [options.openedListClass=show]
  * @param {String} [options.activeOptionClass=on]
  * @param {String} [options.disabledClass=disabled]
+ * @param {String} [options.invalidClass=invalid]
  * @param {String} [options.loadingClass=loading]
  * @param {String} [options.listTpl]
  *
@@ -310,9 +398,11 @@ function SelectSkin( $select, userOptions = {} ) {
  *          '</div>'
  *      ].join( '' )
  * } );
+ *
+ * @returns {SkinSelect}
 */
 export function skinSelect( $select, options ) {
-    new SelectSkin( $select, options );
+    return new SkinSelect( $select, options );
 }
 
 
@@ -321,7 +411,7 @@ export function skinSelect( $select, options ) {
  *
  * @function
  * @param {HTMLElement} $wrapper
- * @param {Object} options
+ * @param {Object} [options]
  * @param {Boolean} [options.full=false] - if true, skin event the option list
  * @param {Array} [options.extraClass=[]]
  * @param {String} [options.className=select-skin]
@@ -330,27 +420,32 @@ export function skinSelect( $select, options ) {
  * @param {String} [options.openedListClass=show]
  * @param {String} [options.activeOptionClass=on]
  * @param {String} [options.disabledClass=disabled]
+ * @param {String} [options.invalidClass=invalid]
  * @param {String} [options.loadingClass=loading]
  * @param {String} [options.listTpl]
  *
  * @example // See skinSelect for example of options
  * skinSelectAll( $wrapper, options )
+ *
+ * @returns {SkinSelect[]}
  */
 export function skinSelectAll( $wrapper, userOptions = {} ) {
-    let $selects, defaultOptions, options;
+    let $selects, defaultOptions, options, skinList;
+
+    skinList = [];
 
     defaultOptions = {
         "full": false,
         "extraClass": []
     };
 
-    options = {};
-
-    options = extend( options, defaultOptions, userOptions );
+    options = extend( {}, defaultOptions, userOptions );
 
     $selects = $wrapper.querySelectorAll( 'select' );
 
     $selects.forEach( $select => {
-        skinSelect( $select, options );
+        skinList.push( skinSelect( $select, options ) );
     } );
+
+    return skinList;
 }

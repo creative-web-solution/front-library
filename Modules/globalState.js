@@ -1,7 +1,7 @@
 import { slice } from 'front-library/Helpers/slice';
 
 /**
- * @typedef {GlobalState_callback} KeyboardHandler_Options
+ * @typedef {Function} GlobalState_callback
  * @memberof globalState
  * @property {*} value
  * @property {String} properyName
