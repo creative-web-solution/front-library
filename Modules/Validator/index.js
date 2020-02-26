@@ -448,10 +448,13 @@ function Input( $input, options ) {
      * Remove events binding from the field
      */
     this.destroy = () => {
-        off( isRadio ? $group : $input, {
-            "eventsName":   options.liveValidation.eventsName[ inputType ],
-            "callback":     onLiveValidation
-        } );
+
+        if ( _hasValidator && options.hasLiveValidation && inputType !== 'hidden' ) {
+            off( isRadio ? $group : $input, {
+                "eventsName":   options.liveValidation.eventsName[ inputType ],
+                "callback":     onLiveValidation
+            } );
+        }
 
 
         if ( options.liveValidation.eventsHook && liveHookFunctionHash ) {

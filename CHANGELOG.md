@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 6.0.6
+
+* Validator: Fix live validation on input hidden
+
 
 ## 6.0.5
 
