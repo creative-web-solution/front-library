@@ -1079,7 +1079,7 @@ export function Slider( $slider, userOptions = {} ) {
             "nbSlideVisibleBefore": options.nbSlideVisibleBefore,
             "nbSlideVisibleAfter": options.nbSlideVisibleAfter,
             "slidePerPage": options.slidePerPage,
-            "moveByPage": true,
+            "moveByPage": options.moveByPage,
             nbSlides,
             nbPages,
             "speed": options.speed,

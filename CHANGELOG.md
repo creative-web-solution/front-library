@@ -1,5 +1,11 @@
 # CHANGELOG
 
+
+## 6.0.7
+
+* Slider: Fix init options bug on `moveByPage` property
+
+
 ## 6.0.6
 
 * Validator: Fix live validation on input hidden
