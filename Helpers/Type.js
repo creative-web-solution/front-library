@@ -1,3 +1,8 @@
+const CLASS_TO_TYPE  = {};
+const CORE_TO_STRING = CLASS_TO_TYPE.toString;
+const CORE_HAS_OWN   = CLASS_TO_TYPE.hasOwnProperty;
+
+
 /**
  * Check the type of an object
  *
@@ -67,3 +72,45 @@ export function isString( obj ) {
 export function isNumber( obj ) {
     return isType( obj, 'Number' );
 }
+
+
+
+'Boolean Number String Function Array Date RegExp Object Error'
+    .split( ' ' )
+    .forEach( function( name ) {
+        CLASS_TO_TYPE[ `[object ${ name }]` ] = name.toLowerCase();
+    } );
+
+
+
+
+/**
+ * Return true if obj is {} or an object created with "new Object"
+ * @function
+ *
+ * @param {*} obj
+ *
+ * @return {Boolean}
+ */
+export function isPlainObject( obj ) {
+    let proto, Ctor;
+
+    // Detect obvious negatives
+    // Use toString instead of jQuery.type to catch host objects
+    if ( !obj || CORE_TO_STRING.call( obj ) !== "[object Object]" ) {
+        return false;
+    }
+
+    proto = Object.getPrototypeOf( obj );
+
+    // Objects with no prototype (e.g., `Object.create( null )`) are plain
+    if ( !proto ) {
+        return true;
+    }
+
+    // Objects with prototype are plain iff they were constructed by a global Object function
+    Ctor = CORE_HAS_OWN.call( proto, "constructor" ) && proto.constructor;
+
+    return typeof Ctor === "function" && CORE_HAS_OWN.toString.call( Ctor ) === CORE_HAS_OWN.toString.call( Object );
+}
+

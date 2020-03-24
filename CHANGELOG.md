@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## 6.0.8
+
+* DOM/Class:
+    * Handle array of css classes
+    * Add sClass function to replace a class by another
+* Update extend and copy functions
+* Update UrlParser
+
+
 ## 6.0.7
 
 * Slider: Fix init options bug on `moveByPage` property

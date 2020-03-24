@@ -70,36 +70,35 @@
 export function UrlParser(url) {
     this.absolute = '';
 
-    if (!url) {
+    if ( !url ) {
         url = window.location.href;
     }
+
 
     /*
         Rebuild the complete url
     */
     function rebuild() {
-        let key, portToAdd, queryToAdd, anchor;
+        let portToAdd, queryToAdd, anchor, queryArray;
 
         queryToAdd = '';
-        portToAdd = '';
+        portToAdd  = '';
+        anchor     = this.anchor ? '#' + this.anchor : '';
+        queryArray = [];
+
         this.query = '';
-        anchor = this.anchor ? '#' + this.anchor : '';
 
-        for (key in this.queryKey) {
-            if (Object.prototype.hasOwnProperty.call( this.queryKey, key)) {
-                this.query += key + '=' + this.queryKey[key] + '&';
-            }
-        }
+        Object.keys( this.queryKey ).forEach( key => {
+            queryArray.push( `${ key }=${ this.queryKey[ key ] }` );
+        } );
 
-        if (this.query.length > 1) {
-            this.query = this.query.substr(0, this.query.length - 1);
-        }
+        this.query = queryArray.length ? queryArray.join( '&' ) : '';
 
-        queryToAdd = this.query !== '' ? '?' + this.query : '';
+        queryToAdd = this.query !== '' ? `?${ this.query }` : '';
 
-        if (this.host === '') {
-            portToAdd =
-                this.location.port === '' ? '' : ':' + this.location.port;
+        if ( this.host === '' ) {
+            portToAdd = this.location.port === '' ? '' : `:${ this.location.port }`;
+
             this.absolute = [
                 this.location.protocol,
                 '://',
@@ -107,18 +106,21 @@ export function UrlParser(url) {
                 portToAdd,
                 this.path,
                 queryToAdd
-            ].join('');
+            ].join( '' );
+
             this.full = [
                 this.location.protocol,
                 '://',
-                this.location.userInfo ? this.location.userInfo + '@' : '',
+                this.location.userInfo ? `${ this.location.userInfo }@` : '',
                 this.location.host,
                 portToAdd,
                 this.path,
                 queryToAdd
-            ].join('');
-        } else {
-            portToAdd = this.port === '' ? '' : ':' + this.port
+            ].join( '' );
+        }
+        else {
+            portToAdd = this.port === '' ? '' : `:${ this.port }`;
+
             this.absolute = [
                 this.protocol,
                 '://',
@@ -126,29 +128,31 @@ export function UrlParser(url) {
                 portToAdd,
                 this.path,
                 queryToAdd
-            ].join('');
+            ].join( '' );
+
             this.full = [
                 this.protocol,
                 '://',
-                this.userInfo ? this.userInfo + '@' : '',
+                this.userInfo ? `${ this.userInfo }@` : '',
                 this.host,
                 portToAdd,
                 this.path,
                 queryToAdd
-            ].join('');
+            ].join( '' );
         }
 
-        this.full2 = [this.full, anchor].join('');
-        this.absolute2 = [this.absolute, anchor].join('');
-        this.relative = [this.path, queryToAdd].join('');
-        this.relative2 = [this.relative, anchor].join('');
+        this.full2     = [ this.full, anchor ].join( '' );
+        this.absolute2 = [ this.absolute, anchor ].join( '' );
+        this.relative  = [ this.path, queryToAdd ].join( '' );
+        this.relative2 = [ this.relative, anchor ].join( '' );
     }
+
 
     /*
     Init
     */
-    ;(function( url, obj ) {
-        let key, location, parseUri, result;
+    function init( url, obj ) {
+        let location, parseUri, result;
 
         parseUri = function( str ) {
             let i, m, o, uri;
@@ -158,7 +162,7 @@ export function UrlParser(url) {
             uri = {};
             i = 14;
 
-            while (i--) {
+            while  (i-- ) {
                 uri[ o.key[ i ] ] = m[ i ] || '';
             }
 
@@ -173,7 +177,7 @@ export function UrlParser(url) {
         }
 
         location = null;
-        result = null;
+        result   = null;
 
         parseUri.options = {
             "anchorPage": false,
@@ -195,39 +199,38 @@ export function UrlParser(url) {
                 'anchor'
             ],
             "q": {
-                "name": 'queryKey',
+                "name":   "queryKey",
                 "parser": /(?:^|&)([^&=]*)=?([^&]*)/g
             },
             "parser": {
-                "strict": /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
-                "loose": /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
+                "strict": /^(?:([^:/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:/?#]*)(?::(\d*))?))?((((?:[^?#/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
+                "loose": /^(?:(?![^:@]+:[^:@/]*@)([^:/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#/]*\.[^?#/.]+(?:[?#]|$)))*\/?)?([^?#/]*))(?:\?([^#]*))?(?:#(.*))?)/
             }
         };
 
-        location = parseUri( window.location.href );
-        result = parseUri( url );
+        location        = parseUri( window.location.href );
+        result          = parseUri( url );
         result.location = location;
 
         if ( !/^(http|ftp|\/)/.test( url ) ) {
             url = result.location.directory + url;
         }
 
-        result.isAnchor =
-            result.anchor !== '' && result.path === result.location.path;
+        result.isAnchor = result.anchor !== '' && result.path === result.location.path;
 
         result.isSameDomain =
-            result.protocol === result.location.protocol &&
-            result.host === result.location.host &&
-            result.port === result.location.port;
+                    result.protocol === result.location.protocol &&
+                    result.host === result.location.host &&
+                    result.port === result.location.port;
 
-        for ( key in result ) {
-            if ( Object.prototype.hasOwnProperty.call( result, key ) ) {
-                obj[ key ] = result[ key ];
-            }
-        }
+        Object.keys( result ).forEach( key => {
+            obj[ key ] = result[ key ];
+        } );
 
         rebuild.call( obj );
-    } )( url, this );
+    }
+
+    init( url, this );
 
 
     /**
@@ -268,7 +271,7 @@ export function UrlParser(url) {
     /**
      * Add/modify one or several query param
      *
-     * @param {(String|Object)} keys
+     * @param {String|Object} keys
      * @param {String} value
      *
      * @returns {UrlParser}
@@ -279,14 +282,12 @@ export function UrlParser(url) {
         }
 
         if ( typeof keys === 'string' && typeof value !== 'undefined' ) {
-            this.queryKey[ keys ] = '' + value;
+            this.queryKey[ keys ] = `${ value }`;
         }
         else if ( typeof keys === 'object' ) {
-            for ( let key in keys ) {
-                if ( Object.prototype.hasOwnProperty.call( keys, key ) ) {
-                    this.queryKey[ key ] = '' + keys[ key ];
-                }
-            }
+            Object.keys( keys ).forEach( key => {
+                this.queryKey[ key ] = `${ keys[ key ] }`;
+            } );
         }
 
         rebuild.call( this );
@@ -298,7 +299,7 @@ export function UrlParser(url) {
     /**
      * Remove one or several query param
      *
-     * @param {(String|String[])} keys
+     * @param {String|String[]} keys
      *
      * @returns {UrlParser}
      */
@@ -308,20 +309,12 @@ export function UrlParser(url) {
         }
 
         if ( typeof keys === 'string' ) {
-            if ( this.queryKey[ keys ] ) {
-                delete this.queryKey[ keys ];
-            }
+            delete this.queryKey[ keys ];
         }
-        else if ( Object.prototype.toString.call( keys ) === '[object Array]' ) {
-            let i = 0;
-
-            while ( i < keys.length ) {
-                if ( this.queryKey[ keys[ i ] ] ) {
-                    delete this.queryKey[ keys[ i ] ];
-                }
-
-                i++;
-            }
+        else if ( Array.isArray( keys ) ) {
+            keys.forEach( key => {
+                delete this.queryKey[ key ];
+            } );
         }
 
         rebuild.call( this );
