@@ -1,6 +1,13 @@
 # CHANGELOG
 
 
+## 6.0.9
+
+* Validator:
+    * Update email validation Regular Expression
+    * Add a loose one: Add data-loose on the input to use it
+
+
 ## 6.0.8
 
 * DOM/Class:

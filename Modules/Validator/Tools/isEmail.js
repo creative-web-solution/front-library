@@ -1,5 +1,6 @@
-// http://net.tutsplus.com/tutorials/other/8-regular-expressions-you-should-know/
-const emailRe                             = /^([a-z0-9_\.\-\+]+)@([\da-z\.\-]+)\.([a-z\.]{2,6})$/i;
+// Regular expression from Symfony
+const RE_EMAIL = /^[a-zA-Z0-9.!#$%&\'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+const RE_EMAIL_LOOSE = /^.+\@\S+\.\S+$/;
 
 /**
  * Test if the value is an email
@@ -7,11 +8,15 @@ const emailRe                             = /^([a-z0-9_\.\-\+]+)@([\da-z\.\-]+)\
  * @function isEmail
  *
  * @param {String} value
+ * @param {Boolean} [loose]
  *
  * @see extra/modules/validator.md for details
  *
  * @returns {Boolean}
  */
-export default function isEmail( value ) {
-    return emailRe.test( value );
+export default function isEmail( value, loose ) {
+    if ( loose ) {
+        return RE_EMAIL_LOOSE.test( value );
+    }
+    return RE_EMAIL.test( value );
 }

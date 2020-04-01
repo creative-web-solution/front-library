@@ -9,7 +9,7 @@ addValidator( 'email', '[type="email"]', ( $input, value, isLiveValidation ) => 
     return standardValidation(
         $input,
         value,
-        value === '' || isEmail( value ),
+        value === '' || isEmail( value, $input.hasAttribute( 'data-loose' ) ),
         'email',
         undefined,
         isLiveValidation
