@@ -78,6 +78,11 @@ export function Autocomplete(userOptions = {}) {
             return `<li class="${ cssClass.error }">${ errorMsg }</li>`;
         },
         "renderMark": ( { resultItem, reQuery, cssClass } ) => {
+            if ( !reQuery ) {
+                resultItem.markedName = resultItem.name;
+                return;
+            }
+
             resultItem.name && ( resultItem.markedName = resultItem.name.replace(
                 reQuery,
                 `<mark class="${ cssClass.mark }">$1</mark>`
@@ -232,6 +237,55 @@ export function Autocomplete(userOptions = {}) {
                     "resultItem": item,
                     reQuery,
                     "query": _query,
+                    "index": i,
+                    "resultList": _list,
+                    "cssClass": className
+                }
+            );
+            return options.render( {
+                "resultItem": item,
+                "index": i,
+                "itemsList": _list,
+                "cssClass": className
+            } );
+        } );
+
+        $layer.innerHTML = options.renderList( {
+            "resultList": html,
+            "cssClass": className
+        } );
+
+        $list = $layer.querySelector( className.list );
+
+        selectionLocked = false;
+        nbResults = _list.length;
+        selectedIndex = -1;
+
+        return this;
+    }
+
+
+    /**
+     * Create the results list
+     * @ignore
+     *
+     * @param {string[]} _list - Array of result
+     *
+     * @returns {Autocomplete}
+     */
+    function setAll( _list ) {
+        let html;
+
+        currentResults = _list;
+        currentQuery = '';
+
+        html = [];
+        hasResults = true;
+
+        html = _list.map( ( item, i ) => {
+            options.renderMark(
+                {
+                    "resultItem": item,
                     "index": i,
                     "resultList": _list,
                     "cssClass": className
@@ -486,9 +540,6 @@ export function Autocomplete(userOptions = {}) {
             case 27: // ESCAPE
                 e.preventDefault();
                 break;
-
-            default:
-                break;
         }
     }
 
@@ -496,7 +547,6 @@ export function Autocomplete(userOptions = {}) {
     function onKeyup( e ) {
         let query = e.target.value;
 
-        // Autocomplete désactivé pour l'instant
         switch ( e.keyCode ) {
             case 38: // UP
                 hoverPrevious();
@@ -585,6 +635,31 @@ export function Autocomplete(userOptions = {}) {
     $field.addEventListener( 'keyup', onKeyup );
     $field.addEventListener( 'keydown', onKeydown );
     $field.addEventListener( 'focus', onFocus );
+
+
+    /**
+     * When 'source' is used, display the list with all items
+     *
+     * @returns {Autocomplete}
+     */
+    this.showAll = () => {
+        if ( !options.source ) {
+            return this;
+        }
+
+        options.source( null, results => {
+            if ( results.length ) {
+                setAll( results );
+            }
+            else {
+                setError( l10n.noResult );
+            }
+
+            show();
+        } );
+
+        return this;
+    };
 
 
     /**

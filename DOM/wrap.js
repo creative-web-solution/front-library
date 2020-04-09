@@ -1,4 +1,5 @@
 import { strToDOM } from 'front-library/DOM/strToDOM';
+import { isString } from 'front-library/Helpers/Type';
 
 /**
  * Wrap a DOM element in another
@@ -6,12 +7,19 @@ import { strToDOM } from 'front-library/DOM/strToDOM';
  * @example $wrapper = wrap( $element, '<span class="abc"></span>' );
  *
  * @param {HTMLElement} $element
- * @param {String} tag - Example: <span></span>
+ * @param {String|HTMLElement} tag - String example: <span></span>
  *
  * @returns {HTMLElement} - The wrap element
  */
 export function wrap( $element, tag ) {
-    let $wrapper = strToDOM( tag );
+    let $wrapper;
+
+    if ( isString( tag ) ) {
+        $wrapper = strToDOM( tag );
+    }
+    else {
+        $wrapper = tag;
+    }
 
     $element.parentNode.insertBefore( $wrapper, $element );
 

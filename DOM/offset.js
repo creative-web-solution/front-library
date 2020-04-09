@@ -5,6 +5,8 @@ function getWindow($element) {
             ? $element.defaultView || $element.parentWindow
             : false
 }
+
+
 /**
  * @typedef {object} offset_Object
  * @property {Number} top
@@ -35,7 +37,7 @@ function getWindow($element) {
 export function offset( $element, isRelativeToViewport, $relativeTo ) {
     let $window, retValue, rootValue, box, $document;
 
-    box = { "top": 0, "left": 0, "right": 0, "bottom": 0, "width": 0, "height": 0 };
+    box       = { "top": 0, "left": 0, "right": 0, "bottom": 0, "width": 0, "height": 0 };
     $document = $element && $element.ownerDocument;
 
     if ( !$document ) {
@@ -46,28 +48,27 @@ export function offset( $element, isRelativeToViewport, $relativeTo ) {
         box = $element.getBoundingClientRect();
         if ( typeof box.left === 'undefined' ) {
             box.left = box.x;
-            box.top = box.y;
+            box.top  = box.y;
         }
     }
 
-    $window = getWindow( $document );
-
     retValue = {
-        "top": box.top,
-        "left": box.left,
+        "top":    box.top,
+        "left":   box.left,
         "bottom": box.bottom,
-        "right": box.right,
-        "width": box.width,
+        "right":  box.right,
+        "width":  box.width,
         "height": box.height
     };
 
     if ( $relativeTo ) {
-        rootValue = offset( $relativeTo );
-        retValue.top -= rootValue.top;
+        rootValue     = offset( $relativeTo );
+        retValue.top  -= rootValue.top;
         retValue.left -= rootValue.left;
     }
     else if ( !isRelativeToViewport ) {
-        retValue.top = retValue.top + $window.pageYOffset;
+        $window       = getWindow( $document );
+        retValue.top  = retValue.top + $window.pageYOffset;
         retValue.left = retValue.left + $window.pageXOffset;
     }
 

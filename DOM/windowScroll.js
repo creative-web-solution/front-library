@@ -16,19 +16,19 @@ export function windowScroll() {
     if ( window.pageYOffset !== undefined ) {
         return {
             "left": window.pageXOffset,
-            "top": window.pageYOffset
+            "top":  window.pageYOffset
         };
     }
     else {
-        d = document;
-        r = d.documentElement;
-        b = d.body;
+        d  = document;
+        r  = d.documentElement;
+        b  = d.body;
         sx = r.scrollLeft || b.scrollLeft || 0;
         sy = r.scrollTop || b.scrollTop || 0;
 
         return {
             "left": sx,
-            "top": sy
+            "top":  sy
         };
     }
 }

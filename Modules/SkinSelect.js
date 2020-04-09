@@ -1,4 +1,4 @@
-import { fire } from 'front-library/Events/EventsManager';
+import { fire, on, off } from 'front-library/Events/EventsManager';
 import { extend } from 'front-library/Helpers/Extend';
 import { isNumber } from 'front-library/Helpers/Type';
 import { template } from 'front-library/Modules/template';
@@ -6,6 +6,10 @@ import { wrap } from 'front-library/DOM/wrap';
 import { strToDOM } from 'front-library/DOM/strToDOM';
 import { index } from 'front-library/DOM/index';
 import { hClass, aClass } from 'front-library/DOM/Class';
+import { rClass } from 'front-library/DOM/Class';
+// import { position } from 'front-library/DOM/position';
+// import { height } from 'front-library/DOM/Size';
+// import { outerHeight } from 'front-library/DOM/OuterSize';
 
 
 const defaultOptions = {
@@ -14,6 +18,8 @@ const defaultOptions = {
     "className": "select-skin",
     "itemClassName": "select-itm",
     "selectWrapClassName": "select",
+    "layerClassName": "select-layer",
+    "hoverItemClass": "hover",
     "openedListClass": "show",
     "activeOptionClass": "on",
     "disabledClass": "disabled",
@@ -23,7 +29,7 @@ const defaultOptions = {
         '<div class="select-layer">',
         '<ul class="select-list">',
         '<% for ( var i = 0, len = list.length; i < len; ++i ) { %>',
-        '<li class="select-itm<%= list[ i ].selected ? " on" : "" %>" data-value="<%= list[ i ].value %>">',
+        '<li tabindex="-1" class="select-itm<%= list[ i ].selected ? " on" : "" %>" data-value="<%= list[ i ].value %>">',
         '<%= list[ i ].text %>',
         '</li>',
         '<% } %>',
@@ -56,9 +62,11 @@ function SkinSelect( $select, userOptions = {} ) {
     var $parent,
         extraClass,
         $span,
-        lastOption,
+        $lastOption,
         loading,
         $layer,
+        focusedItemIndex,
+        $options,
         isListOpened,
         options;
 
@@ -82,14 +90,27 @@ function SkinSelect( $select, userOptions = {} ) {
     function closeList() {
         $parent.classList.remove( options.openedListClass );
 
-        document.body.removeEventListener( 'click', closeList );
+        if ( $options ) {
+            $options.forEach( $option => {
+                $option.setAttribute( 'tabindex', '-1' );
+            } );
+        }
+
+        off( document.body, {
+            "eventsName": "click",
+            "callback":   closeList
+        } );
 
         isListOpened = false;
+
+        removeItemFocus();
+
+        $span.focus();
     }
 
 
     function openList( e ) {
-        e.stopPropagation();
+        e && e.stopPropagation();
 
         if ( $select.disabled || loading ) {
             return;
@@ -102,7 +123,23 @@ function SkinSelect( $select, userOptions = {} ) {
 
         $parent.classList.add( options.openedListClass );
 
-        document.body.addEventListener( 'click', closeList );
+        on( document.body, {
+            "eventsName": "click",
+            "callback":   closeList
+        } );
+
+        if ( $options ) {
+            $options.forEach( $option => {
+                $option.setAttribute( 'tabindex', '0' );
+            } );
+
+            if ( $lastOption ) {
+                focusedItemIndex = index( $lastOption );
+                focusedItemIndex = focusedItemIndex > -1 ? focusedItemIndex : null;
+            }
+
+            focusItem( focusedItemIndex !== null ? focusedItemIndex : 0 );
+        }
 
         isListOpened = true;
     }
@@ -223,13 +260,13 @@ function SkinSelect( $select, userOptions = {} ) {
         if ( options.full ) {
             option = $parent.querySelectorAll( `.${ options.itemClassName }` )[ _index ];
 
-            if ( lastOption ) {
-                lastOption.classList.remove( options.activeOptionClass );
+            if ( $lastOption ) {
+                $lastOption.classList.remove( options.activeOptionClass );
             }
 
             if ( option ) {
                 option.classList.add( options.activeOptionClass );
-                lastOption = option;
+                $lastOption = option;
             }
         }
 
@@ -278,7 +315,7 @@ function SkinSelect( $select, userOptions = {} ) {
     this.updateOptions = optionsArray => {
         let htmlList;
 
-        lastOption = null;
+        $lastOption = null;
 
         if ( optionsArray ) {
             setSelectOptions( optionsArray );
@@ -290,6 +327,7 @@ function SkinSelect( $select, userOptions = {} ) {
         }
 
         $select.style.display = 'none';
+        $span.setAttribute( 'tabindex', '0' );
         closeList();
 
         if ( $layer && $layer.parentNode ) {
@@ -299,9 +337,10 @@ function SkinSelect( $select, userOptions = {} ) {
         htmlList = template( options.listTpl, { "list": $select.options } );
         $parent.appendChild( strToDOM( htmlList ) );
 
-        $layer = $parent.querySelector( '.select-layer' );
+        $layer     = $parent.querySelector( `.${ options.layerClassName }` );
+        $options   = $layer.querySelectorAll( 'li' );
 
-        lastOption = $parent.querySelector( `li.${ options.activeOptionClass }` );
+        $lastOption = $parent.querySelector( `li.${ options.activeOptionClass }` );
     }
 
 
@@ -318,13 +357,136 @@ function SkinSelect( $select, userOptions = {} ) {
         SELF.select( e.target );
     }
 
+
+    function focusItem( index ) {
+        if ( index < 0 ) {
+            index = $options.length - 1;
+        }
+        if ( index >= $options.length ) {
+            index = 0;
+        }
+        if ( !$options[ index ] ) {
+            return;
+        }
+
+        removeItemFocus();
+
+        aClass( $options[ index ], options.hoverItemClass );
+        $options[ index ].focus();
+        // updateListScroll( $options[ index ] );
+
+        focusedItemIndex = index;
+    }
+
+
+    function removeItemFocus() {
+        if ( focusedItemIndex !== null && $options && $options[ focusedItemIndex ] ) {
+            rClass( $options[ focusedItemIndex ], options.hoverItemClass );
+            focusedItemIndex = null;
+        }
+    }
+
+
+    // function updateListScroll( $item ) {
+    //     let itemPos, itemHeight, layerScrollTop, layerHeight;
+
+    //     if ( $layer ) {
+    //         itemPos     = position( $item );
+    //         itemHeight  = outerHeight( $item );
+    //         layerHeight = height( $layer );
+    //         layerScrollTop   = $layer.scrollTop;
+
+    //         console.log( itemPos.top, itemHeight, layerHeight, layerScrollTop );
+
+    //         if ( itemPos.top + itemHeight > layerHeight + layerScrollTop)  {
+    //             console.log( 'after bottom' );
+    //             $layer.scrollTop = itemPos.top - layerHeight + itemHeight;
+    //         }
+    //         else if ( layerScrollTop > 0 && itemPos.top < layerScrollTop ) {
+    //             console.log( 'before top' );
+    //             $layer.scrollTop = itemPos.top;
+    //         }
+    //         else {
+    //             console.log( 'none' );
+    //         }
+    //     }
+    // }
+
+
+    function onKeydown( e ) {
+        switch ( e.keyCode ) {
+            case 38: // UP
+            case 40: // DOWN
+            case 13: // ENTER
+            case 27: // ESCAPE
+                e.preventDefault();
+                break;
+        }
+    }
+
+
+    function onKeyup( e ) {
+        switch ( e.keyCode ) {
+            case 40: // DOWN
+            case 13: // ENTER
+            case 32: // SPACE
+                openList();
+                break;
+
+            case 27: // ESCAPE
+                closeList();
+                break;
+        }
+    }
+
+
+    function onLayerKeydown( e ) {
+        if (
+            ( e.keyCode === 9 && !e.shiftKey && focusedItemIndex === $options.length - 1 ) ||
+            ( e.keyCode === 9 && e.shiftKey && focusedItemIndex === 0 )
+        ) {
+            e.preventDefault();
+        }
+    }
+
+
+    function onLayerKeyup( e ) {
+        if ( e.keyCode === 9 && !e.shiftKey && focusedItemIndex < $options.length - 1) {
+            focusedItemIndex++;
+            return;
+        }
+        else if ( e.keyCode === 9 && e.shiftKey && focusedItemIndex > 0 ) {
+            focusedItemIndex--;
+            return;
+        }
+
+        switch ( e.keyCode ) {
+            case 38: // UP
+                focusItem( focusedItemIndex - 1 );
+                break;
+            case 40: // DOWN
+                focusItem( focusedItemIndex + 1 );
+                break;
+
+            case 13: // ENTER
+            case 32: // SPACE
+                SELF.select( focusedItemIndex );
+                closeList();
+                break;
+
+            case 27: // ESCAPE
+                closeList();
+                break;
+        }
+    }
+
+
     // Create skin
     if ( !hClass( $select.parentNode, options.className ) ) {
         wrap(
             $select,
             `<span class="${ options.className } ${ extraClass }"></span>`
         );
-
     }
 
     $parent = $select.parentNode;
@@ -343,8 +505,38 @@ function SkinSelect( $select, userOptions = {} ) {
     if ( options.full ) {
         this.updateOptions();
 
-        $span.addEventListener( 'click', openList );
-        $parent.addEventListener( 'click', fakeOptionsClickHandler );
+        on( $span, {
+            "eventsName": "click",
+            "callback":   openList
+        } );
+
+        on( $span, {
+            "eventsName": "keydown",
+            "callback":   onKeydown
+        } );
+
+        on( $span, {
+            "eventsName": "keyup",
+            "callback":   onKeyup
+        } );
+
+        on( $layer, {
+            "eventsName": "keydown",
+            "selector":   "li",
+            "callback":   onLayerKeydown
+        } );
+
+        on( $layer, {
+            "eventsName": "keyup",
+            "selector":   "li",
+            "callback":   onLayerKeyup
+        } );
+
+        on( $parent, {
+            "eventsName": "click",
+            "callback":   fakeOptionsClickHandler
+        } );
+
     }
 
     $select.__skinAPI = $parent.__skinAPI = this;
@@ -353,7 +545,10 @@ function SkinSelect( $select, userOptions = {} ) {
         this.setInvalid();
     }
 
-    $select.addEventListener( 'change', changeHandler );
+    on( $select, {
+        "eventsName": "change",
+        "callback":   changeHandler
+    } );
 }
 
 

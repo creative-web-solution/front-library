@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## 6.0.10
+
+* Validator:
+    * Change the default live validation event name on input text from 'change' to 'input'
+* DOM:
+    * Minor updates
+    * The `wrap` function now can handle an HTMLElement as second parameters
+* Autocomplete:
+    * Add a `showAll` function to display all items of the list in source mode.
+* SkinSelect:
+    * Add keyboard feature
+
+
 ## 6.0.9
 
 * Validator:

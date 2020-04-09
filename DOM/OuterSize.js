@@ -17,7 +17,7 @@ function getOuterDim(
 
 
         if ( margin ) {
-            elementStyle = getStyle( $element )
+            elementStyle = getStyle( $element );
             size = {
                 "width": dimensionName === 'height' ? -1 : (size.width +
                         ( parseInt(elementStyle[ 'marginLeft' ], 10 ) || 0 ) +

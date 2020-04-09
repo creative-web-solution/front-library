@@ -20,7 +20,7 @@ const defaultOptions = {
         "eventsName": {
             "optin":            "change",
             "select":           "change",
-            "inputText":        "change"
+            "inputText":        "input"
         },
         "eventsHook":           null
     }
