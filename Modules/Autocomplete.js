@@ -40,9 +40,10 @@ import { position } from 'front-library/DOM/position';
  * @param {String} [userOptions.className.mark=acl-mrk]
  * @param {String} [userOptions.className.error=acl-error]
  * @param {String} [userOptions.className.hover=hover]
+ * @param {String} [userOptions.className.disable=disable]
  */
 export function Autocomplete(userOptions = {}) {
-    let options, cacheQuery, timeoutId, $layer, $list, currentResults, tplSuggestion, selectionLocked, hasResults, selectedIndex, nbResults, url, hideTimeoutId, $field, className, $panelWrapper, l10n, currentQuery, requestAbortController;
+    let options, cacheQuery, timeoutId, $layer, $list, currentResults, tplSuggestion, selectionLocked, hasResults, selectedIndex, nbResults, url, hideTimeoutId, $field, className, $panelWrapper, l10n, currentQuery, requestAbortController, isDisabled;
 
     if ( !( "AbortController" in window ) ) {
         throw 'This plugin uses fecth and AbortController. You may need to add a polyfill for this browser.';
@@ -99,7 +100,8 @@ export function Autocomplete(userOptions = {}) {
             "link": "acl-lnk",
             "mark": "acl-mrk",
             "error": "acl-error",
-            "hover": "hover"
+            "hover": "hover",
+            "disable": "disable"
         }
     }
 
@@ -126,6 +128,12 @@ export function Autocomplete(userOptions = {}) {
     append( $layer, $panelWrapper );
 
     $field.setAttribute( 'autocomplete', 'off' );
+    isDisabled = $field.disabled || $field.classList.contains( className.disable );
+
+    Object.defineProperty( this, 'isDisable', {
+        "get": () => isDisabled || $field.disabled
+    } );
+
 
     /**
      * Update the current options
@@ -545,7 +553,13 @@ export function Autocomplete(userOptions = {}) {
 
 
     function onKeyup( e ) {
-        let query = e.target.value;
+        let query;
+
+        if ( SELF.isDisable ) {
+            return;
+        }
+
+        query = e.target.value;
 
         switch ( e.keyCode ) {
             case 38: // UP
@@ -607,6 +621,10 @@ export function Autocomplete(userOptions = {}) {
 
 
     function onTapField() {
+        if ( SELF.isDisable ) {
+            return;
+        }
+
         if ( hasResults ) {
             selectionLocked = false;
             show();
@@ -615,6 +633,10 @@ export function Autocomplete(userOptions = {}) {
 
 
     function onTapLinks( e, $target ) {
+        if ( SELF.isDisable ) {
+            return;
+        }
+
         let idx = $target.getAttribute( 'data-idx' );
         select( +idx );
     }
@@ -643,7 +665,7 @@ export function Autocomplete(userOptions = {}) {
      * @returns {Autocomplete}
      */
     this.showAll = () => {
-        if ( !options.source ) {
+        if ( !options.source || SELF.isDisable) {
             return this;
         }
 
@@ -657,6 +679,34 @@ export function Autocomplete(userOptions = {}) {
 
             show();
         } );
+
+        return this;
+    };
+
+
+    /**
+     * Disable the autocomplete
+     *
+     * @returns {Autocomplete}
+     */
+    this.disable = () => {
+        isDisabled = true;
+        $field.disabled = true;
+        $field.classList.add( className.disable );
+
+        return this;
+    };
+
+
+    /**
+     * Enable the autocomplete
+     *
+     * @returns {Autocomplete}
+     */
+    this.enable = () => {
+        isDisabled = false;
+        $field.disabled = false;
+        $field.classList.remove( className.disable );
 
         return this;
     };

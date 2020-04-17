@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## 6.0.11
+
+* Autocomplete:
+    * Add `enable` and `disable` functions
+
+
 ## 6.0.10
 
 * Validator:
