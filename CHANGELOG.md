@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## 6.0.14
+
+* SkinSelect:
+    * Fix item focus and scroll
+
+
 ## 6.0.13
 
 * Autocomplete:

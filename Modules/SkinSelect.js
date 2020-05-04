@@ -7,9 +7,9 @@ import { strToDOM } from 'front-library/DOM/strToDOM';
 import { index } from 'front-library/DOM/index';
 import { hClass, aClass } from 'front-library/DOM/Class';
 import { rClass } from 'front-library/DOM/Class';
-// import { position } from 'front-library/DOM/position';
-// import { height } from 'front-library/DOM/Size';
-// import { outerHeight } from 'front-library/DOM/OuterSize';
+import { position } from 'front-library/DOM/position';
+import { height } from 'front-library/DOM/Size';
+import { outerHeight } from 'front-library/DOM/OuterSize';
 
 
 const defaultOptions = {
@@ -29,7 +29,7 @@ const defaultOptions = {
         '<div class="select-layer">',
         '<ul class="select-list">',
         '<% for ( var i = 0, len = list.length; i < len; ++i ) { %>',
-        '<li tabindex="-1" class="select-itm<%= list[ i ].selected ? " on" : "" %>" data-value="<%= list[ i ].value %>">',
+        '<li class="select-itm<%= list[ i ].selected ? " on" : "" %>" data-value="<%= list[ i ].value %>">',
         '<%= list[ i ].text %>',
         '</li>',
         '<% } %>',
@@ -87,14 +87,8 @@ function SkinSelect( $select, userOptions = {} ) {
     }
 
 
-    function closeList( avoidFocus ) {
+    function closeList() {
         $parent.classList.remove( options.openedListClass );
-
-        if ( $options ) {
-            $options.forEach( $option => {
-                $option.setAttribute( 'tabindex', '-1' );
-            } );
-        }
 
         off( document.body, {
             "eventsName": "click",
@@ -105,9 +99,6 @@ function SkinSelect( $select, userOptions = {} ) {
 
         removeItemFocus();
 
-        if ( !avoidFocus ) {
-            $span.focus();
-        }
     }
 
 
@@ -131,10 +122,6 @@ function SkinSelect( $select, userOptions = {} ) {
         } );
 
         if ( $options ) {
-            $options.forEach( $option => {
-                $option.setAttribute( 'tabindex', '0' );
-            } );
-
             if ( $lastOption ) {
                 focusedItemIndex = index( $lastOption );
                 focusedItemIndex = focusedItemIndex > -1 ? focusedItemIndex : null;
@@ -215,12 +202,12 @@ function SkinSelect( $select, userOptions = {} ) {
     /**
      * Force the update of title with the currently selected element text
      */
-    this.updateTitle = ( avoidFocus ) => {
+    this.updateTitle = () => {
         let title;
 
         if ( $select.selectedIndex < 0 ) {
             $span.innerHTML = '';
-            closeList( avoidFocus );
+            closeList();
             return;
         }
 
@@ -228,7 +215,7 @@ function SkinSelect( $select, userOptions = {} ) {
 
         $span.innerHTML = title;
 
-        closeList( avoidFocus );
+        closeList();
     }
 
 
@@ -318,6 +305,7 @@ function SkinSelect( $select, userOptions = {} ) {
         let htmlList;
 
         $lastOption = null;
+        focusedItemIndex = null;
 
         if ( optionsArray ) {
             setSelectOptions( optionsArray );
@@ -330,7 +318,7 @@ function SkinSelect( $select, userOptions = {} ) {
 
         $select.style.display = 'none';
         $span.setAttribute( 'tabindex', '0' );
-        closeList( true );
+        closeList();
 
         if ( $layer && $layer.parentNode ) {
             $layer.parentNode.removeChild( $layer );
@@ -374,8 +362,7 @@ function SkinSelect( $select, userOptions = {} ) {
         removeItemFocus();
 
         aClass( $options[ index ], options.hoverItemClass );
-        $options[ index ].focus();
-        // updateListScroll( $options[ index ] );
+        updateListScroll( $options[ index ] );
 
         focusedItemIndex = index;
     }
@@ -389,30 +376,28 @@ function SkinSelect( $select, userOptions = {} ) {
     }
 
 
-    // function updateListScroll( $item ) {
-    //     let itemPos, itemHeight, layerScrollTop, layerHeight;
+    function updateListScroll( $item ) {
+        let itemPos, itemHeight, layerScrollTop, layerHeight;
 
-    //     if ( $layer ) {
-    //         itemPos     = position( $item );
-    //         itemHeight  = outerHeight( $item );
-    //         layerHeight = height( $layer );
-    //         layerScrollTop   = $layer.scrollTop;
+        if ( $layer ) {
+            itemPos     = position( $item );
+            itemHeight  = outerHeight( $item );
+            layerHeight = height( $layer );
+            layerScrollTop   = $layer.scrollTop;
 
-    //         console.log( itemPos.top, itemHeight, layerHeight, layerScrollTop );
-
-    //         if ( itemPos.top + itemHeight > layerHeight + layerScrollTop)  {
-    //             console.log( 'after bottom' );
-    //             $layer.scrollTop = itemPos.top - layerHeight + itemHeight;
-    //         }
-    //         else if ( layerScrollTop > 0 && itemPos.top < layerScrollTop ) {
-    //             console.log( 'before top' );
-    //             $layer.scrollTop = itemPos.top;
-    //         }
-    //         else {
-    //             console.log( 'none' );
-    //         }
-    //     }
-    // }
+            if ( itemPos.top + itemHeight > layerHeight + layerScrollTop)  {
+                console.log( 'after bottom' );
+                $layer.scrollTop = itemPos.top - layerHeight + itemHeight;
+            }
+            else if ( layerScrollTop > 0 && itemPos.top < layerScrollTop ) {
+                console.log( 'before top' );
+                $layer.scrollTop = itemPos.top;
+            }
+            else {
+                console.log( 'none' );
+            }
+        }
+    }
 
 
     function onKeydown( e ) {
@@ -429,49 +414,23 @@ function SkinSelect( $select, userOptions = {} ) {
 
     function onKeyup( e ) {
         switch ( e.keyCode ) {
-            case 40: // DOWN
-            case 13: // ENTER
-            case 32: // SPACE
-                openList();
-                break;
-
-            case 27: // ESCAPE
-                closeList();
-                break;
-        }
-    }
-
-
-    function onLayerKeydown( e ) {
-        if (
-            ( e.keyCode === 9 && !e.shiftKey && focusedItemIndex === $options.length - 1 ) ||
-            ( e.keyCode === 9 && e.shiftKey && focusedItemIndex === 0 )
-        ) {
-            e.preventDefault();
-        }
-    }
-
-
-    function onLayerKeyup( e ) {
-        if ( e.keyCode === 9 && !e.shiftKey && focusedItemIndex < $options.length - 1) {
-            focusedItemIndex++;
-            return;
-        }
-        else if ( e.keyCode === 9 && e.shiftKey && focusedItemIndex > 0 ) {
-            focusedItemIndex--;
-            return;
-        }
-
-        switch ( e.keyCode ) {
             case 38: // UP
                 focusItem( focusedItemIndex - 1 );
                 break;
             case 40: // DOWN
+                if ( !isListOpened ) {
+                    openList();
+                    break;
+                }
                 focusItem( focusedItemIndex + 1 );
                 break;
 
             case 13: // ENTER
             case 32: // SPACE
+                if ( !isListOpened ) {
+                    openList();
+                    break;
+                }
                 SELF.select( focusedItemIndex );
                 closeList();
                 break;
@@ -520,18 +479,6 @@ function SkinSelect( $select, userOptions = {} ) {
         on( $span, {
             "eventsName": "keyup",
             "callback":   onKeyup
-        } );
-
-        on( $layer, {
-            "eventsName": "keydown",
-            "selector":   "li",
-            "callback":   onLayerKeydown
-        } );
-
-        on( $layer, {
-            "eventsName": "keyup",
-            "selector":   "li",
-            "callback":   onLayerKeyup
         } );
 
         on( $parent, {
