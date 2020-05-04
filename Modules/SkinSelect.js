@@ -87,7 +87,7 @@ function SkinSelect( $select, userOptions = {} ) {
     }
 
 
-    function closeList() {
+    function closeList( avoidFocus ) {
         $parent.classList.remove( options.openedListClass );
 
         if ( $options ) {
@@ -105,7 +105,9 @@ function SkinSelect( $select, userOptions = {} ) {
 
         removeItemFocus();
 
-        $span.focus();
+        if ( !avoidFocus ) {
+            $span.focus();
+        }
     }
 
 
@@ -213,12 +215,12 @@ function SkinSelect( $select, userOptions = {} ) {
     /**
      * Force the update of title with the currently selected element text
      */
-    this.updateTitle = () => {
+    this.updateTitle = ( avoidFocus ) => {
         let title;
 
         if ( $select.selectedIndex < 0 ) {
             $span.innerHTML = '';
-            closeList();
+            closeList( avoidFocus );
             return;
         }
 
@@ -226,7 +228,7 @@ function SkinSelect( $select, userOptions = {} ) {
 
         $span.innerHTML = title;
 
-        closeList();
+        closeList( avoidFocus );
     }
 
 
@@ -319,7 +321,7 @@ function SkinSelect( $select, userOptions = {} ) {
 
         if ( optionsArray ) {
             setSelectOptions( optionsArray );
-            SELF.updateTitle();
+            SELF.updateTitle( true );
         }
 
         if ( !options.full ) {
@@ -328,7 +330,7 @@ function SkinSelect( $select, userOptions = {} ) {
 
         $select.style.display = 'none';
         $span.setAttribute( 'tabindex', '0' );
-        closeList();
+        closeList( true );
 
         if ( $layer && $layer.parentNode ) {
             $layer.parentNode.removeChild( $layer );
@@ -499,7 +501,7 @@ function SkinSelect( $select, userOptions = {} ) {
         $parent.appendChild( $span );
     }
 
-    this.updateTitle();
+    this.updateTitle( true );
 
     // Also skin list
     if ( options.full ) {

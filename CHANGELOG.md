@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## 6.0.12
+
+* Select skin
+    * Fix focus on load
+
+
 ## 6.0.11
 
 * Autocomplete:
