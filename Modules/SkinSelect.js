@@ -386,15 +386,10 @@ function SkinSelect( $select, userOptions = {} ) {
             layerScrollTop   = $layer.scrollTop;
 
             if ( itemPos.top + itemHeight > layerHeight + layerScrollTop)  {
-                console.log( 'after bottom' );
                 $layer.scrollTop = itemPos.top - layerHeight + itemHeight;
             }
             else if ( layerScrollTop > 0 && itemPos.top < layerScrollTop ) {
-                console.log( 'before top' );
                 $layer.scrollTop = itemPos.top;
-            }
-            else {
-                console.log( 'none' );
             }
         }
     }
