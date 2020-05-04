@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## 6.0.13
+
+* Autocomplete:
+    * Fix repeated query parameter
+
+
 ## 6.0.12
 
 * Select skin

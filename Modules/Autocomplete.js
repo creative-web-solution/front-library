@@ -476,7 +476,7 @@ export function Autocomplete(userOptions = {}) {
             return;
         }
         else {
-            let params, myHeaders;
+            let params, myHeaders, newUrl;
 
             if ( requestAbortController ) {
                 requestAbortController.abort();
@@ -490,12 +490,12 @@ export function Autocomplete(userOptions = {}) {
                 return (index > 0 ? result + '&' : '') + key + '=' + params[ key ];
             }, '' );
 
-            url = [ url, url.indexOf( '?' ) > -1 ? '&' : '?', params ].join('');
+            newUrl = [ url, url.indexOf( '?' ) > -1 ? '&' : '?', params ].join('');
 
             myHeaders = new Headers();
             myHeaders.append( 'X-Requested-With', 'XMLHttpRequest' );
 
-            fetch( url, {
+            fetch( newUrl, {
                 "signal": requestAbortController.signal,
                 "headers": myHeaders
             } )
