@@ -3,21 +3,34 @@
  *
  * @param {Function} callback
  * @param {Number} [threshold=100]
+ * @param {Boolean} [immediate]
  *
  * @example debouncedFunction = debounce( myFunction, 200 )
  *
  * @returns {Function}
  */
-export function debounce( callback, threshold = 100 ) {
-    var timer;
+export function debounce( callback, threshold = 100, immediate ) {
+    let timeout;
 
     return function() {
-        clearTimeout( timer );
+        const context = this, args = arguments;
 
-        var args = [].slice.call( arguments );
+        let later = function() {
+            timeout = null;
 
-        timer = setTimeout( function() {
-            callback.apply( this, args );
-        }, threshold );
-    }
+            if ( !immediate ) {
+                callback.apply( context, args );
+            }
+        };
+
+        let callNow = immediate && !timeout;
+
+        clearTimeout( timeout );
+
+        timeout = setTimeout( later, threshold );
+
+        if ( callNow ) {
+            callback.apply( context, args );
+        }
+    };
 }

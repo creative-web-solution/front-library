@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 6.0.15
+
+* Helpers:
+    * Update debounce function
+
 
 ## 6.0.14
 
