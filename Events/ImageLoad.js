@@ -58,7 +58,7 @@ function isDataURI( src ) {
  * @param {Boolean} manageError - If true reject the promise on error (false)
  * @param {onImageLoad_Callback} callback - Function called on image load
  *
- * @example  onImageLoad( $image, callback, manageError ).then( () => {} )
+ * @example  onImageLoad( $image, manageError, callback ).then( () => {} )
  *
  * // To allow event cancelation, don't chain .then() directly after onImageLoad
  * let preload = onImageLoad( $image, callback, manageError );
@@ -146,7 +146,7 @@ export function onImageLoad( $element, manageError, callback ) {
  * @example onAllImagesLoad( $images, partialCallback, manageError ).then( () => {} )
  *
  * // To allow event cancelation, don't chain .then() directly after onAllImagesLoad
- * let preload = onAllImagesLoad( $images, callback, manageError );
+ * let preload = onAllImagesLoad( $images, manageError, callback );
  * preload.then( () => {} );
  * ...
  *

@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 6.0.16
+
+* Autocomplete:
+    * Add resetField, resetResults and reset functions
+
+
 ## 6.0.15
 
 * Helpers:

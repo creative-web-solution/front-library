@@ -739,4 +739,33 @@ export function Autocomplete(userOptions = {}) {
 
         return this;
     };
+
+
+    /**
+     * Reset the input field
+     */
+    this.resetField = () => {
+        $field.value = '';
+    };
+
+
+    /**
+     * Reset the results
+     */
+    this.resetResults = () => {
+        currentQuery = '';
+        currentResults = [];
+        selectedIndex = -1;
+        nbResults = 0;
+        hasResults = false;
+    };
+
+
+    /**
+     * Reset the input field and the results
+     */
+    this.reset = () => {
+        this.resetField();
+        this.resetResults();
+    };
 }
