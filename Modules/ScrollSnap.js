@@ -71,11 +71,12 @@ function ScrollTo( $element, direction, callback ) {
         if ( !item ) {
             return;
         }
-        startTime = null;
+
+        startTime      = null;
         animationFrame = null;
-        snapItem = item;
-        snapItemType = type;
-        startPosition = $element[ scrollPropName ];
+        snapItem       = item;
+        snapItemType   = type;
+        startPosition  = $element[ scrollPropName ];
 
         delta = Math.abs( snapItem.coord - startPosition );
 
@@ -88,8 +89,7 @@ function ScrollTo( $element, direction, callback ) {
             return;
         }
 
-        duration = typeof _duration !== 'undefined' ? _duration : delta; // ms
-
+        duration       = typeof _duration !== 'undefined' ? _duration : delta; // ms
 
         animationFrame = window.requestAnimationFrame( step );
     }
@@ -100,14 +100,17 @@ function ScrollTo( $element, direction, callback ) {
 }
 
 let defaultOptions = {
-    lockedClass: 'locked',
-    minItemsToActivate: 2,
-    direction: 'h'
+    "lockedClass":        "locked",
+    "minItemsToActivate": 2,
+    "direction":          "h",
+    "_setScroll": ( $scroller, x, y ) => {
+        gsap.set( $scroller, { scrollTo: { x, y } });
+    }
 };
 
 let hasIosBadScroll;
 
-const TYPE_API = 'api';
+const TYPE_API    = 'api';
 const TYPE_SCROLL = 'scroll';
 
 
@@ -129,6 +132,7 @@ const TYPE_SCROLL = 'scroll';
  * @param {ScrollSnap_Handler} [options.onSnapEnd]
  * @param {ScrollSnap_Handler} [options.onReachStart]
  * @param {ScrollSnap_Handler} [options.onReachEnd]
+ * @param {Function} [options._setScroll] - Internal function using GSAP and scrollTo plugin to set the scroll. Can be override to use another library
  *
  * @example let sn = new ScrollSnap($scroller, options);
  *
@@ -162,21 +166,21 @@ export function ScrollSnap( $scroller, userOptions = {} ) {
         areEventsBinded,
         lastTouchPosition;
 
-    const TIMEOUT_DELAY = 100;
-    const STATE_IDLE = 'idle';
-    const STATE_MOVING = 'moving';
-    const STATE_LOCKED = 'locked';
+    const TIMEOUT_DELAY       = 100;
+    const STATE_IDLE          = 'idle';
+    const STATE_MOVING        = 'moving';
+    const STATE_LOCKED        = 'locked';
     const SCROLL_END_TRESHOLD = 5;
 
     options = extend( defaultOptions, userOptions );
 
-    const IS_VERTICAL_MODE = options.direction === 'v'
-    const SCROLL_PROPERTY_NAME = IS_VERTICAL_MODE ? 'scrollTop' : 'scrollLeft'
+    const IS_VERTICAL_MODE          = options.direction === 'v'
+    const SCROLL_PROPERTY_NAME      = IS_VERTICAL_MODE ? 'scrollTop' : 'scrollLeft'
     const SCROLL_SIZE_PROPERTY_NAME = IS_VERTICAL_MODE
         ? 'scrollHeight'
         : 'scrollWidth';
 
-    hasSwipe = false;
+    hasSwipe   = false;
     touchended = true;
 
     state = STATE_IDLE;
@@ -379,13 +383,13 @@ export function ScrollSnap( $scroller, userOptions = {} ) {
 
         on( $scroller, {
             "eventsName": "scroll",
-            "callback": onScroll
+            "callback":   onScroll
         } );
 
         gesture( $scroller, 'scrollSnapTouchSwipe', {
             "swipe": onSwipe,
             "start": onTouchstart,
-            "end": onTouchend
+            "end":   onTouchend
         } );
     }
 
@@ -437,12 +441,13 @@ export function ScrollSnap( $scroller, userOptions = {} ) {
             options.snapTo = snapTo;
         }
 
-        propPos = IS_VERTICAL_MODE ? 'top' : 'left';
-        offsetSize = 0;
+        propPos           = IS_VERTICAL_MODE ? 'top' : 'left';
+        offsetSize        = 0;
         snapPoints.length = 0;
-        halfSize.length = 0;
-        currentSnapItem = null;
-        TweenLite.set($scroller, { scrollTo: { x: 0, y: 0 } });
+        halfSize.length   = 0;
+        currentSnapItem   = null;
+
+        options._setScroll( $scroller, 0, 0 );
 
         if ( snapTo ) {
             $snapItems =
@@ -452,17 +457,20 @@ export function ScrollSnap( $scroller, userOptions = {} ) {
         }
 
         if ( $snapItems.length < minItemsToActivate ) {
-            state = STATE_LOCKED;
+            state      = STATE_LOCKED;
             touchended = true;
+
             removeEvents();
             aClass($scroller, options.lockedClass);
+
             return;
         }
 
         bindEvents();
 
-        state = STATE_IDLE;
+        state      = STATE_IDLE;
         touchended = true;
+
         rClass( $scroller, options.lockedClass );
 
         if ( options.$offsetElement ) {
@@ -479,20 +487,20 @@ export function ScrollSnap( $scroller, userOptions = {} ) {
         $snapItems.forEach( ( $item, index ) => {
             let _position = position( $item );
             let snapItem = {
-                "coord": _position[ propPos ] - offsetSize,
-                "index": index,
+                "coord":   _position[ propPos ] - offsetSize,
+                "index":   index,
                 "isFirst": index === 0,
-                "isLast": index === $snapItems.length - 1,
-                "$item": $item
+                "isLast":  index === $snapItems.length - 1,
+                "$item":   $item
             };
 
             if ( $itemToSnapOn === $item ) {
                 currentSnapItem = snapItem;
                 if ( IS_VERTICAL_MODE ) {
-                    TweenLite.set( $scroller, { scrollTo: { x: 0, y: snapItem.coord } } );
+                    options._setScroll( $scroller, 0, snapItem.coord );
                 }
                 else {
-                    TweenLite.set( $scroller, { scrollTo: { x: snapItem.coord, y: 0 } } );
+                    options._setScroll( $scroller, snapItem.coord, 0 );
                 }
             }
             else if ( !currentSnapItem ) {
@@ -545,8 +553,8 @@ export function ScrollSnap( $scroller, userOptions = {} ) {
         if ( state === STATE_MOVING ) {
             interuptAnimation();
         }
-        hasSwipe = false;
-        touchended = false;
+        hasSwipe          = false;
+        touchended        = false;
         lastTouchPosition = position;
         cancelAutoScroll();
     }
@@ -645,10 +653,10 @@ export function ScrollSnap( $scroller, userOptions = {} ) {
 
         if ( duration === 0 ) {
             if ( IS_VERTICAL_MODE ) {
-                TweenLite.set( $scroller, { scrollTo: { x: 0, y: snapItem.coord } } );
+                options._setScroll( $scroller, 0, snapItem.coord );
             }
             else {
-                TweenLite.set( $scroller, { scrollTo: { x: snapItem.coord, y: 0 } } );
+                options._setScroll( $scroller, snapItem.coord, 0 );
             }
             wait().then( () => resetState( snapItem, TYPE_API ) );
         }
@@ -744,11 +752,11 @@ export function ScrollSnap( $scroller, userOptions = {} ) {
         cancelAutoScroll();
         off( $scroller, {
             "eventsName": "scroll",
-            "callback": onScroll
+            "callback":   onScroll
         } );
         off( $scroller, {
             "eventsName": "wheel",
-            "callback": interuptAnimation
+            "callback":   interuptAnimation
         } );
         gestureOff( $scroller, 'scrollSnapTouchSwipe' );
     }

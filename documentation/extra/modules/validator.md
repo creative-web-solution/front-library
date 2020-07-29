@@ -10,7 +10,7 @@ For validation function, you can use either:
 * both at the same time
 
 
-*Initialisation*
+**Initialisation**
 
 ```
 import { Validator } from 'front-library/Modules/Validator'
@@ -31,41 +31,53 @@ validator = new Validator(
         "errorMessages": {},
 
 
-        "validatorsOptions":
-        {
-            "servercheck":
-            {
+        "validatorsOptions": {
+            "servercheck": {
                 "beforeCall":
-                    ( $input, value ) =>
-                    {
+                    ( $input, value ) => {
                         console.log( 'beforeCall: ', $input, value );
                     },
                 "afterCall":
-                    ( $input, value ) =>
-                    {
+                    ( $input, value ) => {
                         console.log( 'afterCall: ', $input, value );
                     }
             }
         },
-        "onValidate": data =>
-        {
+        "onValidate": data => {
             console.log( 'Valid cb:', data );
         },
-        "onInvalidate": data =>
-        {
+        "onInvalidate": data => {
             console.log( 'Invalid cb:', data );
             data.errors.forEach(
-                input =>
-                {
+                input => {
                     console.log( input.getErrorMessages() );
                 }
             );
+        },
+        "liveValidation": {
+            "onValidate":  ( input, event ) => {
+                console.log('Live valid cb:', input, event );
+            },
+            "onInvalidate": ( input, event ) => {
+                console.log('Live invalid cb:', input, event );
+                console.log('Error message: ', input.getErrorMessages());
+            },
+            "eventsName": {
+                "optin":            "change",
+                "select":           "change",
+                "inputText":        "change"
+            },
+            "eventsHook": {
+                "focus": ( input, event ) => {
+                    console.log('Live focus eventsHook:', input, event );
+                }
+            }
         }
     }
 );
 ```
 
-*Form binding*
+**Form binding**
 
 ```
 on(
@@ -101,6 +113,42 @@ on(
     }
 );
 ```
+
+
+### Live validation
+
+The live validation system allows you to validate each field separatly on some specific event like 'change', 'keyup', ...
+
+You can set these events in the `liveValidation.eventsName` property. You can set a different event on each type of field. There are 3 types:
+
+* optin: for radio button and checkbox
+* select
+* inputText: all textfied like fields (number, email, ...), including textarea
+
+When the setted event is triggered, one of the function `liveValidation.onValidate` or `liveValidation.onInvalidate` will be called.
+
+**Event hook system**
+
+You can bind an event with a custom callback to the fields in the `liveValidation.eventsHook` property.
+
+For exemple, to bind a `focus` and a `click` event on all fields:
+
+{
+    ...,
+    "liveValidation": {
+        ...,
+        "eventsHook": {
+            "focus": ( input, event ) => {
+                console.log('Focus eventsHook:', input, event );
+            },
+            "click": ( input, event ) => {
+                console.log('Click eventsHook:', input, event );
+            }
+        }
+    }
+}
+
+
 
 ### Radio button DOM feature
 
@@ -172,7 +220,7 @@ data = {
 }
 ```
 
-*Input object sample:*
+**Input object sample:**
 
 ```
 input = {
@@ -197,6 +245,9 @@ input = {
     // Validate the field and return a boolean
     isValid()                   function
 
+    // Tell if the current validation is live (like on change event) or global (like on submit)
+    isLiveValidation            boolean
+
 
     // For radio button only
 
@@ -209,7 +260,7 @@ input = {
 }
 ```
 
-*getErrors( locale ) function:*
+**getErrors( locale ) function:**
 
 Return an array of validators:
 
@@ -222,7 +273,7 @@ Return an array of validators:
 }
 ```
 
-*getErrorMessages( locale ) function:*
+**getErrorMessages( locale ) function:**
 
 Take an optional parameter that contains a hash connecting labels to error message:
 
@@ -261,7 +312,7 @@ Locale object are like this:
 The key must match with the name of the validators. If there is no match the `default` key will be used
 
 
-*Error messages*
+**Error messages**
 
 Error messages can be defined in (in order of priority if set in several times):
 
@@ -277,7 +328,7 @@ Example for an email error message:
 <input type="email" required data-error-label="Field in error" data-error-label-email="Invalid email" >
 ```
 
-*Used labels:*
+**Used labels:**
 
 * email
 * equals
@@ -304,8 +355,7 @@ import { addValidator } from 'front-library/Modules/Validator'
 addValidator(
     VALIDATOR_NAME,
     SELECTOR,
-    ( $input, value ) =>
-    {
+    ( $input, value, isLiveValidation, options ) => {
         return Promise_Object
     }
 );
@@ -322,12 +372,21 @@ addValidator(
     VALIDATOR_NAME,
     SELECTOR,
     ASYNC,
-    ( $input, value ) =>
-    {
+    ( $input, value, isLiveValidation, options ) => {
         return Promise_Object;
     }
 );
 ```
+
+**Callback function**
+
+* $input : The current tested field
+* value : The value of this field
+* isLiveValidation : If false, it's propably a global validation, like just before a submit.
+* options : Options define in the `validatorsOptions` of the main configuration
+
+`isLiveValidation` is usefull when the check use external web service. You can avoid the check on live validation and do it on submit validation.
+
 
 See sample below.
 
@@ -342,106 +401,25 @@ A state (object return by the promise) is like this:
     "label":                        validatorName,
 
     // OPTIONAL
+    "isLiveValidation":             true|false,
     "extraMessages":                [], // Like warning, info, ...
     "extraErrorMessages":           [], // Extra error message/label
     "data":                         {}
 }
 ```
 
-There are available tools/helper:
 
-Import its with:
-
-```
-import { validatorTools } from 'front-library/Modules/Validator'
-```
-
-
-*Group selection*
-
-```
-validatorTools.getRadioList( RADIO_OR_INPUT_NAME [, {
-    [selector]
-    [othersOnly]
-} ] );
-
-validatorTools.getRadioList( $inputRadio );
-// or
-validatorTools.getRadioList( $inputRadio.name );
-```
-
-Return a NodeList of all `input[name="{NAME}"]`
-
-For example, you can set a custom selector like `select[data-group="{NAME}"]`:
-
-```
-validatorTools.getRadioList( $inputRadio, {
-    [selector]
-    [othersOnly]
-} );
-```
-
-
-*Check if one of the radio button is check:*
-
-```
-validatorTools.isRadioListChecked( $listOfInputRadio );
-validatorTools.isRadioListChecked( $inputRadio );
-```
-
-Return the radio button checked or false.
-
-
-*Get the text of a label's field:*
-
-```
-validatorTools.getLabel( $input );
-validatorTools.getLabel( $input, $wrapper );
-```
-
-Return the text of the label, if there is only one, an array of string if more than 1, and '' if no label is found
-
-
-*Get the label element of a field:*
-
-```
-validatorTools.getLabelElement( $input );
-validatorTools.getLabelElement( $input, $wrapper );
-```
-
-Return the label, if there is only one, the list of labels if many or null if none
-
-*Validation promise helper*
-
-```
-validatorTools.standardValidation( $input, value, isValid, validatorName );
-```
-
-Return a promise that will be rejected in case of error. See complete example below.
-
-
-*Some helpers:*
-
-```
-validatorTools.isEmpty( value );
-validatorTools.isNumber( value );
-validatorTools.isEmail( value );
-validatorTools.isUrl( isUrl );
-validatorTools.isDate( stringDate, format? );
-```
-
-
-*Full sample of the url checking:*
+**Full sample of the url checking:**
 
 ```
 addValidator(
     'url',
     '[type="url"]',
-    ( $input, value ) =>
+    ( $input, value, isLiveValidation, options ) =>
     {
-        let isValid                        = value === '' || validatorTools.isUrl( value );
+        let isValid                        = value === '' || isUrl( value );
 
-        return validatorTools.standardValidation( $input, value, isValid, 'url' );
+        return standardValidation( $input, value, isValid, 'url', null , isLiveValidation );
     }
 );
 ```
@@ -453,8 +431,7 @@ addValidator(
     'testasync',
     '[data-testasync]',
     true,
-    ( $input, value ) =>
-    {
+    ( $input, value, isLiveValidation, options ) => {
         let deferred                        = defer();
 
         isValid                             = true|false;
@@ -463,7 +440,7 @@ addValidator(
         setTimeout(
             () =>
             {
-                deferred.resolve( validatorTools.createState( $input, value, isValid, 'testasync' ) );
+                deferred.resolve( createState( $input, value, isValid, 'testasync', null, isLiveValidation ) );
             },
             1000
         );
@@ -479,8 +456,7 @@ Example with a custom state:
 addValidator(
     'test',
     '[data-test]',
-    ( $input, value ) =>
-    {
+    ( $input, value, isLiveValidation, options ) => {
         let deferred                        = defer();
 
         deferred.resolve(
@@ -489,6 +465,8 @@ addValidator(
                 "value":                        value,
                 "isValid":                      true,
                 "label":                        'test',
+
+                "isLiveValidation":             isLiveValidation,
 
                 "extraMessages":                [ 'Here is a warning or an information' ],
                 "extraErrorMessages":           [ 'Here is an extra error message', 'or-some-label' ],
@@ -501,4 +479,106 @@ addValidator(
         return deferred;
     }
 );
+```
+
+
+### Tools
+
+**There are available tools/helper:**
+
+Import its with:
+
+```
+import { createState, standardValidation } from 'front-library/Modules/Validator/Tools/ValidationState'
+import { getRadioList, isRadioListChecked } from 'front-library/Modules/Validator/Tools/RadioButton'
+import { getLabelElement, getLabel } from 'front-library/Modules/Validator/Tools/Label'
+import isEmpty from 'front-library/Modules/Validator/Tools/isEmpty'
+import isNumber from 'front-library/Modules/Validator/Tools/isNumber'
+import isEmail from 'front-library/Modules/Validator/Tools/isEmail'
+import isUrl from 'front-library/Modules/Validator/Tools/isUrl'
+import isDate from 'front-library/Modules/Validator/Tools/isDate'
+import getQueryFromForm from 'front-library/Modules/Validator/Tools/getQueryFromForm'
+```
+
+
+**Group selection**
+
+```
+getRadioList( RADIO_OR_INPUT_NAME [, {
+    [selector]
+    [othersOnly]
+} ] );
+
+getRadioList( $inputRadio );
+// or
+getRadioList( $inputRadio.name );
+```
+
+Return a NodeList of all `input[name="{NAME}"]`
+
+For example, you can set a custom selector like `select[data-group="{NAME}"]`:
+
+```
+getRadioList( $inputRadio, {
+    [selector]
+    [othersOnly]
+} );
+```
+
+
+**Check if one of the radio button is check:**
+
+```
+isRadioListChecked( $listOfInputRadio );
+isRadioListChecked( $inputRadio );
+```
+
+Return the radio button checked or false.
+
+
+**Get the text of a label's field:**
+
+```
+getLabel( $input );
+getLabel( $input, $wrapper );
+```
+
+Return the text of the label, if there is only one, an array of string if more than 1, and '' if no label is found
+
+
+**Get the label element of a field:**
+
+```
+getLabelElement( $input );
+getLabelElement( $input, $wrapper );
+```
+
+Return the label, if there is only one, the list of labels if many or null if none
+
+**Validation promise helper**
+
+```
+standardValidation( $input, value, isValid, validatorName, customData , isLiveValidation );
+```
+
+Return a promise that will be rejected in case of error. See complete example below.
+
+
+**Some helpers:**
+
+```
+isEmpty( value );
+isNumber( value );
+isEmail( value );
+isUrl( isUrl );
+isDate( stringDate, format? );
+```
+
+
+**Create a query form a form**
+
+```
+import getQueryFromForm from 'front-library/Modules/Validator/Tools/getQueryFromForm'
+
+let query = getQueryFromForm( $form );
 ```

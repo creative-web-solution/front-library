@@ -13,14 +13,15 @@
  * @returns {Array}
  */
 export function unique( list, filter ) {
-    let returnArr = [];
+    if ( !filter ) {
+        return Array.from( new Set( list ) );
+    }
 
-    for ( let i = 0; i < list.length; i++ ) {
-        if (
-            ( filter && filter(list[ i ], returnArr ) ) ||
-            ( !filter && !returnArr.includes(list[ i ] ) )
-        ) {
-            returnArr.push( list[ i ] );
+    const returnArr = [];
+
+    for ( const item of list ) {
+        if ( filter( item, returnArr ) ) {
+            returnArr.push( item );
         }
     }
 

@@ -1,37 +1,17 @@
+let videoCanPlayType;
+
+
 /**
  * @callback mediaPreloader_Callback
  * @memberof MediaPreloader
  *
  * @param {Number} percent
  */
-
-let videoCanPlayType, videoTemp, audioTemp, CHECK_DELAY;
-
-videoTemp = document.createElement( 'VIDEO' );
-audioTemp = document.createElement( 'AUDIO' );
-
-videoCanPlayType = {
-    "mp4":
-        videoTemp.canPlayType( 'video/mp4' ) === 'probably' ||
-        videoTemp.canPlayType( 'video/mp4' ) === 'maybe',
-    "webm":
-        videoTemp.canPlayType( 'video/webm' ) === 'probably' ||
-        videoTemp.canPlayType( 'video/webm' ) === 'maybe',
-    "mp3":
-        audioTemp.canPlayType( 'video/mp3' ) === 'probably' ||
-        audioTemp.canPlayType( 'video/mp3' ) === 'maybe'
-};
-
-videoTemp = null;
-audioTemp = null;
-
-CHECK_DELAY = 200; // ms
-
 /**
  * Preload audio and video
  * @class MediaPreloader
  *
- * @example let mp = MediaPreloader(
+ * @example let mp = new MediaPreloader(
  *             {
  *                 "$media": $myVideo,
  *                 "onProgress": percent => {
@@ -72,6 +52,30 @@ export function MediaPreloader( options ) {
         'pause',
         'play'
     ];
+    const CHECK_DELAY = 200; // ms
+
+    if ( !videoCanPlayType ) {
+        let videoTemp, audioTemp;
+
+        videoTemp = document.createElement( 'VIDEO' );
+        audioTemp = document.createElement( 'AUDIO' );
+
+        videoCanPlayType = {
+            "mp4":
+                videoTemp.canPlayType( 'video/mp4' ) === 'probably' ||
+                videoTemp.canPlayType( 'video/mp4' ) === 'maybe',
+            "webm":
+                videoTemp.canPlayType( 'video/webm' ) === 'probably' ||
+                videoTemp.canPlayType( 'video/webm' ) === 'maybe',
+            "mp3":
+                audioTemp.canPlayType( 'video/mp3' ) === 'probably' ||
+                audioTemp.canPlayType( 'video/mp3' ) === 'maybe'
+        };
+
+        videoTemp = null;
+        audioTemp = null;
+    }
+
 
     idleMaxCount = 4;
     $media = options.$media;
@@ -82,13 +86,10 @@ export function MediaPreloader( options ) {
             reject();
         }
 
+
         function removeEvents() {
-            for (
-                let index = 0, len = EVENTS_NAME.length;
-                index < len;
-                ++index
-            ) {
-                $media.removeEventListener( EVENTS_NAME[ index ], capture );
+            for ( const eventName of EVENTS_NAME ) {
+                $media.removeEventListener( eventName, capture );
             }
         }
 
@@ -204,15 +205,10 @@ export function MediaPreloader( options ) {
             }
         }
 
-        // Events bindings
-        for (
-            let index = 0, len = EVENTS_NAME.length;
-            index < len;
-            ++index
-        ) {
-            $media.addEventListener( EVENTS_NAME[ index ], capture, false );
+        for ( const eventName of EVENTS_NAME ) {
+            $media.addEventListener( eventName, capture, false );
         }
-    } )
+    } );
 
     /**
      * Start the preload of the media

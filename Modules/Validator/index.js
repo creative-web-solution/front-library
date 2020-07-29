@@ -370,8 +370,6 @@ function Input( $input, options ) {
      * Return an array of error messages and labels
      */
     this.getErrorMessages = _locale => {
-        let messages;
-
         if ( !validatorsInErrors ) {
             this.getErrors();
         }
@@ -380,10 +378,10 @@ function Input( $input, options ) {
             return [];
         }
 
-        messages = [];
+        const messages = [];
 
         validatorsInErrors.forEach( validator => {
-            // BASIC MESSAGE (determined form validator name)
+            // BASIC MESSAGE (determined from validator name)
             messages.push( {
                 "message": labelToMessage( validator.name, _locale ),
                 "label": validator.name,
@@ -552,17 +550,15 @@ export function Validator( $form, userOptions = {} ) {
     let options,
         inputsList,
         radioDuplicateHash,
-        state,
-        STATE_IDLE,
-        STATE_VALIDATING;
+        state;
 
     options = extend( defaultOptions, userOptions );
     options.hasLiveValidation = options.liveValidation.onValidate || options.liveValidation.onInvalidate;
     inputsList = [];
     radioDuplicateHash = {};
 
-    STATE_IDLE = 'idle';
-    STATE_VALIDATING = 'validating';
+    const STATE_IDLE = 'idle';
+    const STATE_VALIDATING = 'validating';
     state = STATE_IDLE;
 
     $form.setAttribute( 'novalidate', 'novalidate' );
@@ -729,16 +725,13 @@ export function Validator( $form, userOptions = {} ) {
      * @return {Input}
      */
     this.getFieldValidator = $field => {
-        let input;
 
-        for ( let i = 0, len = inputsList.length; i < len; ++i ) {
-            if ( inputsList[ i ].$input === $field ) {
-                input = inputsList[ i ];
-                break;
+        for ( const input of inputsList ) {
+            if ( input.$input === $field ) {
+                return input;
             }
         }
 
-        return input;
     }
 
 
@@ -764,6 +757,7 @@ export function Validator( $form, userOptions = {} ) {
         state = STATE_VALIDATING;
 
         prom = defer();
+
         retObject = {
             "input": input,
             "error": null,

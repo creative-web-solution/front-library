@@ -69,9 +69,9 @@ export function getRadioList( inputRadioOrInputName, userOptions ) {
 export function isRadioListChecked( $iputRadioOrRadioList ) {
     let $list = ( $iputRadioOrRadioList instanceof NodeList || $iputRadioOrRadioList instanceof Array ) ? $iputRadioOrRadioList : getRadioList( $iputRadioOrRadioList );
 
-    for ( let i = 0, len = $list.length; i < len; ++i ) {
-        if ( $list[i].checked ) {
-            return $list[ i ];
+    for ( const $item of $list ) {
+        if ( $item.checked ) {
+            return $item;
         }
     }
     return false;

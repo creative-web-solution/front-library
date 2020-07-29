@@ -1,3 +1,8 @@
+import { gesture, gestureOff } from 'front-library/Events/Gesture';
+import { rClass, aClass } from 'front-library/DOM/Class';
+import { wait } from 'front-library/Helpers/wait';
+
+
 /**
  * Simulate hover (on touch) on mobile device. Touch a second time to follow the link.
  * @class
@@ -14,54 +19,64 @@
  * @param {HTMLEvent} options.$wrapper
  */
 export function TouchHover({ cssClass, selector, $wrapper }) {
-    let $lastElem, $body, hasClickOutsideListener;
+    let $lastElem, hasClickOutsideListener;
+
+    const $BODY           = document.body;
+    const IS_TOUCHED_ONCE = Symbol( 'isTouchedOnce' );
 
     hasClickOutsideListener = false;
-    $body = document.body;
-    $wrapper = $wrapper || $body;
+    $wrapper                 = $wrapper || $BODY;
 
-    function addClass( $elem ) {
-        if ( $elem === $lastElem ) {
-            return;
-        }
+
+    function addClass( $target ) {
 
         if ( $lastElem ) {
-            $lastElem.classList.remove( cssClass );
+            rClass( $lastElem, cssClass );
         }
 
-        $elem.classList.add( cssClass );
-        $lastElem = $elem;
+        aClass( $target, cssClass );
+        $lastElem = $target;
 
         if ( !hasClickOutsideListener ) {
-            $body.addEventListener( 'touchstart', removeClass );
+            wait().then( () => {
+                gesture( $BODY, 'touchhover2', {
+                    "end": removeClass
+                } );
+            } );
             hasClickOutsideListener = true;
         }
+
+        $target[ IS_TOUCHED_ONCE ] = true;
     }
 
 
-    function removeClass( e ) {
-        if ( e.target && e.target.closest(selector) === $lastElem ) {
-            return;
-        }
+    function removeClass() {
 
-        $body.removeEventListener( 'touchstart', removeClass );
+        gestureOff( $BODY, 'touchhover2', {
+            "end": removeClass
+        } );
         hasClickOutsideListener = false;
 
         if ( $lastElem ) {
-            $lastElem.classList.remove( cssClass );
+            rClass( $lastElem, cssClass );
+
+            $lastElem[ IS_TOUCHED_ONCE ] = false;
             $lastElem = null;
         }
     }
 
 
-    function toggleClass( e ) {
-        if ( !e.target || !e.target.matches( selector ) ) {
+    function toggleClass( e, $target ) {
+        if ( $target !== $lastElem ) {
+            removeClass();
+        }
+
+        if ( $target[ IS_TOUCHED_ONCE ] ) {
+            removeClass();
             return;
         }
 
-        e.stopPropagation()
-
-        addClass( e.target );
+        addClass( $target );
     }
 
 
@@ -71,8 +86,14 @@ export function TouchHover({ cssClass, selector, $wrapper }) {
      * @returns {TouchHover}
      */
     this.destroy = () => {
-        $wrapper.removeEventListener( 'touchend', toggleClass );
-        $body.removeEventListener( 'touchstart', removeClass );
+
+        gestureOff( $wrapper, 'touchhover', {
+            "end": toggleClass
+        } );
+
+        gestureOff( $BODY, 'touchhover2', {
+            "end": removeClass
+        } );
 
         return this;
     }
@@ -82,5 +103,12 @@ export function TouchHover({ cssClass, selector, $wrapper }) {
         return;
     }
 
-    $wrapper.addEventListener( 'touchend', toggleClass );
+
+    gesture( $wrapper, 'touchhover', {
+        "selector":     selector,
+        "end":          toggleClass,
+        "preventClick": ( e, $target ) => {
+            return $target[ IS_TOUCHED_ONCE ];
+        }
+    } );
 }

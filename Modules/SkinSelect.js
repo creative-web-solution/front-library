@@ -59,7 +59,7 @@ const defaultOptions = {
  * @param {String} [userOptions.listTpl]
  */
 function SkinSelect( $select, userOptions = {} ) {
-    var $parent,
+    let $parent,
         extraClass,
         $span,
         $lastOption,

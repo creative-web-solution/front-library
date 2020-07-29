@@ -41,32 +41,49 @@ import { extend } from 'front-library/Helpers/Extend';
  * keyboardControls.off();
  */
 export function KeyboardHandler( $element, userOptions = {} ) {
-    let defaultOptions = {
+    const DEFAULT_OPTIONS = {
         "preventDefault": true
     };
 
-    let options;
+    const OPTIONS            = extend( DEFAULT_OPTIONS, userOptions );
 
-    const LEFT_KEY_CODE = 37;
-    const UP_KEY_CODE = 38;
-    const RIGHT_KEY_CODE = 39;
-    const DOWN_KEY_CODE = 40;
-    const TAB_KEY_CODE = 9;
-    const PAGE_UP_KEY_CODE = 33;
+    const LEFT_KEY_CODE      = 37;
+    const UP_KEY_CODE        = 38;
+    const RIGHT_KEY_CODE     = 39;
+    const DOWN_KEY_CODE      = 40;
+    const TAB_KEY_CODE       = 9;
+    const PAGE_UP_KEY_CODE   = 33;
     const PAGE_DOWN_KEY_CODE = 34;
-    const ENTER_KEY_CODE = 13;
-    const SPACE_KEY_CODE = 32;
-    const ESCAPE_KEY_CODE = 27;
-    const R_KEY_CODE = 82;
-    const P_KEY_CODE = 80;
-    const F5_KEY_CODE = 116;
+    const ENTER_KEY_CODE     = 13;
+    const SPACE_KEY_CODE     = 32;
+    const ESCAPE_KEY_CODE    = 27;
+    const R_KEY_CODE         = 82;
+    const P_KEY_CODE         = 80;
+    const F5_KEY_CODE        = 116;
+    const EVENTS_NAME        = new Map();
 
-    options = extend( defaultOptions, userOptions );
+
+    EVENTS_NAME.set( ENTER_KEY_CODE,     () => [ 'onEnter', 'onSelect' ] );
+    EVENTS_NAME.set( SPACE_KEY_CODE,     () => [ 'onSpace', 'onSelect' ] );
+    EVENTS_NAME.set( ESCAPE_KEY_CODE,    () => [ 'onEscape' ] );
+    EVENTS_NAME.set( RIGHT_KEY_CODE,     () => [ 'onRight', 'onNext' ] );
+    EVENTS_NAME.set( LEFT_KEY_CODE,      () => [ 'onLeft', 'onPrevious' ] );
+    EVENTS_NAME.set( UP_KEY_CODE,        () => [ 'onUp', 'onNext' ] );
+    EVENTS_NAME.set( DOWN_KEY_CODE,      () => [ 'onDown', 'onPrevious' ] );
+    EVENTS_NAME.set( PAGE_UP_KEY_CODE,   () => [ 'onPageUp' ] );
+    EVENTS_NAME.set( PAGE_DOWN_KEY_CODE, () => [ 'onPageDown' ] );
+    EVENTS_NAME.set( TAB_KEY_CODE,       e => {
+        if ( e.shiftKey && OPTIONS[ 'onTabReverse' ] ) {
+            return [ 'onTabReverse' ];
+        }
+        return [ 'onTab' ];
+    } );
+
 
     function handleCallbacks( event, $context, callbacks ) {
         callbacks.forEach( cb => {
-            if ( options[ cb ] ) {
-                options[ cb ].call( $context, event, $context );
+            if ( OPTIONS[ cb ] ) {
+                OPTIONS[ cb ].call( $context, event, $context );
             }
         } );
     }
@@ -75,7 +92,7 @@ export function KeyboardHandler( $element, userOptions = {} ) {
         let keyCode = e.which;
 
         // Block all key except tab, CTRL R, CMD R or F5
-        if ( options.preventDefault &&
+        if ( OPTIONS.preventDefault &&
                 keyCode !== TAB_KEY_CODE &&
                 keyCode !== F5_KEY_CODE &&
                 !( keyCode === R_KEY_CODE && ( e.ctrlKey || e.metaKey ) ) &&
@@ -87,46 +104,30 @@ export function KeyboardHandler( $element, userOptions = {} ) {
 
         handleCallbacks( e, e.target, [ 'onKey' ] );
 
-        if ( ENTER_KEY_CODE === keyCode ) {
-            handleCallbacks( e, e.target, [ 'onEnter', 'onSelect' ] );
+        if ( EVENTS_NAME.has( keyCode ) ) {
+            handleCallbacks( e, e.target, EVENTS_NAME.get( keyCode )( e ) );
         }
-        else if ( SPACE_KEY_CODE === keyCode ) {
-            handleCallbacks( e, e.target, [ 'onSpace', 'onSelect' ] );
-        }
-        else if ( ESCAPE_KEY_CODE === keyCode ) {
-            handleCallbacks( e, e.target, [ 'onEscape' ] );
-        }
-        else if ( RIGHT_KEY_CODE === keyCode ) {
-            handleCallbacks( e, e.target, [ 'onRight', 'onNext' ] );
-        }
-        else if ( LEFT_KEY_CODE === keyCode ) {
-            handleCallbacks( e, e.target, [ 'onLeft', 'onPrevious' ] );
-        }
-        else if ( UP_KEY_CODE === keyCode ) {
-            handleCallbacks( e, e.target, [ 'onUp', 'onNext' ] );
-        }
-        else if ( DOWN_KEY_CODE === keyCode ) {
-            handleCallbacks( e, e.target, [ 'onDown', 'onPrevious' ] );
-        }
-        else if ( PAGE_UP_KEY_CODE === keyCode ) {
-            handleCallbacks( e, e.target, [ 'onPageUp' ] );
-        }
-        else if (PAGE_DOWN_KEY_CODE === keyCode) {
-            handleCallbacks( e, e.target, [ 'onPageDown' ] );
-        }
-        else if ( TAB_KEY_CODE === keyCode ) {
-            if ( e.shiftKey && options[ 'onTabReverse' ] ) {
-                handleCallbacks( e, e.target, [ 'onTabReverse' ] );
-                return
-            }
-            handleCallbacks( e, e.target, [ 'onTab' ] );
-        }
+    }
+
+    /**
+     * Add the binding
+     *
+     * @returns {KeyboardHandler}
+     */
+    this.on = () => {
+        on( $element, {
+            "eventsName": "keydown",
+            "selector": OPTIONS.selector,
+            "callback": onKeypress
+        } );
+
+        return this;
     }
 
     /**
      * Remove the binding
      *
-     * @returns {IntersectObserver}
+     * @returns {KeyboardHandler}
      */
     this.off = () => {
         off( $element, {
@@ -138,9 +139,5 @@ export function KeyboardHandler( $element, userOptions = {} ) {
     }
 
 
-    on( $element, {
-        "eventsName": "keydown",
-        "selector": options.selector,
-        "callback": onKeypress
-    } );
+    this.on();
 }

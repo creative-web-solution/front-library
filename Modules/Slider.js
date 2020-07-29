@@ -145,7 +145,7 @@ function Slide( options ) {
             this.x = getXMin( this.offsetToGo );
         }
 
-        TweenLite.set( $slide, {
+        options._setStyle( $slide, {
             "x": 0,
             "xPercent": this.x,
             "position": this.offsetToGo === 0 ? 'relative' : 'absolute'
@@ -176,7 +176,7 @@ function Slide( options ) {
 
         this.x = x;
 
-        TweenLite.set($slide, {
+        options._setStyle( $slide, {
             "x": 0,
             "xPercent": x
         } );
@@ -204,14 +204,15 @@ function Slide( options ) {
 
         prom = defer();
 
-        TweenLite.to($slide, options.speed, {
+        options._tweenTo( $slide, {
+            "duration": options.speed,
             "x": 0,
             "xPercent": this.x,
             "ease": easing,
             "onComplete": () => {
-                TweenLite.set( $slide, {
+                options._setStyle( $slide, {
                     "position": positionning
-                } )
+                } );
 
                 SELF[ SELF.isActive() ? 'activate' : 'deactivate' ]();
 
@@ -241,8 +242,8 @@ function Slide( options ) {
             $link.removeAttribute( 'tabindex' );
         } );
 
-        TweenLite.killTweensOf( $slide );
-        TweenLite.set( $slide, {
+        options._killTweens( $slide );
+        options._setStyle( $slide, {
             "clearProps": "all"
         } );
     };
@@ -263,27 +264,40 @@ function Slide( options ) {
     };
 }
 
-const DIRECTION_NEXT = 1;
+const DIRECTION_NEXT     = 1;
 const DIRECTION_PREVIOUS = -1;
 
-const SLIDER_EVENT_BEFORE = 'before';
+const SLIDER_EVENT_BEFORE      = 'before';
 const SLIDER_EVENT_BEFORE_EACH = 'beforeEach';
-const SLIDER_EVENT_AFTER = 'after';
-const SLIDER_EVENT_AFTER_EACH = 'afterEach';
-const SLIDER_EVENT_START = 'start';
+const SLIDER_EVENT_AFTER       = 'after';
+const SLIDER_EVENT_AFTER_EACH  = 'afterEach';
+const SLIDER_EVENT_START       = 'start';
+
 
 const defaultOptions = {
-    startSlide: 0,
-    nbSlideVisibleBefore: 0,
-    nbSlideVisibleAfter: 0,
-    slidePerPage: 1,
-    moveByPage: true,
-    speed: 0.5,
-    smoothHeight: true,
-    listSelector: ".list",
-    itemsSelector: ".item",
-    activeClass: "active-slide",
-    loop: true
+    "startSlide":           0,
+    "nbSlideVisibleBefore": 0,
+    "nbSlideVisibleAfter":  0,
+    "slidePerPage":         1,
+    "moveByPage":           true,
+    "speed":                0.5,
+    "smoothHeight":         true,
+    "listSelector":         ".list",
+    "itemsSelector":        ".item",
+    "activeClass":          "active-slide",
+    "loop":                 true,
+    "_setStyle": ( $elem, styles ) => {
+        gsap.set( $elem, styles );
+    },
+    "_tweenTo": ( $elem, styles ) => {
+        gsap.to( $elem, styles );
+    },
+    "_tweenFromTo": ( $elem, init, styles ) => {
+        gsap.fromTo( $elem, init, styles );
+    },
+    "_killTweens": ( $elem ) => {
+        gsap.killTweensOf( $elem );
+    }
 };
 
 let customeSlideId = 0;
@@ -315,6 +329,10 @@ function getNextSlideId() {
  * @param {Callback} [userOptions.onAfter=data => {}] - Called one time at the end of the animation
  * @param {Callback} [userOptions.onAfterEach=data => {}] - Called for every slide that is came in the 1st position during the animation
  * @param {Callback} [userOptions.onStart=data => {}] - Called one time at the initialisation of the slider
+ * @param {Function} [options._setStyle] - Internal function using GSAP to set CSS styles. Can be override to use another library
+ * @param {Function} [options._tweenTo] - Internal function using GSAP to tween element. Can be override to use another library
+ * @param {Function} [options._tweenFromTo] - Internal function using GSAP to initialize and tween element. Can be override to use another library
+ * @param {Function} [options._killTweens] - Internal function using GSAP to remove tweens from element. Can be override to use another library
  *
  * @see extra/modules/slider.md
  *
@@ -753,13 +771,13 @@ export function Slider( $slider, userOptions = {} ) {
     function updateHeight( currentSlide, nextSlide, duration ) {
         let deferred = defer();
 
-        TweenLite.fromTo(
+        options._tweenFromTo(
             $list,
-            duration,
             {
                 "height": currentSlide.getHeight()
             },
             {
+                duration,
                 "height": nextSlide.getHeight(),
                 "onComplete": deferred.resolve
             }
@@ -770,7 +788,7 @@ export function Slider( $slider, userOptions = {} ) {
 
 
     function cleanListHeight() {
-        TweenLite.set( $list, {
+        options._setStyle( $list, {
             "clearProps": "height"
         } );
     }
@@ -1084,7 +1102,11 @@ export function Slider( $slider, userOptions = {} ) {
             nbPages,
             "speed": options.speed,
             "$slide": $slide,
-            index
+            index,
+            "_setStyle": options._setStyle,
+            "_tweenTo": options._tweenTo,
+            "_tweenFromTo": options._tweenFromTo,
+            "_killTweens": options._killTweens
         } );
 
         if ( slide.index === options.startSlide ) {
@@ -1170,7 +1192,7 @@ export function SliderControls( slider, options ) {
      * @instance
      */
     Object.defineProperty( this, 'slider', {
-        get: function() {
+        "get": function() {
             return slider;
         }
     } );
@@ -1512,15 +1534,15 @@ export function SliderControls( slider, options ) {
             paginationKeyboardControls = new KeyboardHandler(
                 options.$pagination,
                 {
-                    selector: options.paginationItems,
-                    onPrevious: () => {
+                    "selector": options.paginationItems,
+                    "onPrevious": () => {
                         one( slider, {
                             "eventsNAme": "before",
                             "callback": updateBulletsFocus
                         } );
                         slider.previous();
                     },
-                    onNext: () => {
+                    "onNext": () => {
                         one( slider, {
                             "eventsNAme": "before",
                             "callback": updateBulletsFocus

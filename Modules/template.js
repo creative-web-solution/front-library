@@ -89,7 +89,7 @@ let entityRegexes = {
 function defaults(obj) {
     Array.prototype.slice.call(arguments, 1).forEach(source => {
         if (source) {
-            for (var prop in source) {
+            for (let prop in source) {
                 if (obj[prop] === void 0) {
                     obj[prop] = source[prop]
                 }

@@ -748,10 +748,13 @@ export function Popin( userOptions = {}, $popin ) {
             }
         );
 
-        off( window, {
-            "eventsName": "resize",
-            "callback": resizeHandler
-        });
+        off(
+            window,
+            {
+                "eventsName": "resize",
+                "callback": resizeHandler
+            }
+        );
 
         off(
             $popin,

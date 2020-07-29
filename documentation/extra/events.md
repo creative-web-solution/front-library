@@ -1,3 +1,87 @@
+## Keyboard handler
+
+
+Callbacks are bound on 'keydown' events
+
+
+```
+import { KeyboardHandler } from 'front-library/Events/KeyboardHandler'
+
+let keyboardControls = new KeyboardHandler(
+    $domElement,
+    {
+        // Used for event delegation
+        "selector":                     ".my-selector",
+
+        // Prevent default on all key pressed, except TAB
+        "preventDefault":               true,
+
+        "onEnter":                      callback,
+        "onSpace":                      callback,
+
+        // Called when pressing ENTER or SPACE
+        "onSelect":                     callback,
+
+        "onEscape":                     callback,
+
+        "onTab":                        callback,
+        "onTabReverse":                 callback,
+
+        // Called when pressing ARROW KEYS
+        "onRight":                      callback,
+        "onLeft":                       callback,
+        "onUp":                         callback,
+        "onDown":                       callback,
+
+        "onPageUp":                     callback,
+        "onPageDown":                   callback,
+
+        // Called when pressing LEFT or DOWN arrow keys
+        "onPrevious":                   callback,
+
+        // Called when pressing RIGHT or UP arrow keys
+        "onNext":                       callback,
+
+        // Called on every key
+        "onKey":                        callback
+    }
+);
+
+keyboardControls.off();
+```
+
+
+Callbacks receive the original event in param and the DOM element as this.
+
+```
+function callback( event, $element )
+{
+    // this => DOM element on which the key is pressed
+    // same as $element
+}
+```
+
+You have access to:
+
+* event.which || event.keyCode
+* event.shiftKey
+* event.altKey
+* event.ctrlKey
+* event.metaKey
+
+
+### Note on TAB key handling:
+
+**if onTabReverse is defined:**
+
+* `onTabReverse` will be called only if the shift key **IS** pressed
+* `onTab` will be called only if the shift ket **IS NOT** pressed
+
+
+**if onTabReverse is undefined:**
+
+* `onTab` callback will be called whatever if shift key is pressed or not
+
 ## Gestures
 
 ```
@@ -149,87 +233,3 @@ Available directions:
 * down-left
 * left
 * up-left
-
-## Keyboard handler
-
-
-Callbacks are bound on 'keydown' events
-
-
-```
-import { KeyboardHandler } from 'front-library/Events/KeyboardHandler'
-
-let keyboardControls = new KeyboardHandler(
-    $domElement,
-    {
-        // Used for event delegation
-        "selector":                     '.my-selector',
-
-        // Prevent default on all key pressed, except TAB
-        "preventDefault":               true,
-
-        "onEnter":                      callback,
-        "onSpace":                      callback,
-
-        // Called when pressing ENTER or SPACE
-        "onSelect":                     callback,
-
-        "onEscape":                     callback,
-
-        "onTab":                        callback,
-        "onTabReverse":                 callback,
-
-        // Called when pressing ARROW KEYS
-        "onRight":                      callback,
-        "onLeft":                       callback,
-        "onUp":                         callback,
-        "onDown":                       callback,
-
-        "onPageUp":                     callback,
-        "onPageDown":                   callback,
-
-        // Called when pressing LEFT or DOWN arrow keys
-        "onPrevious":                   callback,
-
-        // Called when pressing RIGHT or UP arrow keys
-        "onNext":                       callback,
-
-        // Called on every key
-        "onKey":                        callback
-    }
-);
-
-keyboardControls.off();
-```
-
-
-Callbacks receive the original event in param and the DOM element as this.
-
-```
-function callback( event, $element )
-{
-    // this => DOM element on which the key is pressed
-    // same as $element
-}
-```
-
-You have access to:
-
-* event.which || event.keyCode
-* event.shiftKey
-* event.altKey
-* event.ctrlKey
-* event.metaKey
-
-
-### Note on TAB key handling:
-
-**if onTabReverse is defined:**
-
-* `onTabReverse` will be called only if the shift key **IS** pressed
-* `onTab` will be called only if the shift ket **IS NOT** pressed
-
-
-**if onTabReverse is undefined:**
-
-* `onTab` callback will be called whatever if shift key is pressed or not

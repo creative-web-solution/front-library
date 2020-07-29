@@ -26,6 +26,7 @@ export default function getQueryFromForm( $form, selector = 'select,input,textar
 
         $fields.forEach( $input => {
             if (
+                !$input.name ||
                 [ 'button', 'submit', 'image', 'file', 'reset' ].includes( $input.type ) ||
                 ( $input.type === 'checkbox' || $input.type === 'radio' ) && !$input.checked
             ) {

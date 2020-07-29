@@ -1,26 +1,53 @@
 import { on, off, fire } from 'front-library/Events/EventsManager';
+import { isString } from 'front-library/Helpers/Type';
 
 
 function PubSub() {
-    const EVENTS_STORE = {}
+    const EVENTS_STORE = {};
+
+    /**
+     * Add events name
+     *
+     * @memberof pubSub
+     * @function add
+     * @param {Object|String} eventsNames - [ "name1", "name2" ] or "name1"
+     *
+     * @returns {PubSub}
+     */
+    this.add = eventsNames => {
+
+        if ( isString( eventsNames ) ) {
+            this[ eventsNames ] = eventsNames;
+
+            return this;
+        }
+
+        eventsNames.forEach( key => {
+            this[ key ] = key;
+        } );
+
+        return this;
+    }
+
 
     /**
      * Initialize all events name
      *
      * @memberof pubSub
      * @function init
-     * @param {Object} eventsNames
+     * @param {Object} eventsNames - { "name1": val, "name2": val2, ... }
+     *
+     * @deprecated Use pubSub.add( [] ) instead
      *
      * @returns {PubSub}
      */
     this.init = eventsNames => {
-        for ( let key in eventsNames ) {
-            if ( !Object.prototype.hasOwnProperty.call( eventsNames, key) || this[ key ] ) {
+        Object.keys( eventsNames ).forEach( key => {
+            if ( this[ key ] ) {
                 return;
             }
-
             this[ key ] = eventsNames[ key ];
-        }
+        } );
 
         return this;
     }
@@ -37,10 +64,10 @@ function PubSub() {
      * @returns {PubSub}
      */
     this.fire = ( eventName, data ) => {
-        fire(EVENTS_STORE, {
+        fire( EVENTS_STORE, {
             "eventsName": eventName,
-            "detail": data
-        });
+            "detail":     data
+        } );
 
         return this;
     }
@@ -56,10 +83,10 @@ function PubSub() {
      *
      * @returns {PubSub}
      */
-    this.on = (eventName, callback) => {
+    this.on = ( eventName, callback ) => {
         on( EVENTS_STORE, {
             "eventsName": eventName,
-            "callback": callback
+            "callback":   callback
         } );
 
         return this;
@@ -76,10 +103,10 @@ function PubSub() {
      *
      * @returns {PubSub}
      */
-    this.off = (eventName, callback) => {
+    this.off = ( eventName, callback ) => {
         off( EVENTS_STORE, {
             "eventsName": eventName,
-            "callback": callback
+            "callback":   callback
         } );
 
         return this;
@@ -110,7 +137,7 @@ function PubSub() {
  *
  * pubSub.fire( pubSub.MY_EVENT_2, {myProp: 'test'} );
 */
-let pubSub = new PubSub();
+const pubSub = new PubSub();
 
 
 export { pubSub };

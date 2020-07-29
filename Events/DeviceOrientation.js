@@ -80,9 +80,10 @@ export function DeviceOrientation( options ) {
                 'change',
                 checkScreenOrientation
             )
-        } else {
+        }
+        else {
             window.screen.removeEventListener(
-                PREFIX + 'orientationchange',
+                `${ PREFIX }orientationchange`,
                 checkScreenOrientation
             )
         }
@@ -104,13 +105,16 @@ export function DeviceOrientation( options ) {
         let type,
             orientation = window.orientation;
 
-        if (orientation === -90) {
+        if ( orientation === -90 ) {
             type = 'landscape-secondary';
-        } else if (orientation === 90) {
+        }
+        else if ( orientation === 90 ) {
             type = 'landscape-primary';
-        } else if (orientation === 0) {
+        }
+        else if ( orientation === 0 ) {
             type = 'portrait-primary';
-        } else if (orientation === 180) {
+        }
+        else if ( orientation === 180 ) {
             type = 'portrait-secondary';
         }
 
@@ -152,7 +156,7 @@ export function DeviceOrientation( options ) {
     }
     else {
         window.screen.addEventListener(
-            PREFIX + 'orientationchange',
+            `${ PREFIX }orientationchange`,
             checkScreenOrientation
         );
         checkScreenOrientation();

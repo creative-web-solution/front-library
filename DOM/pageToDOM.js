@@ -15,38 +15,38 @@ if ( document.implementation && document.implementation.createHTMLDocument ) {
     All "external" attributes (href, src) are prefixed by data-
 */
 function sanitiseHTML( html ) {
-    var prefix = '<!--"\'-->';
-    var att = '[^-a-z0-9:._]';
-    var tag = '<[a-z]';
-    var any = '(?:[^<>"\']*(?:"[^"]*"|\'[^\']*\'))*?[^<>]*';
-    var etag = '(?:>|(?=<))';
+    const prefix = '<!--"\'-->';
+    const att = '[^-a-z0-9:._]';
+    const tag = '<[a-z]';
+    const any = '(?:[^<>"\']*(?:"[^"]*"|\'[^\']*\'))*?[^<>]*';
+    const etag = '(?:>|(?=<))';
 
-    var entityEnd = '(?:;|(?!\\d))';
-    var ents = {
+    const entityEnd = '(?:;|(?!\\d))';
+    const ents = {
         ' ': '(?:\\s|&nbsp;?|&#0*32' + entityEnd + '|&#x0*20' + entityEnd + ')',
         '(': '(?:\\(|&#0*40' + entityEnd + '|&#x0*28' + entityEnd + ')',
         ')': '(?:\\)|&#0*41' + entityEnd + '|&#x0*29' + entityEnd + ')',
         '.': '(?:\\.|&#0*46' + entityEnd + '|&#x0*2e' + entityEnd + ')'
     };
 
-    var charMap = {};
-    var s = ents[ ' ' ] + '*';
+    const charMap = {};
+    const s = ents[ ' ' ] + '*';
 
     function ae( string ) {
-        var all_chars_lowercase = string.toLowerCase();
+        const all_chars_lowercase = string.toLowerCase();
         if ( ents[ string ] ) {
             return ents[ string ];
         }
-        var all_chars_uppercase = string.toUpperCase();
-        var RE_res = '';
-        for ( var i = 0; i < string.length; i++ ) {
-            var char_lowercase = all_chars_lowercase.charAt( i );
+        const all_chars_uppercase = string.toUpperCase();
+        let RE_res = '';
+        for ( let i = 0; i < string.length; i++ ) {
+            const char_lowercase = all_chars_lowercase.charAt( i );
             if ( charMap[ char_lowercase ] ) {
                 RE_res += charMap[ char_lowercase ];
                 continue;
             }
-            var char_uppercase = all_chars_uppercase.charAt( i );
-            var RE_sub = [ char_lowercase ];
+            const char_uppercase = all_chars_uppercase.charAt( i );
+            let RE_sub = [ char_lowercase ];
             RE_sub.push( '&#0*' + char_lowercase.charCodeAt(0) + entityEnd );
             RE_sub.push(
                 '&#x0*' + char_lowercase.charCodeAt( 0 ).toString( 16 ) + entityEnd
@@ -77,8 +77,8 @@ function sanitiseHTML( html ) {
         marker = typeof marker === 'string' ? marker : '\\s*=';
         delimiter = typeof delimiter === 'string' ? delimiter : '';
         end = typeof end === 'string' ? end : '';
-        var is_end = end && '?';
-        var re1 = new RegExp(
+        const is_end = end && '?';
+        const re1 = new RegExp(
             '(' +
                 att +
                 ')(' +
@@ -108,7 +108,7 @@ function sanitiseHTML( html ) {
             selector = new RegExp( selector, 'gi' );
         }
         flags = typeof flags === 'string' ? flags : 'gi';
-        var re1 = new RegExp(
+        const re1 = new RegExp(
             '(' +
                 att +
                 attribute +
@@ -117,9 +117,9 @@ function sanitiseHTML( html ) {
         );
 
         end = typeof end === 'string' ? end + ')' : ')';
-        var at1 = new RegExp( '(")(' + front + '[^"]+")', flags );
-        var at2 = new RegExp( "(')(" + front + "[^']+')", flags );
-        var at3 = new RegExp(
+        const at1 = new RegExp( '(")(' + front + '[^"]+")', flags );
+        const at2 = new RegExp( "(')(" + front + "[^']+')", flags );
+        const at3 = new RegExp(
             '()(' +
                 front +
                 '(?:"[^"]+"|\'[^\']+\'|(?:(?!' +
@@ -129,7 +129,7 @@ function sanitiseHTML( html ) {
             flags
         );
 
-        var handleAttr = function( match, g1, g2 ) {
+        const handleAttr = function( match, g1, g2 ) {
             if ( g2.charAt( 0 ) === '"' ) {
                 return g1 + g2.replace( at1, by );
             }
@@ -205,11 +205,11 @@ function sanitiseHTML( html ) {
 function string2dom( html, callback ) {
     html = sanitiseHTML( html );
 
-    var iframe = document.createElement( 'iframe' );
+    const iframe = document.createElement( 'iframe' );
     iframe.style.display = 'none';
     document.body.appendChild( iframe );
 
-    var doc = iframe.contentDocument || iframe.contentWindow.document;
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
     doc.open();
     doc.write( html );
     doc.close();

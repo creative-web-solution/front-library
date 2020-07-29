@@ -30,8 +30,10 @@ function getSrc( $element ) {
     return new Promise( resolve => {
         // Responsive image on browser that natively support it
         if (
-            ( $element.hasAttribute( 'srcset' ) ||
-                $element.parentNode.nodeName === 'PICTURE' ) &&
+            (
+                $element.hasAttribute( 'srcset' ) ||
+                $element.parentNode && $element.parentNode.nodeName === 'PICTURE'
+            ) &&
             hasNativePicture
         ) {
             getCurrentSrc( $element, src => {
@@ -154,7 +156,7 @@ export function onImageLoad( $element, manageError, callback ) {
  *
  * @returns {Promise} - Return a standard Promise + an .off() function to cancel event
  */
-export function onAllImagesLoad ( $images, ...args ) {
+export function onAllImagesLoad( $images, ...args ) {
     let promArray, promResult;
 
     promArray = [];

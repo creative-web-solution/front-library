@@ -7,15 +7,15 @@ import { Autocomplete } from 'front-library/Modules/Autocomplete'
 
 ac = Autocomplete(
     {
-        "$searchField":                     null,
-        "$panelWrapper":                    document.body,
-        "maxHeight":                        200,
-        "useCache":                         false,
-        "minchar":                          3,
-        "source":                           null,
-        "url":                              "",
-        "updateOnSelect":                   true, // Update or not the text field with the selected value
-        cssPositionning:                    false, // Use CSS or Javascript for the position of the layer
+        "$searchField":    null,
+        "$panelWrapper":   document.body,
+        "maxHeight":       200,
+        "useCache":        false,
+        "minchar":         3,
+        "source":          null,
+        "url":             "",
+        "updateOnSelect":  true, // Update or not the text field with the selected value
+        cssPositionning:   false, // Use CSS or Javascript for the position of the layer
         "onSelect": ( { item, resultsList, query } ) =>
         {
             console.log( "Option selected: ", item, query, resultsList );
@@ -53,23 +53,36 @@ ac = Autocomplete(
             ));
         },
         "l10n": {
-            "noResult":                     "No result",
-            "error":                        "Server error"
+            "noResult":  "No result",
+            "error":     "Server error"
         },
         "className": {
-            layer:                          "ac-layer",
-            list:                           "ac-list",
-            item:                           "acl-itm",
-            link:                           "acl-lnk",
-            mark:                           "acl-mrk",
-            error:                          "acl-error",
-            hover:                          "hover"
+            "layer":     "ac-layer",
+            "list":      "ac-list",
+            "item":      "acl-itm",
+            "link":      "acl-lnk",
+            "mark":      "acl-mrk",
+            "error":     "acl-error",
+            "hover":     "hover",
+            "disable":   "disable"
         }
     }
 );
 
 // Destroy
 ac.clean();
+
+// Display the list with all items (source mode only, not with ajax call)
+ac.showAll();
+
+// Reset the input field
+ac.resetField();
+
+//Reset the results
+ac.resetResults();
+
+// Reset the input field and the results
+ac.reset();
 ```
 
 
@@ -105,7 +118,7 @@ It has 2 parameters:
 
 ```
 function( query, callback ) {
-    var results = my_custom_filter( mySource, query );
+    var results = query === null ? mySource : my_custom_filter( mySource, query );
 
     // results =
     //  [
@@ -120,3 +133,10 @@ function( query, callback ) {
 }
 ```
 
+When in source mode, you can call the API function `showAll` to display the complete list of all item:
+
+```
+myAutocompleteInstance.showAll();
+```
+
+In order to do that, the source function will be called with the `query` parameter to `null`. So, if you want to use this feature, don't forget to return all the items when it's the case as show in the example.

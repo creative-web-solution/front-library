@@ -11,8 +11,8 @@
 export function slice( list, what ) {
     var index;
 
-    if ( !list || !list.length ) {
-        return;
+    if ( !list || !list.length || !what ) {
+        return list;
     }
 
     index = list.indexOf( what );

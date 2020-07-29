@@ -102,13 +102,17 @@ import { slice } from 'front-library/Helpers/slice';
 export function MediaQueriesEvents( breakpointsList, userOptions ) {
     let removeFromArray, isSuspended, currentBreakpoint, functionHash;
 
-    const defaultOptions = {
+    const DEFAULT_OPTIONS = {
         "unit": "px"
     };
 
     const GLOBAL_HASH_NAME = '__globalHashName';
 
-    const options = extend( {}, defaultOptions, userOptions );
+    const OPTIONS = extend(
+        {},
+        DEFAULT_OPTIONS,
+        userOptions
+    );
 
     functionHash = {
         [ `${ GLOBAL_HASH_NAME }` ]: []
@@ -145,24 +149,12 @@ export function MediaQueriesEvents( breakpointsList, userOptions ) {
 
 
     function getBreakpoint( breakpointName ) {
-        for ( let i = 0, len = breakpointsList.length; i < len; ++i ) {
-            if ( breakpointsList[ i ].name === breakpointName ) {
-                return breakpointsList[ i ];
-            }
-        }
-
-        return false;
+        return breakpointsList.find( bp => bp.name === breakpointName );
     }
 
 
     function getCurrentBreakpoint() {
-        for ( let i = 0, len = breakpointsList.length; i < len; ++i ) {
-            if ( breakpointsList[ i ].query.matches ) {
-                return breakpointsList[ i ];
-            }
-        }
-
-        return false;
+        return breakpointsList.find( bp => bp.query.matches );
     }
 
 
@@ -170,11 +162,11 @@ export function MediaQueriesEvents( breakpointsList, userOptions ) {
         let minQuery, maxQuery, query;
 
         if ( typeof breakpoint.min === 'number' ) {
-            minQuery = `(min-width:${ breakpoint.min }${ options.unit })`;
+            minQuery = `(min-width:${ breakpoint.min }${ OPTIONS.unit })`;
         }
 
         if ( typeof breakpoint.max === 'number' ) {
-            maxQuery = `(max-width:${ breakpoint.max }${ options.unit })`;
+            maxQuery = `(max-width:${ breakpoint.max }${ OPTIONS.unit })`;
         }
 
         if ( minQuery && maxQuery ) {
@@ -195,6 +187,20 @@ export function MediaQueriesEvents( breakpointsList, userOptions ) {
 
 
     // API
+
+    /**
+     * Return the value of the property with the name of the current breakpoint of an object
+     *
+     * @param {Object} obj
+     *
+     * @example mediaQueryEvent.getValue( { "small": "val1", "medium": "val2", ... } );
+     * Ih the current breakpoint name is "small", it will return "val1"
+     *
+     * @returns {*}
+     */
+    this.getValue = ( obj ) => {
+        return obj[ currentBreakpoint.name ];
+    };
 
 
     /**
@@ -354,10 +360,10 @@ export function MediaQueriesEvents( breakpointsList, userOptions ) {
     this.in = breakpointNameList => {
         let currentBreakpoint;
 
-        if ( !breakpointNameList || !breakpointNameList.length || !( currentBreakpoint = this.which() ) ) {
+        if ( !breakpointNameList || !breakpointNameList.length ) {
             return false;
         }
-        return breakpointNameList.includes(currentBreakpoint.name);
+        return breakpointNameList.includes( currentBreakpoint.name );
     }
 
 
@@ -405,27 +411,25 @@ export function MediaQueriesEvents( breakpointsList, userOptions ) {
         }
 
         breakpoint.handler = mql => {
-            if ( !isSuspended ) {
-                update( breakpoint, mql.matches );
-            }
-
             if ( mql.matches ) {
                 currentBreakpoint = breakpoint;
             }
-        }
+
+            if ( !isSuspended ) {
+                update( breakpoint, mql.matches );
+            }
+        };
 
         breakpoint.query.addListener( breakpoint.handler );
 
         breakpoint.in = breakpointNameList => {
-                if ( !breakpointNameList || !breakpointNameList.length ) {
+            if ( !breakpointNameList || !breakpointNameList.length ) {
                 return false;
             }
             return breakpointNameList.includes( breakpoint.name );
-        }
+        };
 
-        breakpoint.is = breakpointName => {
-            return breakpoint.name === breakpointName;
-        }
+        breakpoint.is = breakpointName => breakpoint.name === breakpointName;
 
         functionHash[ breakpoint.name ] = [];
     });

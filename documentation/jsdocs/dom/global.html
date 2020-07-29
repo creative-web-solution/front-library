@@ -33,7 +33,7 @@
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="global.html#aClass">aClass</a></li><li><a href="global.html#append">append</a></li><li><a href="global.html#children">children</a></li><li><a href="global.html#clone">clone</a></li><li><a href="global.html#documentSize">documentSize</a></li><li><a href="global.html#filter">filter</a></li><li><a href="global.html#getMatrix">getMatrix</a></li><li><a href="global.html#getStyle">getStyle</a></li><li><a href="global.html#getTransform">getTransform</a></li><li><a href="global.html#getTranslate">getTranslate</a></li><li><a href="global.html#hClass">hClass</a></li><li><a href="global.html#height">height</a></li><li><a href="global.html#index">index</a></li><li><a href="global.html#insertAfter">insertAfter</a></li><li><a href="global.html#insertBefore">insertBefore</a></li><li><a href="global.html#next">next</a></li><li><a href="global.html#offset">offset</a></li><li><a href="global.html#outerHeight">outerHeight</a></li><li><a href="global.html#outerSize">outerSize</a></li><li><a href="global.html#outerWidth">outerWidth</a></li><li><a href="global.html#pageToDOM">pageToDOM</a></li><li><a href="global.html#position">position</a></li><li><a href="global.html#prepend">prepend</a></li><li><a href="global.html#previous">previous</a></li><li><a href="global.html#prop">prop</a></li><li><a href="global.html#rClass">rClass</a></li><li><a href="global.html#remove">remove</a></li><li><a href="global.html#size">size</a></li><li><a href="global.html#strToDOM">strToDOM</a></li><li><a href="global.html#tClass">tClass</a></li><li><a href="global.html#width">width</a></li><li><a href="global.html#windowScroll">windowScroll</a></li><li><a href="global.html#windowSize">windowSize</a></li><li><a href="global.html#wrap">wrap</a></li>
+					<li><a href="global.html#aClass">aClass</a></li><li><a href="global.html#append">append</a></li><li><a href="global.html#children">children</a></li><li><a href="global.html#clone">clone</a></li><li><a href="global.html#documentSize">documentSize</a></li><li><a href="global.html#filter">filter</a></li><li><a href="global.html#getMatrix">getMatrix</a></li><li><a href="global.html#getStyle">getStyle</a></li><li><a href="global.html#getTransform">getTransform</a></li><li><a href="global.html#getTranslate">getTranslate</a></li><li><a href="global.html#hClass">hClass</a></li><li><a href="global.html#height">height</a></li><li><a href="global.html#index">index</a></li><li><a href="global.html#insertAfter">insertAfter</a></li><li><a href="global.html#insertBefore">insertBefore</a></li><li><a href="global.html#next">next</a></li><li><a href="global.html#offset">offset</a></li><li><a href="global.html#outerHeight">outerHeight</a></li><li><a href="global.html#outerSize">outerSize</a></li><li><a href="global.html#outerWidth">outerWidth</a></li><li><a href="global.html#pageToDOM">pageToDOM</a></li><li><a href="global.html#position">position</a></li><li><a href="global.html#prepend">prepend</a></li><li><a href="global.html#previous">previous</a></li><li><a href="global.html#prop">prop</a></li><li><a href="global.html#rClass">rClass</a></li><li><a href="global.html#remove">remove</a></li><li><a href="global.html#sClass">sClass</a></li><li><a href="global.html#size">size</a></li><li><a href="global.html#strToDOM">strToDOM</a></li><li><a href="global.html#tClass">tClass</a></li><li><a href="global.html#width">width</a></li><li><a href="global.html#windowScroll">windowScroll</a></li><li><a href="global.html#windowSize">windowSize</a></li><li><a href="global.html#wrap">wrap</a></li>
 				</ul>
 			</li>
 			
@@ -223,6 +223,9 @@
             
                 
 <span class="param-type">String</span>
+|
+
+<span class="param-type">Array.&lt;string></span>
 
 
 
@@ -233,7 +236,7 @@
 
             
 
-            <td class="description last">Class names separated by space</td>
+            <td class="description last">Class name, class names separated by space or array of class</td>
         </tr>
 
     
@@ -3759,7 +3762,7 @@ elementWidth = outerWidth($element, true, true)</pre>
             
 <hr>
 <dt>
-    <h4 class="name" id="position"><span class="type-signature"></span>position($element)</h4>
+    <h4 class="name" id="position"><span class="type-signature"></span>position($element [, $target])</h4>
     
     
 </dt>
@@ -3767,7 +3770,8 @@ elementWidth = outerWidth($element, true, true)</pre>
 
     
     <div class="description">
-        Return the position of an element
+        Return the position of an element or
+The position relative to another element
     </div>
     
 
@@ -3789,6 +3793,8 @@ elementWidth = outerWidth($element, true, true)</pre>
 
         <th>Type</th>
 
+        
+        <th>Argument</th>
         
 
         
@@ -3815,6 +3821,48 @@ elementWidth = outerWidth($element, true, true)</pre>
             
             </td>
 
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>$target</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
             
 
             
@@ -3905,9 +3953,11 @@ elementWidth = outerWidth($element, true, true)</pre>
         
 
     
-        <h5>Example</h5>
+        <h5>Examples</h5>
         
     <pre class="sunlight-highlight-javascript">{ top, left } = position( $element )</pre>
+
+    <pre class="sunlight-highlight-javascript">{ top, left } = position( $element, $target )</pre>
 
 
     
@@ -4508,6 +4558,9 @@ elementWidth = outerWidth($element, true, true)</pre>
             
                 
 <span class="param-type">String</span>
+|
+
+<span class="param-type">Array.&lt;String></span>
 
 
 
@@ -4518,7 +4571,7 @@ elementWidth = outerWidth($element, true, true)</pre>
 
             
 
-            <td class="description last">Class names separated by space</td>
+            <td class="description last">Class name, class names separated by space or array of class</td>
         </tr>
 
     
@@ -4789,6 +4842,215 @@ elementWidth = outerWidth($element, true, true)</pre>
         
     <pre class="sunlight-highlight-javascript">remove( $element )
 remove( $element, $parent )</pre>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="sClass"><span class="type-signature"></span>sClass($elements, oldCssClass, newCssClass)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Replace classes.
+Remove oldCssClass and add newCssClass only if oldCssClass exists
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>$elements</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+|
+
+<span class="param-type">Array.&lt;HTMLElement></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>oldCssClass</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>newCssClass</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">HTMLElement</span>
+|
+
+<span class="param-type">Array.&lt;HTMLElement></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">sClass( $elements, oldCssClass, newCssClass )</pre>
 
 
     
@@ -5173,7 +5435,7 @@ $li = strToDOM( &#x27;&lt;li&gt;&lt;/li&gt;&#x27;, &#x27;UL&#x27; );</pre>
             
 <hr>
 <dt>
-    <h4 class="name" id="tClass"><span class="type-signature"></span>tClass($elements, cssClass [, isActive])</h4>
+    <h4 class="name" id="tClass"><span class="type-signature"></span>tClass($elements, cssClass [, forceAdd])</h4>
     
     
 </dt>
@@ -5260,6 +5522,9 @@ $li = strToDOM( &#x27;&lt;li&gt;&lt;/li&gt;&#x27;, &#x27;UL&#x27; );</pre>
             
                 
 <span class="param-type">String</span>
+|
+
+<span class="param-type">Array.&lt;String></span>
 
 
 
@@ -5278,14 +5543,14 @@ $li = strToDOM( &#x27;&lt;li&gt;&lt;/li&gt;&#x27;, &#x27;UL&#x27; );</pre>
 
             
 
-            <td class="description last">Class names separated by space</td>
+            <td class="description last">Class name, class names separated by space or array of class</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>isActive</code></td>
+                <td class="name"><code>forceAdd</code></td>
             
 
             <td class="type">
@@ -5400,7 +5665,7 @@ $li = strToDOM( &#x27;&lt;li&gt;&lt;/li&gt;&#x27;, &#x27;UL&#x27; );</pre>
         <h5>Example</h5>
         
     <pre class="sunlight-highlight-javascript">tClass( $elements, cssClass )
-tClass( $elements, cssClass, isActive )</pre>
+tClass( $elements, cssClass, forceAdd )</pre>
 
 
     
@@ -5858,6 +6123,9 @@ tClass( $elements, cssClass, isActive )</pre>
             
                 
 <span class="param-type">String</span>
+|
+
+<span class="param-type">HTMLElement</span>
 
 
 
@@ -5868,7 +6136,7 @@ tClass( $elements, cssClass, isActive )</pre>
 
             
 
-            <td class="description last">Example: <span></span></td>
+            <td class="description last">String example: <span></span></td>
         </tr>
 
     
@@ -8006,9 +8274,9 @@ tClass( $elements, cssClass, isActive )</pre>
 
 
 <span class="jsdoc-message">
-	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a>
 	
-		on 2020-02-06T17:54:05+01:00
+		on 2020-07-28T16:49:10+02:00
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

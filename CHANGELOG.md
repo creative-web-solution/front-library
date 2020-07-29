@@ -1,5 +1,29 @@
 # CHANGELOG
 
+
+## 6.1.0
+
+* General:
+    * Refactor
+    * Minor updates
+    * Cleanup
+    * Update Tweenlite 2.x to GSAP 3.x
+
+* MediaQueriesEvents:
+    * Add `getValue` function
+
+* ScrollSnap:
+    * Update Tweenlite 2.x to GSAP 3.x
+    * Move GSAP functions in options to override them and be able to use another library
+
+* Slider:
+    * Update Tweenlite 2.x to GSAP 3.x
+    * Move GSAP functions in options to override them and be able to use another library
+
+* Add new WegGL category
+    * Add GLImageTransition
+
+
 ## 6.0.16
 
 * Autocomplete:
