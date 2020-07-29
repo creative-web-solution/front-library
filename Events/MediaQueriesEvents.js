@@ -358,8 +358,6 @@ export function MediaQueriesEvents( breakpointsList, userOptions ) {
      * @return {Boolean}
      */
     this.in = breakpointNameList => {
-        let currentBreakpoint;
-
         if ( !breakpointNameList || !breakpointNameList.length ) {
             return false;
         }
