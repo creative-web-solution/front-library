@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 6.1.1
+
+* Handle idle state in "wait" function: `wait('idle').then(...)`
+
+
 ## 6.1.0
 
 * General:
