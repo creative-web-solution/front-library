@@ -102,9 +102,7 @@ function SkinSelect( $select, userOptions = {} ) {
     }
 
 
-    function openList( e ) {
-        e && e.stopPropagation();
-
+    function openList() {
         if ( $select.disabled || loading ) {
             return;
         }

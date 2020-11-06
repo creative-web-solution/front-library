@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 6.1.2
+
+* Fix event propagation on select skin button
+
+
 ## 6.1.1
 
 * Handle idle state in "wait" function: `wait('idle').then(...)`
