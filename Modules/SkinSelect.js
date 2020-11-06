@@ -114,10 +114,12 @@ function SkinSelect( $select, userOptions = {} ) {
 
         $parent.classList.add( options.openedListClass );
 
-        on( document.body, {
-            "eventsName": "click",
-            "callback":   closeList
-        } );
+        window.requestAnimationFrame( () => {
+            on( document.body, {
+                "eventsName": "click",
+                "callback":   closeList
+            } );
+        }, 0 );
 
         if ( $options ) {
             if ( $lastOption ) {
