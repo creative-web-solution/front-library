@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 6.1.3
+
+* Add CSS property setter/getter function
+
+
 ## 6.1.2
 
 * Fix event propagation on select skin button
