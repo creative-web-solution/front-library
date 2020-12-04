@@ -31,15 +31,24 @@ export function prop( $element, property ) {
  * Set a CSS property on an element
  *
  * @param {HTMLElement} $element
- * @param {String} property
+ * @param {String|Object} property
  * @param {String} value
  *
  * @example $element = setCssVar($element, '--my-var', '12px')
+ * $element = setCssVar($element, {
+ *  "--my-var":   "12px",
+ *  "--my-var-2": "100%"
+ * })
  *
  * @returns {HTMLElement}
  */
 export function setCssProperty( $element, property, value ) {
-    $element.style.setProperty( property, value );
+    if ( typeof property === 'string' ) {
+        $element.style.setProperty( property, value );
+    }
+    else {
+        Object.keys( property ).forEach( prop => $element.style.setProperty( prop, property[ prop ] ) );
+    }
 
     return $element;
 }
