@@ -1,8 +1,10 @@
 # CHANGELOG
 
-## 6.2.0
+## 6.2.1
 
 * Add a scope to the package name for NPM publish
+* Update doc
+* Add CSS custom variable Modernizr test
 
 
 ## 6.1.3
