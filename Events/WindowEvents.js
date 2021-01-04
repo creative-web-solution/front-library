@@ -1,6 +1,6 @@
-import { windowScroll } from 'front-library/DOM/windowScroll';
-import { documentSize } from 'front-library/DOM/documentSize';
-import { windowSize } from 'front-library/DOM/windowSize';
+import { windowScroll } from '@creative-web-solution/front-library/DOM/windowScroll';
+import { documentSize } from '@creative-web-solution/front-library/DOM/documentSize';
+import { windowSize } from '@creative-web-solution/front-library/DOM/windowSize';
 
 
 /**

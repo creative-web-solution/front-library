@@ -1,6 +1,6 @@
-import { standardValidation } from 'front-library/Modules/Validator/Tools/ValidationState';
-import isNumber from 'front-library/Modules/Validator/Tools/isNumber';
-import { addValidator } from 'front-library/Modules/Validator';
+import { standardValidation } from '@creative-web-solution/front-library/Modules/Validator/Tools/ValidationState';
+import isNumber from '@creative-web-solution/front-library/Modules/Validator/Tools/isNumber';
+import { addValidator } from '@creative-web-solution/front-library/Modules/Validator';
 
 /**
  * Number validation

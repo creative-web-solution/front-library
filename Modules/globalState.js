@@ -1,4 +1,4 @@
-import { slice } from 'front-library/Helpers/slice';
+import { slice } from '@creative-web-solution/front-library/Helpers/slice';
 
 /**
  * @typedef {Function} GlobalState_callback

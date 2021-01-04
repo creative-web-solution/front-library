@@ -1,5 +1,5 @@
-import { standardValidation } from 'front-library/Modules/Validator/Tools/ValidationState';
-import { addValidator } from 'front-library/Modules/Validator';
+import { standardValidation } from '@creative-web-solution/front-library/Modules/Validator/Tools/ValidationState';
+import { addValidator } from '@creative-web-solution/front-library/Modules/Validator';
 
 /**
  * Min length validation

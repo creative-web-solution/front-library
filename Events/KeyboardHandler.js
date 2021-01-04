@@ -1,5 +1,5 @@
-import { on, off } from 'front-library/Events/EventsManager';
-import { extend } from 'front-library/Helpers/Extend';
+import { on, off } from '@creative-web-solution/front-library/Events/EventsManager';
+import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
 
 /**
  * @callback KeyboardHandler_Callback

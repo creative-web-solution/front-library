@@ -1,4 +1,4 @@
-import { prop } from 'front-library/DOM/Styles';
+import { prop } from '@creative-web-solution/front-library/DOM/Styles';
 
 /**
  * @typedef {Object} matrix_Object

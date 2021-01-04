@@ -1,6 +1,6 @@
-import { standardValidation } from 'front-library/Modules/Validator/Tools/ValidationState';
-import isUrl from 'front-library/Modules/Validator/Tools/isUrl';
-import { addValidator } from 'front-library/Modules/Validator';
+import { standardValidation } from '@creative-web-solution/front-library/Modules/Validator/Tools/ValidationState';
+import isUrl from '@creative-web-solution/front-library/Modules/Validator/Tools/isUrl';
+import { addValidator } from '@creative-web-solution/front-library/Modules/Validator';
 
 /**
  * URL validation

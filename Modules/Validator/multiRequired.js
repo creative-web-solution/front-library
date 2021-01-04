@@ -1,8 +1,8 @@
-import { getValue } from 'front-library/Helpers/getValue';
-import { standardValidation } from 'front-library/Modules/Validator/Tools/ValidationState';
-import isEmpty from 'front-library/Modules/Validator/Tools/isEmpty';
-import { addValidator } from 'front-library/Modules/Validator';
-import { isRadioListChecked } from 'front-library/Modules/Validator/Tools/RadioButton';
+import { getValue } from '@creative-web-solution/front-library/Helpers/getValue';
+import { standardValidation } from '@creative-web-solution/front-library/Modules/Validator/Tools/ValidationState';
+import isEmpty from '@creative-web-solution/front-library/Modules/Validator/Tools/isEmpty';
+import { addValidator } from '@creative-web-solution/front-library/Modules/Validator';
+import { isRadioListChecked } from '@creative-web-solution/front-library/Modules/Validator/Tools/RadioButton';
 
 
 /**

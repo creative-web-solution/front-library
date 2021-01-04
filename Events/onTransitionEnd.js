@@ -1,4 +1,4 @@
-import { defer } from 'front-library/Helpers/defer';
+import { defer } from '@creative-web-solution/front-library/Helpers/defer';
 
 
 const transitionendEventName = ( function() {

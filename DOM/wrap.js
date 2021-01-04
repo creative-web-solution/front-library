@@ -1,5 +1,5 @@
-import { strToDOM } from 'front-library/DOM/strToDOM';
-import { isString } from 'front-library/Helpers/Type';
+import { strToDOM } from '@creative-web-solution/front-library/DOM/strToDOM';
+import { isString } from '@creative-web-solution/front-library/Helpers/Type';
 
 /**
  * Wrap a DOM element in another

@@ -1,6 +1,6 @@
-import { standardValidation } from 'front-library/Modules/Validator/Tools/ValidationState';
-import isDate from 'front-library/Modules/Validator/Tools/isDate';
-import { addValidator } from 'front-library/Modules/Validator';
+import { standardValidation } from '@creative-web-solution/front-library/Modules/Validator/Tools/ValidationState';
+import isDate from '@creative-web-solution/front-library/Modules/Validator/Tools/isDate';
+import { addValidator } from '@creative-web-solution/front-library/Modules/Validator';
 
 /**
  * Date validation

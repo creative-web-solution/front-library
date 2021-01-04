@@ -1,15 +1,15 @@
-import { fire, on, off } from 'front-library/Events/EventsManager';
-import { extend } from 'front-library/Helpers/Extend';
-import { isNumber } from 'front-library/Helpers/Type';
-import { template } from 'front-library/Modules/template';
-import { wrap } from 'front-library/DOM/wrap';
-import { strToDOM } from 'front-library/DOM/strToDOM';
-import { index } from 'front-library/DOM/index';
-import { hClass, aClass } from 'front-library/DOM/Class';
-import { rClass } from 'front-library/DOM/Class';
-import { position } from 'front-library/DOM/position';
-import { height } from 'front-library/DOM/Size';
-import { outerHeight } from 'front-library/DOM/OuterSize';
+import { fire, on, off } from '@creative-web-solution/front-library/Events/EventsManager';
+import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
+import { isNumber } from '@creative-web-solution/front-library/Helpers/Type';
+import { template } from '@creative-web-solution/front-library/Modules/template';
+import { wrap } from '@creative-web-solution/front-library/DOM/wrap';
+import { strToDOM } from '@creative-web-solution/front-library/DOM/strToDOM';
+import { index } from '@creative-web-solution/front-library/DOM/index';
+import { hClass, aClass } from '@creative-web-solution/front-library/DOM/Class';
+import { rClass } from '@creative-web-solution/front-library/DOM/Class';
+import { position } from '@creative-web-solution/front-library/DOM/position';
+import { height } from '@creative-web-solution/front-library/DOM/Size';
+import { outerHeight } from '@creative-web-solution/front-library/DOM/OuterSize';
 
 
 const defaultOptions = {

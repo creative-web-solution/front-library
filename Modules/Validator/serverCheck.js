@@ -1,6 +1,6 @@
-import { defer } from 'front-library/Helpers/defer';
-import { createState } from 'front-library/Modules/Validator/Tools/ValidationState';
-import { addValidator } from 'front-library/Modules/Validator';
+import { defer } from '@creative-web-solution/front-library/Helpers/defer';
+import { createState } from '@creative-web-solution/front-library/Modules/Validator/Tools/ValidationState';
+import { addValidator } from '@creative-web-solution/front-library/Modules/Validator';
 
 /**
  * Server validation

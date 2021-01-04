@@ -1,4 +1,4 @@
-import { getStyle } from 'front-library/DOM/Styles';
+import { getStyle } from '@creative-web-solution/front-library/DOM/Styles';
 
 function getOuterDim(
     $element,

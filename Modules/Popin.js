@@ -1,11 +1,11 @@
-import { on, off } from 'front-library/Events/EventsManager';
-import { KeyboardHandler } from 'front-library/Events/KeyboardHandler';
-import { extend } from 'front-library/Helpers/Extend';
-import { defer } from 'front-library/Helpers/defer';
-import { strToDOM } from 'front-library/DOM/strToDOM';
-import { append } from 'front-library/DOM/Manipulation';
-import { windowSize } from 'front-library/DOM/windowSize';
-import { template } from 'front-library/Modules/template';
+import { on, off } from '@creative-web-solution/front-library/Events/EventsManager';
+import { KeyboardHandler } from '@creative-web-solution/front-library/Events/KeyboardHandler';
+import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
+import { defer } from '@creative-web-solution/front-library/Helpers/defer';
+import { strToDOM } from '@creative-web-solution/front-library/DOM/strToDOM';
+import { append } from '@creative-web-solution/front-library/DOM/Manipulation';
+import { windowSize } from '@creative-web-solution/front-library/DOM/windowSize';
+import { template } from '@creative-web-solution/front-library/Modules/template';
 
 let $body = document.body;
 

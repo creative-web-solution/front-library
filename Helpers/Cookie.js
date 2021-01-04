@@ -13,7 +13,7 @@ let defaultOptions = {
  *
  * @example cookie.create( 'cookieName', 'cookieValue' )
  * cookie.read( 'cookieName' )
- * cookie.erase( 'cookieName' )
+ * cookie.delete( 'cookieName' )
  *
  * // All parameters
  * cookie.create( 'cookieName', 'cookieValue', {

@@ -1,7 +1,7 @@
-import { aClass }                           from 'front-library/DOM/Class';
-import { append }                           from 'front-library/DOM/Manipulation';
-import { createMat4, orthoMat4, scaleMat4 } from 'front-library/WebGL/Tools/matrix';
-import { defer }                            from 'front-library/Helpers/defer';
+import { aClass }                           from '@creative-web-solution/front-library/DOM/Class';
+import { append }                           from '@creative-web-solution/front-library/DOM/Manipulation';
+import { createMat4, orthoMat4, scaleMat4 } from '@creative-web-solution/front-library/WebGL/Tools/matrix';
+import { defer }                            from '@creative-web-solution/front-library/Helpers/defer';
 
 
 const VERTEX_SHADER_SOURCE = `

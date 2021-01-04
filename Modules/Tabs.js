@@ -1,8 +1,8 @@
-import { aClass, rClass } from 'front-library/DOM/Class';
-import { on, off } from 'front-library/Events/EventsManager';
-import { extend } from 'front-library/Helpers/Extend';
-import { next } from 'front-library/DOM/Traversing';
-import { KeyboardHandler } from 'front-library/Events/KeyboardHandler';
+import { aClass, rClass } from '@creative-web-solution/front-library/DOM/Class';
+import { on, off } from '@creative-web-solution/front-library/Events/EventsManager';
+import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
+import { next } from '@creative-web-solution/front-library/DOM/Traversing';
+import { KeyboardHandler } from '@creative-web-solution/front-library/Events/KeyboardHandler';
 
 const STATUS_ON = 'STATUS_ON';
 const STATUS_OFF = 'STATUS_OFF';

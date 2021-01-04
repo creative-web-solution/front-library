@@ -1,10 +1,10 @@
-import { gesture, gestureOff } from 'front-library/Events/Gesture';
-import { extend } from 'front-library/Helpers/Extend';
-import { append, remove } from 'front-library/DOM/Manipulation';
-import { height } from 'front-library/DOM/Size';
-import { offset } from 'front-library/DOM/offset';
-import { outerHeight, outerWidth } from 'front-library/DOM/OuterSize';
-import { position } from 'front-library/DOM/position';
+import { gesture, gestureOff } from '@creative-web-solution/front-library/Events/Gesture';
+import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
+import { append, remove } from '@creative-web-solution/front-library/DOM/Manipulation';
+import { height } from '@creative-web-solution/front-library/DOM/Size';
+import { offset } from '@creative-web-solution/front-library/DOM/offset';
+import { outerHeight, outerWidth } from '@creative-web-solution/front-library/DOM/OuterSize';
+import { position } from '@creative-web-solution/front-library/DOM/position';
 
 /**
  * Autocomplete

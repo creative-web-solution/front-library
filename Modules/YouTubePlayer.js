@@ -1,5 +1,5 @@
-import { extend } from 'front-library/Helpers/Extend';
-import { defer } from 'front-library/Helpers/defer';
+import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
+import { defer } from '@creative-web-solution/front-library/Helpers/defer';
 
 
 let ytAPILoadingPromise;

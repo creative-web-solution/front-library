@@ -1,9 +1,9 @@
-import { getValue } from 'front-library/Helpers/getValue';
-import { extend } from 'front-library/Helpers/Extend';
-import { defer } from 'front-library/Helpers/defer';
-import { unique } from 'front-library/Helpers/unique';
-import { on, off } from 'front-library/Events/EventsManager';
-import { getRadioList } from 'front-library/Modules/Validator/Tools/RadioButton';
+import { getValue } from '@creative-web-solution/front-library/Helpers/getValue';
+import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
+import { defer } from '@creative-web-solution/front-library/Helpers/defer';
+import { unique } from '@creative-web-solution/front-library/Helpers/unique';
+import { on, off } from '@creative-web-solution/front-library/Events/EventsManager';
+import { getRadioList } from '@creative-web-solution/front-library/Modules/Validator/Tools/RadioButton';
 
 
 const defaultOptions = {

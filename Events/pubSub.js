@@ -1,5 +1,5 @@
-import { on, off, fire } from 'front-library/Events/EventsManager';
-import { isString } from 'front-library/Helpers/Type';
+import { on, off, fire } from '@creative-web-solution/front-library/Events/EventsManager';
+import { isString } from '@creative-web-solution/front-library/Helpers/Type';
 
 
 function PubSub() {

@@ -1,11 +1,11 @@
-import { extend } from "front-library/Helpers/Extend";
-import { strToDOM } from "front-library/DOM/strToDOM";
-import { slice } from "front-library/Helpers/slice";
-import { aClass, rClass } from "front-library/DOM/Class";
-import { append, remove } from "front-library/DOM/Manipulation";
-import { one, off } from "front-library/Events/EventsManager";
-import { wait } from "front-library/Helpers/wait";
-import { onTransitionEnd } from "front-library/Events/onTransitionEnd";
+import { extend } from "@creative-web-solution/front-library/Helpers/Extend";
+import { strToDOM } from "@creative-web-solution/front-library/DOM/strToDOM";
+import { slice } from "@creative-web-solution/front-library/Helpers/slice";
+import { aClass, rClass } from "@creative-web-solution/front-library/DOM/Class";
+import { append, remove } from "@creative-web-solution/front-library/DOM/Manipulation";
+import { one, off } from "@creative-web-solution/front-library/Events/EventsManager";
+import { wait } from "@creative-web-solution/front-library/Helpers/wait";
+import { onTransitionEnd } from "@creative-web-solution/front-library/Events/onTransitionEnd";
 
 
 const DEFAULT_OPTIONS = {

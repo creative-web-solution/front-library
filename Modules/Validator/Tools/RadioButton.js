@@ -1,4 +1,4 @@
-import { extend } from 'front-library/Helpers/Extend';
+import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
 
 /**
  * Get all radio with the same name

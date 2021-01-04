@@ -1,7 +1,7 @@
-import { extend } from 'front-library/Helpers/Extend';
-import { strToDOM } from 'front-library/DOM/strToDOM';
-import { insertAfter, append } from 'front-library/DOM/Manipulation';
-import { on } from 'front-library/Events/EventsManager';
+import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
+import { strToDOM } from '@creative-web-solution/front-library/DOM/strToDOM';
+import { insertAfter, append } from '@creative-web-solution/front-library/DOM/Manipulation';
+import { on } from '@creative-web-solution/front-library/Events/EventsManager';
 
 
 const defaultOptions = {

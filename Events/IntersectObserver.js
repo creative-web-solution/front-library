@@ -1,5 +1,5 @@
-import { extend } from 'front-library/Helpers/Extend';
-import { slice } from 'front-library/Helpers/slice';
+import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
+import { slice } from '@creative-web-solution/front-library/Helpers/slice';
 
 /**
  * @callback IntersectObserver_Handler

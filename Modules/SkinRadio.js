@@ -1,6 +1,6 @@
-import { extend } from 'front-library/Helpers/Extend';
-import { wrap } from 'front-library/DOM/wrap';
-import { isString } from 'front-library/Helpers/Type';
+import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
+import { wrap } from '@creative-web-solution/front-library/DOM/wrap';
+import { isString } from '@creative-web-solution/front-library/Helpers/Type';
 
 
 const defaultOptions = {

@@ -1,4 +1,4 @@
-import { isFunction, isArray, isPlainObject } from 'front-library/Helpers/Type';
+import { isFunction, isArray, isPlainObject } from '@creative-web-solution/front-library/Helpers/Type';
 
 
 /**

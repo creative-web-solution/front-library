@@ -1,4 +1,4 @@
-import { getValue } from 'front-library/Helpers/getValue';
+import { getValue } from '@creative-web-solution/front-library/Helpers/getValue';
 
 /**
  * Create a query with the fields of a form.

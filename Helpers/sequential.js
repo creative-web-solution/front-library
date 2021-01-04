@@ -1,4 +1,4 @@
-import { isArray } from 'front-library/Helpers/Type';
+import { isArray } from '@creative-web-solution/front-library/Helpers/Type';
 
 /**
  * Create a sequential list of promises (which resolves one after another)
