@@ -9,3 +9,4 @@
 * Modernizr.touchpad
 * Modernizr.winos
 * Modernizr.winphone
+* Modernizr.cssvars

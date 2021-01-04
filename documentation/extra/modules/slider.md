@@ -3,7 +3,7 @@
 ### Slider
 
 ```
-import { Slider } from 'front-library/Modules/Slider'
+import { Slider } from '@creative-web-solution/front-library/Modules/Slider'
 
 let slider = new Slider(
     $slider,
@@ -117,7 +117,7 @@ on( slider, {
 ### Slider controls
 
 ```
-import { SliderControls } from 'front-library/Modules/Slider'
+import { SliderControls } from '@creative-web-solution/front-library/Modules/Slider'
 
 let controls = new SliderControls(
     slider,

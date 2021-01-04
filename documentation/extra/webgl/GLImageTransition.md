@@ -81,7 +81,7 @@ on( document.body, {
 
 A preset is a javascript class that contains a fragment shader and its uniforms if needed.
 
-There are some available presets in the `front-library/WebGL/GLImageTransition/Presets` folder.
+There are some available presets in the `@creative-web-solution/front-library/WebGL/GLImageTransition/Presets` folder.
 
 
 ## How to make a preset

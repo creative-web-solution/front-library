@@ -13,7 +13,7 @@ For validation function, you can use either:
 **Initialisation**
 
 ```
-import { Validator } from 'front-library/Modules/Validator'
+import { Validator } from '@creative-web-solution/front-library/Modules/Validator'
 
 let $form, validator;
 
@@ -350,7 +350,7 @@ Example for an email error message:
 A validator return a Promise which is ALWAYS resolve when the validation is ended. This is its parameter (called state) which will tell us if the validation is ok or not.
 
  ```
-import { addValidator } from 'front-library/Modules/Validator'
+import { addValidator } from '@creative-web-solution/front-library/Modules/Validator'
 
 addValidator(
     VALIDATOR_NAME,
@@ -366,7 +366,7 @@ The ASYNC parameter as no effect on validation, it's just here for indication pu
 Can be useful for debug.
 
  ```
-import { addValidator } from 'front-library/Modules/Validator'
+import { addValidator } from '@creative-web-solution/front-library/Modules/Validator'
 
 addValidator(
     VALIDATOR_NAME,
@@ -489,15 +489,15 @@ addValidator(
 Import its with:
 
 ```
-import { createState, standardValidation } from 'front-library/Modules/Validator/Tools/ValidationState'
-import { getRadioList, isRadioListChecked } from 'front-library/Modules/Validator/Tools/RadioButton'
-import { getLabelElement, getLabel } from 'front-library/Modules/Validator/Tools/Label'
-import isEmpty from 'front-library/Modules/Validator/Tools/isEmpty'
-import isNumber from 'front-library/Modules/Validator/Tools/isNumber'
-import isEmail from 'front-library/Modules/Validator/Tools/isEmail'
-import isUrl from 'front-library/Modules/Validator/Tools/isUrl'
-import isDate from 'front-library/Modules/Validator/Tools/isDate'
-import getQueryFromForm from 'front-library/Modules/Validator/Tools/getQueryFromForm'
+import { createState, standardValidation } from '@creative-web-solution/front-library/Modules/Validator/Tools/ValidationState'
+import { getRadioList, isRadioListChecked } from '@creative-web-solution/front-library/Modules/Validator/Tools/RadioButton'
+import { getLabelElement, getLabel } from '@creative-web-solution/front-library/Modules/Validator/Tools/Label'
+import isEmpty from '@creative-web-solution/front-library/Modules/Validator/Tools/isEmpty'
+import isNumber from '@creative-web-solution/front-library/Modules/Validator/Tools/isNumber'
+import isEmail from '@creative-web-solution/front-library/Modules/Validator/Tools/isEmail'
+import isUrl from '@creative-web-solution/front-library/Modules/Validator/Tools/isUrl'
+import isDate from '@creative-web-solution/front-library/Modules/Validator/Tools/isDate'
+import getQueryFromForm from '@creative-web-solution/front-library/Modules/Validator/Tools/getQueryFromForm'
 ```
 
 
@@ -578,7 +578,7 @@ isDate( stringDate, format? );
 **Create a query form a form**
 
 ```
-import getQueryFromForm from 'front-library/Modules/Validator/Tools/getQueryFromForm'
+import getQueryFromForm from '@creative-web-solution/front-library/Modules/Validator/Tools/getQueryFromForm'
 
 let query = getQueryFromForm( $form );
 ```

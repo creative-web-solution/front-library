@@ -33,7 +33,7 @@
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="global.html#aClass">aClass</a></li><li><a href="global.html#append">append</a></li><li><a href="global.html#children">children</a></li><li><a href="global.html#clone">clone</a></li><li><a href="global.html#documentSize">documentSize</a></li><li><a href="global.html#filter">filter</a></li><li><a href="global.html#getMatrix">getMatrix</a></li><li><a href="global.html#getStyle">getStyle</a></li><li><a href="global.html#getTransform">getTransform</a></li><li><a href="global.html#getTranslate">getTranslate</a></li><li><a href="global.html#hClass">hClass</a></li><li><a href="global.html#height">height</a></li><li><a href="global.html#index">index</a></li><li><a href="global.html#insertAfter">insertAfter</a></li><li><a href="global.html#insertBefore">insertBefore</a></li><li><a href="global.html#next">next</a></li><li><a href="global.html#offset">offset</a></li><li><a href="global.html#outerHeight">outerHeight</a></li><li><a href="global.html#outerSize">outerSize</a></li><li><a href="global.html#outerWidth">outerWidth</a></li><li><a href="global.html#pageToDOM">pageToDOM</a></li><li><a href="global.html#position">position</a></li><li><a href="global.html#prepend">prepend</a></li><li><a href="global.html#previous">previous</a></li><li><a href="global.html#prop">prop</a></li><li><a href="global.html#rClass">rClass</a></li><li><a href="global.html#remove">remove</a></li><li><a href="global.html#sClass">sClass</a></li><li><a href="global.html#size">size</a></li><li><a href="global.html#strToDOM">strToDOM</a></li><li><a href="global.html#tClass">tClass</a></li><li><a href="global.html#width">width</a></li><li><a href="global.html#windowScroll">windowScroll</a></li><li><a href="global.html#windowSize">windowSize</a></li><li><a href="global.html#wrap">wrap</a></li>
+					<li><a href="global.html#aClass">aClass</a></li><li><a href="global.html#append">append</a></li><li><a href="global.html#children">children</a></li><li><a href="global.html#clone">clone</a></li><li><a href="global.html#documentSize">documentSize</a></li><li><a href="global.html#filter">filter</a></li><li><a href="global.html#getCssProperty">getCssProperty</a></li><li><a href="global.html#getMatrix">getMatrix</a></li><li><a href="global.html#getStyle">getStyle</a></li><li><a href="global.html#getTransform">getTransform</a></li><li><a href="global.html#getTranslate">getTranslate</a></li><li><a href="global.html#hClass">hClass</a></li><li><a href="global.html#height">height</a></li><li><a href="global.html#index">index</a></li><li><a href="global.html#insertAfter">insertAfter</a></li><li><a href="global.html#insertBefore">insertBefore</a></li><li><a href="global.html#next">next</a></li><li><a href="global.html#offset">offset</a></li><li><a href="global.html#outerHeight">outerHeight</a></li><li><a href="global.html#outerSize">outerSize</a></li><li><a href="global.html#outerWidth">outerWidth</a></li><li><a href="global.html#pageToDOM">pageToDOM</a></li><li><a href="global.html#position">position</a></li><li><a href="global.html#prepend">prepend</a></li><li><a href="global.html#previous">previous</a></li><li><a href="global.html#prop">prop</a></li><li><a href="global.html#rClass">rClass</a></li><li><a href="global.html#remove">remove</a></li><li><a href="global.html#sClass">sClass</a></li><li><a href="global.html#setCssProperty">setCssProperty</a></li><li><a href="global.html#size">size</a></li><li><a href="global.html#strToDOM">strToDOM</a></li><li><a href="global.html#tClass">tClass</a></li><li><a href="global.html#width">width</a></li><li><a href="global.html#windowScroll">windowScroll</a></li><li><a href="global.html#windowSize">windowSize</a></li><li><a href="global.html#wrap">wrap</a></li>
 				</ul>
 			</li>
 			
@@ -1108,6 +1108,184 @@
         <h5>Example</h5>
         
     <pre class="sunlight-highlight-javascript">filteredArray = filter( $elements, selector );</pre>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="getCssProperty"><span class="type-signature"></span>getCssProperty($element, property)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Get a CSS property of an element
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>$element</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>property</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">String</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">value = getCssProperty($element, &#x27;--my-var&#x27;)</pre>
 
 
     
@@ -5060,6 +5238,215 @@ Remove oldCssClass and add newCssClass only if oldCssClass exists
             
 <hr>
 <dt>
+    <h4 class="name" id="setCssProperty"><span class="type-signature"></span>setCssProperty($element, property, value)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Set a CSS property on an element
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>$element</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>property</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+|
+
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">HTMLElement</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">$element = setCssVar($element, &#x27;--my-var&#x27;, &#x27;12px&#x27;)
+$element = setCssVar($element, {
+ &quot;--my-var&quot;:   &quot;12px&quot;,
+ &quot;--my-var-2&quot;: &quot;100%&quot;
+})</pre>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
     <h4 class="name" id="size"><span class="type-signature"></span>size($element)</h4>
     
     
@@ -8276,7 +8663,7 @@ tClass( $elements, cssClass, forceAdd )</pre>
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a>
 	
-		on 2020-07-28T16:49:10+02:00
+		on 2021-01-04T14:15:41+01:00
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

@@ -5,7 +5,7 @@ Callbacks are bound on 'keydown' events
 
 
 ```
-import { KeyboardHandler } from 'front-library/Events/KeyboardHandler'
+import { KeyboardHandler } from '@creative-web-solution/front-library/Events/KeyboardHandler'
 
 let keyboardControls = new KeyboardHandler(
     $domElement,
@@ -85,7 +85,7 @@ You have access to:
 ## Gestures
 
 ```
-import { gesture, gestureOff } from 'front-library/Events/Gesture'
+import { gesture, gestureOff } from '@creative-web-solution/front-library/Events/Gesture'
 
 let gestureHanlder = gesture( $element, 'handlerName', options );
 

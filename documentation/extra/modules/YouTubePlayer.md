@@ -3,7 +3,7 @@
 **Init**
 
 ```
-import { YouTubePlayer } from 'front-library/Modules/YouTubePlayer'
+import { YouTubePlayer } from '@creative-web-solution/front-library/Modules/YouTubePlayer'
 
 ytPlayer = new YouTubePlayer(
     {
