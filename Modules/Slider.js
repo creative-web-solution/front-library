@@ -462,10 +462,13 @@ export function Slider( $slider, userOptions = {} ) {
     function getNextSlideIndex( index, step = 1 ) {
         index = index + step;
 
-        if ( index >= nbSlides && options.loop ) {
+        if ( options.loop && index >= nbSlides ) {
             index = 0;
         }
-        else if ( index >= nbSlides ) {
+        else if (
+            !options.loop && !options.moveByPage && index > nbSlides - options.slidePerPage ||
+            index >= nbSlides
+        ) {
             return -1;
         }
 
@@ -1169,7 +1172,8 @@ export function Slider( $slider, userOptions = {} ) {
  *      "paginationItems": '.item',
  *      "autoslide": 10, // in second
  *      "swipe": false,
- *      "enableKeyboard": true
+ *      "enableKeyboard": true,
+ *      "gestureOptions": Object
  *  }
  * );
 */
@@ -1179,7 +1183,8 @@ export function SliderControls( slider, options ) {
         keyboardNextButton,
         $bullets,
         paginationKeyboardControls,
-        inSlideKeyboardControls;
+        inSlideKeyboardControls,
+        isAutoslideEnabled;
 
     const SELF = this;
 
@@ -1314,6 +1319,33 @@ export function SliderControls( slider, options ) {
     };
 
 
+    /**
+     * Start the autoslide
+     *
+     * @memberof SliderControls
+     * @function startAutoslide
+     * @instance
+     */
+    this.startAutoslide = () => {
+        if ( options.autoslide ) {
+            isAutoslideEnabled = true;
+            autoslideLoop();
+        }
+    };
+
+
+    /**
+     * Stop the autoslide
+     *
+     * @memberof SliderControls
+     * @function startAutoslide
+     * @instance
+     */
+    this.stopAutoslide = () => {
+        stopAutoslide();
+    };
+
+
     function onPrev( e, $target ) {
         e.preventDefault();
 
@@ -1337,13 +1369,13 @@ export function SliderControls( slider, options ) {
 
     function stopAutoslide() {
         clearTimeout( autoslideTimeoutId );
-        options.autoslide = 0;
+        isAutoslideEnabled = false;
     }
 
 
     function makeAutoslide() {
         slider.next().then( () => {
-            if ( options.autoslide ) {
+            if ( isAutoslideEnabled ) {
                 autoslideLoop();
             }
         } );
@@ -1576,7 +1608,5 @@ export function SliderControls( slider, options ) {
 
     // ------------------- START AUTOSLIDE
 
-    if ( options.autoslide ) {
-        autoslideLoop();
-    }
+    this.startAutoslide();
 }

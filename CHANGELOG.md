@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 6.2.2
+
+* Add DragSlider module
+* Update touchdevice detection method
+* Slider:
+    * Add function to start and stop auto slide
+    * Fix display when no loop and several slides per page
+
+
 ## 6.2.1
 
 * Add a scope to the package name for NPM publish

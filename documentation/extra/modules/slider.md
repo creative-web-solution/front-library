@@ -128,7 +128,8 @@ let controls = new SliderControls(
         "paginationItems":      selector
         "autoslide":            int, // in second
         "swipe":                false,
-        "enableKeyboard":       false
+        "enableKeyboard":       false,
+        "gestureOptions":       Object // See gesture.md
     }
 );
 
@@ -136,6 +137,9 @@ promise = controls.previous();
 promise = controls.next();
 promise = controls.goto( slideIndex );
 boolean = controls.isEnable();
+
+controls.startAutoslide(); // options.autoslide must be set
+controls.stopAutoslide();
 
 controls.destroy();
 ```

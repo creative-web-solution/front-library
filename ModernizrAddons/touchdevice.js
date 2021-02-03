@@ -1,4 +1,4 @@
 /*dependencies: addons::mobile,addons::touchpad */
 Modernizr.addTest( 'touchdevice', function() {
-    return Modernizr.mobile || Modernizr.touchpad;
+    return window.matchMedia('(hover: none)').matches;
 } );
