@@ -1,5 +1,11 @@
 # CHANGELOG
 
+
+## 6.2.3
+
+* Update DragSlider module
+
+
 ## 6.2.2
 
 * Add DragSlider module

@@ -17,14 +17,16 @@ import { on, off }                from '@creative-web-solution/front-library/Eve
  * @param {String} options.listSelector
  * @param {String} options.itemSelector
  * @param {String} options.dragClass
- * @param {Function} options.onStartDrag
- * @param {Function} options.onDrag
- * @param {Function} options.onStopDrag
- * @param {Function} options.onSnap
- * @param {Function} options.onSnapUpdate
- * @param {Function} options.onMouseEnter
- * @param {Function} options.onMouseLeave
- * @param {Function} options.onInit
+ * @param {String} [options.lockedClass="is-locked"]
+ * @param {Function} [options.onStartDrag]
+ * @param {Function} [options.onDrag]
+ * @param {Function} [options.onStopDrag]
+ * @param {Function} [options.onSnap]
+ * @param {Function} [options.onSnapUpdate]
+ * @param {Function} [options.onMouseEnter]
+ * @param {Function} [options.onMouseLeave]
+ * @param {Function} [options.onInit]
+ * @param {Function} [options.onChangeState]
  * @param {Number} [options.swipeTresholdMin=40] - in px
  * @param {Number} [options.swipeTresholdSize=0.5] - in % (0.5 = 50% of the size of one item)
  */
@@ -40,10 +42,18 @@ export function DragSlider( $slider, options ) {
         "x": 0
     };
 
-    options.swipeTresholdMin = options.swipeTresholdMin || 40;
+    isDraggingActive         = false;
+
+    options.swipeTresholdMin  = options.swipeTresholdMin || 40;
     options.swipeTresholdSize = options.swipeTresholdSize || 0.5;
+    options.lockedClass       = options.lockedClass || 'is-locked';
 
     itemArray = [];
+
+
+    Object.defineProperty( this, 'isActive', {
+        "get": () => isDraggingActive
+    } );
 
 
     function cancelLinkClick() {
@@ -63,6 +73,7 @@ export function DragSlider( $slider, options ) {
         siteOffset       = parseInt( prop( $items[ 0 ], 'marginLeft' ), 10 );
         listDelta        = viewportInfo.width - $list.scrollWidth;
 
+        const prevIsDraggingActive = isDraggingActive;
         isDraggingActive = listDelta < 0;
 
         if ( !isDraggingActive ) {
@@ -75,17 +86,23 @@ export function DragSlider( $slider, options ) {
             } );
         }
 
-        tClass( $slider, 'is-locked', !isDraggingActive );
+        tClass( $slider, options.lockedClass, !isDraggingActive );
+
+        if ( prevIsDraggingActive !== isDraggingActive ) {
+            options.onChangeState?.( isDraggingActive );
+        }
 
         itemArray.length = 0;
 
         $items.forEach( ( $item, index ) => {
+            const ITEM_OFFSET = offset( $item, false, $list );
+
             itemArray.push({
                 index,
                 "isFirst": index === 0,
-                "isLast":  index === $items.length - 1,
+                "isLast":  index === $items.length - 1 || ITEM_OFFSET.left > Math.abs( listDelta ),
                 $item,
-                "info": offset( $item, false, $list )
+                "info": ITEM_OFFSET
             });
 
             itemMap.set( $item, itemArray[ index ] );
@@ -110,11 +127,25 @@ export function DragSlider( $slider, options ) {
         }
         else {
             finalX = -1 * snapItem.info.left + siteOffset;
+
+            finalX = Math.max( Math.min( 0, finalX ), listDelta );
+
+            // If close to the end, then snap to it
+            if ( Math.abs( finalX - listDelta ) <= 3 ) {
+                finalX = listDelta;
+            }
         }
 
-        finalX = Math.max( Math.min( 0, finalX ), listDelta );
+        const IS_SNAP_TO_END   = finalX === listDelta;
+        const IS_SNAP_TO_START = finalX === 0;
 
-        options.onSnap?.( snapItem, deltaMove.x, listDelta );
+        options.onSnap?.( {
+            "item":        snapItem,
+            "xPos":        deltaMove.x,
+            "moveMaxSize": listDelta,
+            "isAtStart":   IS_SNAP_TO_START,
+            "isAtEnd":     IS_SNAP_TO_END
+        } );
 
         gsap.to( $list, {
             "duration": 0.3,
@@ -124,7 +155,13 @@ export function DragSlider( $slider, options ) {
             "onUpdate": function() {
                 deltaMove.x = gsap.getProperty( this.targets()[ 0 ], 'x' );
 
-                options.onSnapUpdate?.( snapItem, deltaMove.x, listDelta );
+                options.onSnapUpdate?.( {
+                    "item":        snapItem,
+                    "xPos":        deltaMove.x,
+                    "moveMaxSize": listDelta,
+                    "isAtStart":   IS_SNAP_TO_START,
+                    "isAtEnd":     IS_SNAP_TO_END
+                } );
             }
         } );
 
@@ -274,7 +311,13 @@ export function DragSlider( $slider, options ) {
             }
         } );
 
-        options.onStartDrag?.( currentSnapItem, deltaMove.x, listDelta );
+        options.onStartDrag?.( {
+            "item":        currentSnapItem,
+            "xPos":        deltaMove.x,
+            "moveMaxSize": listDelta,
+            "isAtStart":   deltaMove.x === 0,
+            "isAtEnd":     deltaMove.x === listDelta
+        } );
     }
 
 
@@ -299,7 +342,13 @@ export function DragSlider( $slider, options ) {
             "z": 0
         } );
 
-        options.onDrag?.( currentSnapItem, deltaMove.newX, listDelta  );
+        options.onDrag?.( {
+            "item":        currentSnapItem,
+            "xPos":        deltaMove.newX,
+            "moveMaxSize": listDelta,
+            "isAtStart":   deltaMove.newX === 0,
+            "isAtEnd":     deltaMove.newX === listDelta
+        } );
     }
 
 
@@ -317,7 +366,13 @@ export function DragSlider( $slider, options ) {
 
         snapToItem();
 
-        options.onStopDrag?.( currentSnapItem, deltaMove.x, listDelta );
+        options.onStopDrag?.({
+            "item":        currentSnapItem,
+            "xPos":        deltaMove.x,
+            "moveMaxSize": listDelta,
+            "isAtStart":   deltaMove.x === 0,
+            "isAtEnd":     deltaMove.x === listDelta
+        } );
     }
 
 
@@ -326,7 +381,13 @@ export function DragSlider( $slider, options ) {
             return;
         }
 
-        options.onMouseEnter?.( currentSnapItem, deltaMove.x, listDelta );
+        options.onMouseEnter?.( {
+            "item":        currentSnapItem,
+            "xPos":        deltaMove.x,
+            "moveMaxSize": listDelta,
+            "isAtStart":   deltaMove.x === 0,
+            "isAtEnd":     deltaMove.x === listDelta
+        } );
     }
 
 
@@ -335,7 +396,13 @@ export function DragSlider( $slider, options ) {
             return;
         }
 
-        options.onMouseLeave?.( currentSnapItem, deltaMove.x, listDelta );
+        options.onMouseLeave?.( {
+            "item":        currentSnapItem,
+            "xPos":        deltaMove.x,
+            "moveMaxSize": listDelta,
+            "isAtStart":   deltaMove.x === 0,
+            "isAtEnd":     deltaMove.x === listDelta
+        } );
     }
 
 
@@ -374,7 +441,13 @@ export function DragSlider( $slider, options ) {
             return;
         }
 
-        options.onSnap?.( ITEM, deltaMove.x, listDelta );
+        options.onSnap?.( {
+            "item":        ITEM,
+            "xPos":        deltaMove.x,
+            "moveMaxSize": listDelta,
+            "isAtStart":   deltaMove.x === 0,
+            "isAtEnd":     deltaMove.x === listDelta
+        } );
 
         gsap.to( $list, {
             "duration": 0.3,
@@ -384,7 +457,13 @@ export function DragSlider( $slider, options ) {
             "onUpdate": function() {
                 deltaMove.x = gsap.getProperty( this.targets()[ 0 ], 'x' );
 
-                options.onSnapUpdate?.( ITEM, deltaMove.x, listDelta );
+                options.onSnapUpdate?.( {
+                    "item":        ITEM,
+                    "xPos":        deltaMove.x,
+                    "moveMaxSize": listDelta,
+                    "isAtStart":   deltaMove.x === 0,
+                    "isAtEnd":     deltaMove.x === listDelta
+                } );
             }
         } );
     };
@@ -437,7 +516,13 @@ export function DragSlider( $slider, options ) {
             "callback":   onMouseleave
         } );
 
-        options.onInit?.( currentSnapItem, deltaMove.x, listDelta );
+        options.onInit?.( {
+            "item":        currentSnapItem,
+            "xPos":        deltaMove.x,
+            "moveMaxSize": listDelta,
+            "isAtStart":   deltaMove.x === 0,
+            "isAtEnd":     deltaMove.x === listDelta
+        } );
 
         aClass( $slider, 'is-active' );
     }

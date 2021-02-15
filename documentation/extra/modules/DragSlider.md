@@ -7,21 +7,25 @@ const slider = new DragSlider( $slider, {
     "listSelector": "",
     "itemSelector": "",
     "dragClass": "",
-    "onDrag": ( item, listXPosition, listWidth ) => {},
-    "onInit": ( item, listXPosition, listWidth ) => {},
-    "onMouseEnter": ( item, listXPosition, listWidth ) => {},
-    "onMouseLeave": ( item, listXPosition, listWidth ) => {},
-    "onSnap": ( item, listXPosition, listWidth ) => {
+    "lockedClass": "",
+    "onDrag": ({ item, xPos, moveMaxSize, isAtStart, isAtEnd }) => {},
+    "onInit": ({ item, xPos, moveMaxSize, isAtStart, isAtEnd }) => {},
+    "onMouseEnter": ({ item, xPos, moveMaxSize, isAtStart, isAtEnd }) => {},
+    "onMouseLeave": ({ item, xPos, moveMaxSize, isAtStart, isAtEnd }) => {},
+    "onSnap": ({ item, xPos, moveMaxSize, isAtStart, isAtEnd }) => {
         // Call at the begin of the snap animation
     },
-    "onSnapUpdate": ( item, listXPosition, listWidth ) => {
+    "onSnapUpdate": ({ item, xPos, moveMaxSize, isAtStart, isAtEnd }) => {
         // Call during the snap animation
     },
-    "onStartDrag": ( item, listXPosition, listWidth ) => {},
-    "onStopDrag": ( item, listXPosition, listWidth ) => {},
+    "onStartDrag": ({ item, xPos, moveMaxSize, isAtStart, isAtEnd }) => {},
+    "onStopDrag": ({ item, xPos, moveMaxSize, isAtStart, isAtEnd }) => {},
+    "onChangeState": ( isActive ) => {},
     "swipeTresholdMin": 40 // in px,
     "swipeTresholdSize": 0.5 // in % (0.5 = 50% of the size of one item)
 } );
+
+slider.isActive;
 
 slider.init();
 slider.destroy();
