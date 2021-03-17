@@ -66,10 +66,10 @@ function Tab( $TAB, options ) {
     function toggleTab( e ) {
         e.preventDefault();
 
-        if( isOpen ) {
+        if( isOpen && ( !options.atLeastOneOpen || options.allowMultipleTab ) ) {
             closeTab();
         }
-        else {
+        else if( !isOpen ) {
             openTab();
         }
     }
@@ -108,6 +108,7 @@ function Tab( $TAB, options ) {
 const DEFAULT_OPTIONS = {
     "tabSelector":      "button[aria-expanded]",
     "allowMultipleTab": false,
+    "atLeastOneOpen":   false,
     "animations": {
         "open": function( $TAB, $TAB_PANNEL ) {
             aClass( [ $TAB, $TAB_PANNEL ], 'on' );
@@ -155,6 +156,7 @@ const DEFAULT_OPTIONS = {
  * @param {Object} [userOptions]
  * @param {String} [userOptions.tabSelector='button[aria-expanded]']
  * @param {Boolean} [userOptions.allowMultipleTab=false]
+ * @param {Boolean} [userOptions.atLeastOneOpen=false]
  * @param {Accordion_callback} [userOptions.onOpenAtStart]
  * @param {Accordion_callback} [userOptions.onOpen]
  * @param {Accordion_callback} [userOptions.onClose]
@@ -166,6 +168,7 @@ const DEFAULT_OPTIONS = {
  * @example new Accordion( document.querySelector( '.accordion' ), {
  *      "tabSelector":     ".tab",
  *      "allowMultipleTab": false,
+ *      "atLeastOneOpen":   false,
  *      "animations": {
  *          "open": function( $tab, $panel ) {
  *              aClass( [ $tab, $panel ], 'on' );
@@ -233,6 +236,7 @@ export function Accordion( $accordionWrapper, userOptions = {} ) {
         if( status === STATUS_ON ){
             return;
         }
+
         status = STATUS_ON;
 
         $tabs.forEach( ( $tab, index ) => {
@@ -254,6 +258,8 @@ export function Accordion( $accordionWrapper, userOptions = {} ) {
         tablist.forEach( tab => {
             tab.destroy();
         } );
+
+        tablist.length = 0;
     }
 
 

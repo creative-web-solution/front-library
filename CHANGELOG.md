@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 6.2.4
+
+* Accordion: add an ption to avoid closing all tabs
+
+
 ## 6.2.3
 
 * Update DragSlider module
