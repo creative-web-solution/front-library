@@ -254,12 +254,14 @@ function Slide( options ) {
             "$slide": $slide,
             "id": this.id,
             "delay": this.delay,
-            "index": SELF.index,
-            "position": SELF.position,
-            "isFirst": SELF.isFirst,
-            "isLast": SELF.isLast,
+            "index": this.index,
+            "position": this.position,
+            "isFirst": this.isFirst,
+            "isLast": this.isLast,
             "isVisible": this.isVisible(),
-            "isActive": this.isActive()
+            "isActive": this.isActive(),
+            "page": this.currentPage,
+            "pageIndex": this.currentPage - 1,
         }
     };
 }
@@ -404,7 +406,7 @@ export function Slider( $slider, userOptions = {} ) {
 
 
     /**
-     * All slides
+     * All slides (DOM elements)
      *
      * @memberof Slider
      * @instance
@@ -413,6 +415,20 @@ export function Slider( $slider, userOptions = {} ) {
     Object.defineProperty( this, '$slides', {
         "get": function() {
             return $slides;
+        }
+    } );
+
+
+    /**
+     * All slides
+     *
+     * @memberof Slider
+     * @instance
+     * @member {HTMLElement[]} $slides
+     */
+    Object.defineProperty( this, 'slides', {
+        "get": function() {
+            return slidesList.map( slide => slide.getSlideProperties() );
         }
     } );
 
