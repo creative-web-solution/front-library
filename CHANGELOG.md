@@ -1,5 +1,11 @@
 # CHANGELOG
 
+
+## 6.2.6
+
+* Slider: add a function to get all slides of a page + Add the pageIndex in slide's properties
+
+
 ## 6.2.5
 
 * Slider: expose list of slide objects + expose page number for each slide

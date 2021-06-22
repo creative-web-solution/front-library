@@ -65,7 +65,12 @@ function Slide( options ) {
         this.id = $slide.id = getNextSlideId();
     }
 
-    $slide.setAttribute( 'role', 'tabpanel' )
+    $slide.setAttribute( 'role', 'tabpanel' );
+
+
+    Object.defineProperty( this, 'currentPageIndex', {
+        "get": () => this.currentPage - 1
+    } );
 
 
     function toggleElementsFocusability( activate ) {
@@ -261,7 +266,7 @@ function Slide( options ) {
             "isVisible": this.isVisible(),
             "isActive": this.isActive(),
             "page": this.currentPage,
-            "pageIndex": this.currentPage - 1,
+            "pageIndex": this.currentPageIndex
         }
     };
 }
@@ -1057,6 +1062,23 @@ export function Slider( $slider, userOptions = {} ) {
 
 
     /**
+     * Get all slides oh a page
+     *
+     * @memberof Slider
+     * @function getSlidesOfPage
+     * @instance
+     *
+     * @param {Number} pageIndex
+     *
+     * @returns {Slide[]}
+     */
+    this.getSlidesOfPage = pageIndex => {
+        return slidesList.filter( slide => slide.currentPageIndex === pageIndex )
+                         .map( slide => slide.getSlideProperties() );
+    };
+
+
+    /**
      * Get a slide in function of an index
      *
      * @memberof Slider
@@ -1068,15 +1090,15 @@ export function Slider( $slider, userOptions = {} ) {
      * @returns {Slide}
      */
     this.getSlide = index => {
-        return slidesList[ index ];
+        return slidesList[ index ] ? slidesList[ index ].getSlideProperties() : undefined;
     };
 
 
     /**
      * Get the nbth slide after the index
      *
-     * @memberof getTheNthChildAfter
-     * @function getSlide
+     * @memberof Slider
+     * @function getTheNthChildAfter
      * @instance
      *
      * @param {Number} index - target index
@@ -1092,8 +1114,8 @@ export function Slider( $slider, userOptions = {} ) {
     /**
      * Get the nbth slide before the index
      *
-     * @memberof getTheNthChildBefore
-     * @function getSlide
+     * @memberof Slider
+     * @function getTheNthChildBefore
      * @instance
      *
      * @param {Number} index - target index
