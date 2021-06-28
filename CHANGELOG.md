@@ -1,9 +1,18 @@
 # CHANGELOG
 
+## 7.0.0
+
+Move to TypeScript
+
+
+## 6.2.5
+
+* Slider: expose list of slide objects + expose page number for each slide
+
 
 ## 6.2.4
 
-* Accordion: add an ption to avoid closing all tabs
+* Accordion: add an option to avoid closing all tabs
 
 
 ## 6.2.3
