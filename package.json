@@ -24,6 +24,7 @@
       [
         "babelify",
         {
+          "extensions": [ ".tsx", ".ts" ],
           "presets": [
             "@babel/preset-env"
           ]

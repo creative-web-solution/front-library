@@ -2,26 +2,6 @@ import { on, off } from '@creative-web-solution/front-library/Events/EventsManag
 import { extend }  from '@creative-web-solution/front-library/Helpers/Extend';
 
 
-export enum GestureDirection {
-    up        = "up",
-    down      = "down",
-    left      = "left",
-    right     = "right",
-    upRight   = "up-right",
-    downRight = "down-right",
-    upLeft    = "up-left",
-    downLeft  = "down-left",
-    none      = "none"
-}
-
-export enum GestureMode {
-    "touch",
-    "mouse",
-    "pointer",
-    "click"
-}
-
-
 const defaultOptions: GestureOptionsType = {
     "threshold":            20,
     "useTouch":             true,
@@ -54,34 +34,34 @@ const MIN_DELTA_FOR_DIRECTION_CHANGE = 5; // px
 
 
 const EVENTS_NAME = ( function() {
-    let start, move, end, mode: GestureMode;
+    let start, move, end, mode: GestureModeType;
 
     const click = 'click';
-    mode        = GestureMode.click;
+    mode        = 'click';
 
     if ( 'ontouchstart' in document ) {
         start = 'touchstart';
         move  = 'touchmove';
         end   = 'touchend';
-        mode  = GestureMode.touch;
+        mode  = 'touch';
     }
     else if ( window.PointerEvent ) {
         start = 'pointerdown';
         move  = 'pointermove';
         end   = 'pointerup';
-        mode  = GestureMode.pointer;
+        mode  = 'pointer';
     }
     else if ( window.MSPointerEvent ) {
         start = 'MSPointerDown';
         move  = 'MSPointerMove';
         end   = 'MSPointerUp';
-        mode  = GestureMode.pointer;
+        mode  = 'pointer';
     }
     else if ( 'onmousedown' in document ) {
         start = 'mousedown';
         move  = 'mousemove';
         end   = 'mouseup';
-        mode  = GestureMode.mouse;
+        mode  = 'mouse';
     }
 
     return {
@@ -90,7 +70,7 @@ const EVENTS_NAME = ( function() {
         end,
         click,
         mode,
-        "hasTouch": mode !== GestureMode.click
+        "hasTouch": mode !== 'click'
     };
 } )();
 
@@ -98,7 +78,7 @@ const EVENTS_NAME = ( function() {
 function getPos( e ) {
     let obj;
 
-    if ( EVENTS_NAME.mode === GestureMode.pointer || EVENTS_NAME.mode === GestureMode.mouse ) {
+    if ( EVENTS_NAME.mode === 'pointer' || EVENTS_NAME.mode === 'mouse' ) {
         if ( e.pageX ) {
             obj = {
                 "pageX":   e.pageX,
@@ -389,7 +369,7 @@ class GestureManager {
 
     private getVelocityData(): GestureVelocityType {
         let angle,
-            direction: GestureDirection = GestureDirection.none;
+            direction: GestureDirectionType = 'none';
 
         const currentTime = new Date().valueOf();
 
@@ -422,53 +402,53 @@ class GestureManager {
         angle = ( angle * 180 ) / Math.PI;
 
         if ( deltaPosX > 0 && deltaPosY > 0 ) {
-            direction = GestureDirection.downRight;
+            direction = 'down-right';
             angle = 360 - angle;
 
             if ( this.fuzzyEquals( angle, 360 ) ) {
-                direction = GestureDirection.right;
+                direction = 'right';
                 angle = 0;
             }
             else if ( this.fuzzyEquals( angle, 270 ) ) {
-                direction = GestureDirection.down;
+                direction = 'down';
                 angle = 270;
             }
         }
         else if ( deltaPosX > 0 && deltaPosY < 0 ) {
-            direction = GestureDirection.upRight;
+            direction = 'up-right';
 
             if ( this.fuzzyEquals( angle, 360 ) ) {
-                direction = GestureDirection.right;
+                direction = 'right';
                 angle = 0;
             }
             else if ( this.fuzzyEquals( angle, 90 ) ) {
-                direction = GestureDirection.up;
+                direction = 'up';
                 angle = 90;
             }
         }
         else if ( deltaPosX < 0 && deltaPosY > 0 ) {
-            direction = GestureDirection.downLeft;
+            direction = 'down-left';
             angle = angle + 180;
 
             if ( this.fuzzyEquals( angle, 180 ) ) {
-                direction = GestureDirection.left;
+                direction = 'left';
                 angle = 180;
             }
             else if ( this.fuzzyEquals( angle, 270 ) ) {
-                direction = GestureDirection.down;
+                direction = 'down';
                 angle = 270;
             }
         }
         else if ( deltaPosX < 0 && deltaPosY < 0 ) {
-            direction = GestureDirection.upLeft;
+            direction = 'up-left';
             angle = 180 - angle;
 
             if ( this.fuzzyEquals( angle, 180 ) ) {
-                direction = GestureDirection.left;
+                direction = 'left';
                 angle = 180;
             }
             else if ( this.fuzzyEquals( angle, 90 ) ) {
-                direction = GestureDirection.up;
+                direction = 'up';
                 angle = 90;
             }
         }
@@ -642,7 +622,7 @@ class GestureManager {
 
         if ( !this.#isTapCancelled && !this.#isTapEventFired && this.#options.tap ) {
             this.#options.tap.call( this.#$currentTargetElement, e, this.#$currentTargetElement, getPos(e), 'tap' );
-            if ( EVENTS_NAME.mode !== GestureMode.click ) {
+            if ( EVENTS_NAME.mode !== 'click' ) {
                 this.#isTapEventFired = true;
             }
         }

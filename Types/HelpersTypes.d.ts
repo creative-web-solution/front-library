@@ -1,3 +1,5 @@
+type ColorRenderType =  'obj' | 'hex' | 'rgba';
+
 type ColorType = {
     r:  number;
     g:  number;

@@ -1,3 +1,5 @@
+type SlideDirectionType = -1 | 1;
+
 type SlidePropertiesType = {
     $slide:     HTMLElement;
     id:         string;

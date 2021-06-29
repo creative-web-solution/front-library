@@ -1,3 +1,5 @@
+type GLImageTransitionFitType  = 'cover' | 'contains';
+
 interface GLImageTransitionPreset {
     fsSource: string;
     addUniform?( GL: WebGLRenderingContext, SHADER_PROGRAM: WebGLProgram ): void;
@@ -13,8 +15,8 @@ type GLImageTransitionOptionsType = {
     $wrapper?: HTMLElement;
     /** @default webgl */
     context?:  string;
-    /** @default GLImageTransitionFit.FIT_COVER */
-    fitMode?: GLImageTransitionFit;
+    /** @default cover */
+    fitMode?: GLImageTransitionFitType;
     /**
      * Transition duration in second
      * @default 1

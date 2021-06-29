@@ -1,3 +1,12 @@
+type ScrollSnapSnapType = 'scroll' | 'api';
+
+type ScrollSnapDirectionType = 'h' | 'v';
+
+type ScrollSnapScrollPropertyType = 'scrollLeft' | 'scrollTop';
+
+type ScrollSnapSizePropertyType = 'scrollWidth' | 'scrollHeight';
+
+
 type ScrollSnapItemType = {
     coord:   number;
     index:   number;
@@ -28,7 +37,7 @@ type ScrollSnapRefreshOptionType = {
         top?:        number;
         left?:       number;
     };
-    direction?:      ScrollSnapDirection;
+    direction?:      ScrollSnapDirectionType;
 }
 
 type ScrollSnapOptionsType = {
@@ -37,7 +46,7 @@ type ScrollSnapOptionsType = {
     /** @default 2 */
     minItemsToActivate?: number;
     /** @default h */
-    direction?:          ScrollSnapDirection;
+    direction?:          ScrollSnapDirectionType;
     /** Internal function using GSAP and scrollTo plugin to set the scroll. Can be override to use another library */
     _setScroll?:         ( $scroller: HTMLElement, x: number, y: number ) => void;
     $offsetElement?:     HTMLElement;

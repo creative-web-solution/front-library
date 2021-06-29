@@ -1,9 +1,3 @@
-export enum ColorRenderType {
-    obj  = 'obj',
-    hex  = 'hex',
-    rgba = 'rgba'
-};
-
 const RGBA_REGEXP = /^rgba\(([0-9]{1,3}),([0-9]{1,3}),([0-9]{1,3}),([01](\.[0-9]+)?)\)$/i;
 const RGB_REGEXP  = /^rgb\(([0-9]{1,3}),([0-9]{1,3}),([0-9]{1,3})\)$/i;
 const HEX_REGEXP  = /^#[0-9A-F]{3,8}$/i;
@@ -245,7 +239,7 @@ export function formatRGBAColor( color: ColorType ): string {
  * let blendedcolor1 = shadeBlend( color1, color2, 0.333 );
  * let blendedcolor34 = shadeBlend( color3, color4, -0.8 );
  */
-export function shadeBlend( color1: string, color2: string | null, percent: number, render: ColorRenderType = ColorRenderType.obj ): ColorType | string {
+export function shadeBlend( color1: string, color2: string | null, percent: number, render: ColorRenderType = 'obj' ): ColorType | string {
     let color;
 
     const coef = Math.abs( percent );
@@ -269,10 +263,10 @@ export function shadeBlend( color1: string, color2: string | null, percent: numb
         "ha": "FF"
     };
 
-    if ( render === ColorRenderType.obj ) {
+    if ( render === 'obj' ) {
         return color;
     }
-    else if ( render === ColorRenderType.hex ) {
+    else if ( render === 'hex' ) {
         return formatHexColor( color );
     }
     else {
@@ -288,7 +282,7 @@ export function shadeBlend( color1: string, color2: string | null, percent: numb
  * @param percent - Percent (between 0 and 1)
  * @param render - render type: obj, hex or rgba
 */
-export function lighten( color: string, percent: number, render: ColorRenderType = ColorRenderType.obj ): ColorType | string {
+export function lighten( color: string, percent: number, render: ColorRenderType = 'obj' ): ColorType | string {
     return shadeBlend( color, null, Math.abs( percent ), render );
 }
 
@@ -300,6 +294,6 @@ export function lighten( color: string, percent: number, render: ColorRenderType
  * @param percent - Percent (between 0 and 1)
  * @param render - render type: obj, hex or rgba
 */
-export function darken( color: string, percent: number, render: ColorRenderType = ColorRenderType.obj ): ColorType | string {
+export function darken( color: string, percent: number, render: ColorRenderType = 'obj' ): ColorType | string {
     return shadeBlend( color, null, percent > 0 ? percent * -1 : percent, render );
 }

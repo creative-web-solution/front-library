@@ -8,30 +8,10 @@ import { position }            from '@creative-web-solution/front-library/DOM/Po
 import { width, height }       from '@creative-web-solution/front-library/DOM/Size';
 
 
-export enum ScrollSnapSnapType {
-    scroll = 'scroll',
-    api    = 'api'
-}
-
-export enum ScrollSnapDirection {
-    horizontal = 'h',
-    vertical   = 'v'
-}
-
-export enum ScrollSnapScrollProperty {
-    scrollLeft = 'scrollLeft',
-    scrollTop  = 'scrollTop'
-}
-
-export enum ScrollSnapSizeProperty {
-    scrollWidth  = 'scrollWidth',
-    scrollHeight = 'scrollHeight'
-}
-
 const defaultOptions: ScrollSnapOptionsType = {
     "lockedClass":        "locked",
     "minItemsToActivate": 2,
-    "direction":          ScrollSnapDirection.horizontal,
+    "direction":          "h",
     "_setScroll": ( $scroller, x, y ) => {
         gsap.set( $scroller, { scrollTo: { x, y } });
     }
@@ -61,15 +41,15 @@ class ScrollTo {
     #startPosition!: number;
     #snapItem!:      ScrollSnapItemType;
     #snapItemType!:  ScrollSnapSnapType;
-    #scrollPropName: ScrollSnapScrollProperty;
+    #scrollPropName: ScrollSnapScrollPropertyType;
     #$element:       HTMLElement;
     #callback:       ScrollToCallbackType;
 
 
-    constructor( $element: HTMLElement, direction: ScrollSnapDirection, callback: ScrollToCallbackType ) {
+    constructor( $element: HTMLElement, direction: ScrollSnapDirectionType, callback: ScrollToCallbackType ) {
         this.#$element       = $element;
         this.#callback       = callback;
-        this.#scrollPropName = direction === ScrollSnapDirection.vertical ? ScrollSnapScrollProperty.scrollTop : ScrollSnapScrollProperty.scrollLeft;
+        this.#scrollPropName = direction === 'v' ? 'scrollTop' : 'scrollLeft';
     }
 
 
@@ -177,8 +157,8 @@ export default class ScrollSnap {
     #areEventsBinded!:          boolean;
     #lastTouchPosition!:        GestureCoordsType;
     #IS_VERTICAL_MODE:          boolean;
-    #SCROLL_PROPERTY_NAME:      ScrollSnapScrollProperty;
-    #SCROLL_SIZE_PROPERTY_NAME: ScrollSnapSizeProperty;
+    #SCROLL_PROPERTY_NAME:      ScrollSnapScrollPropertyType;
+    #SCROLL_SIZE_PROPERTY_NAME: ScrollSnapSizePropertyType;
     #$scroller:                 HTMLElement
 
     #TIMEOUT_DELAY              = 100;
@@ -193,14 +173,14 @@ export default class ScrollSnap {
         this.#$scroller = $scroller;
         this.#options   = extend( defaultOptions, userOptions );
 
-        this.#IS_VERTICAL_MODE          = this.#options.direction === ScrollSnapDirection.vertical
+        this.#IS_VERTICAL_MODE          = this.#options.direction === 'v'
         this.#SCROLL_PROPERTY_NAME      = this.#IS_VERTICAL_MODE
-            ? ScrollSnapScrollProperty.scrollTop
-            : ScrollSnapScrollProperty.scrollLeft;
+            ? 'scrollTop'
+            : 'scrollLeft';
 
         this.#SCROLL_SIZE_PROPERTY_NAME = this.#IS_VERTICAL_MODE
-            ? ScrollSnapSizeProperty.scrollHeight
-            : ScrollSnapSizeProperty.scrollWidth;
+            ? 'scrollHeight'
+            : 'scrollWidth';
 
         this.#hasSwipe   = false;
         this.#touchended = true;
@@ -214,7 +194,7 @@ export default class ScrollSnap {
         // Store the coordinate of the middle and the DOM object of each item
         this.#halfSize = [];
 
-        this.#scrollToHandler = new ScrollTo( $scroller, this.#options.direction as ScrollSnapDirection, this.resetState.bind( this ) );
+        this.#scrollToHandler = new ScrollTo( $scroller, this.#options.direction as ScrollSnapDirectionType, this.resetState.bind( this ) );
 
         this.refresh( {
             "snapTo": this.#options.snapTo
@@ -342,7 +322,7 @@ export default class ScrollSnap {
     private processScroll() {
         let snapItem = this.#snapPoints[ this.getCurrentSection( this.#$scroller[ this.#SCROLL_PROPERTY_NAME ] ) ];
 
-        if ( this.processLimit( snapItem, ScrollSnapSnapType.scroll ) ) {
+        if ( this.processLimit( snapItem, 'scroll' ) ) {
             return;
         }
 
@@ -350,7 +330,7 @@ export default class ScrollSnap {
             this.#options.onSnapStart( {
                 "$scroller":    this.#$scroller,
                 "snapItem":     this.#currentSnapItem,
-                "type":         ScrollSnapSnapType.scroll,
+                "type":         "scroll",
                 "scrollerSize": this.#scrollerSize,
                 "offsetSize":   this.#offsetSize,
                 ...this.getScrollPositionInformation()
@@ -359,7 +339,7 @@ export default class ScrollSnap {
 
         this.#scrollToHandler.scrollTo(
             snapItem,
-            ScrollSnapSnapType.scroll
+            'scroll'
         );
         this.#state = this.#STATE_MOVING;
 
@@ -623,14 +603,14 @@ export default class ScrollSnap {
             this.#options.onSnapStart( {
                 "$scroller":    this.#$scroller,
                 "snapItem":     this.#currentSnapItem,
-                "type":         ScrollSnapSnapType.api,
+                "type":         "api",
                 "scrollerSize": this.#scrollerSize,
                 "offsetSize":   this.#offsetSize,
                 ...this.getScrollPositionInformation()
             } );
         }
 
-        this.#scrollToHandler.scrollTo( this.#snapPoints[ index ], ScrollSnapSnapType.api, duration );
+        this.#scrollToHandler.scrollTo( this.#snapPoints[ index ], "api", duration );
     }
 
 
@@ -659,7 +639,7 @@ export default class ScrollSnap {
             this.#options.onSnapStart( {
                 "$scroller":    this.#$scroller,
                 "snapItem":     this.#currentSnapItem,
-                "type":         ScrollSnapSnapType.api,
+                "type":         "api",
                 "scrollerSize": this.#scrollerSize,
                 "offsetSize":   this.#offsetSize,
                 ...this.getScrollPositionInformation()
@@ -673,10 +653,10 @@ export default class ScrollSnap {
             else {
                 this.#options._setScroll?.( this.#$scroller, snapItem.coord, 0 );
             }
-            wait().then( () => this.resetState( snapItem, ScrollSnapSnapType.api ) );
+            wait().then( () => this.resetState( snapItem, "api" ) );
         }
         else {
-            this.#scrollToHandler.scrollTo( snapItem, ScrollSnapSnapType.api, duration );
+            this.#scrollToHandler.scrollTo( snapItem, "api", duration );
         }
 
     }
@@ -704,14 +684,14 @@ export default class ScrollSnap {
             this.#options.onSnapStart( {
                 "$scroller":    this.#$scroller,
                 "snapItem":     this.#currentSnapItem,
-                "type":         ScrollSnapSnapType.api,
+                "type":         "api",
                 "scrollerSize": this.#scrollerSize,
                 "offsetSize":   this.#offsetSize,
                 ...this.getScrollPositionInformation()
             } );
         }
 
-        this.#scrollToHandler.scrollTo( this.#snapPoints[ nextIndex ], ScrollSnapSnapType.api, duration );
+        this.#scrollToHandler.scrollTo( this.#snapPoints[ nextIndex ], "api", duration );
     }
 
 
@@ -736,14 +716,14 @@ export default class ScrollSnap {
             this.#options.onSnapStart( {
                 "$scroller":    this.#$scroller,
                 "snapItem":     this.#currentSnapItem,
-                "type":         ScrollSnapSnapType.api,
+                "type":         "api",
                 "scrollerSize": this.#scrollerSize,
                 "offsetSize":   this.#offsetSize,
                 ...this.getScrollPositionInformation()
             } );
         }
 
-        this.#scrollToHandler.scrollTo( this.#snapPoints[ previousIndex ], ScrollSnapSnapType.api, duration );
+        this.#scrollToHandler.scrollTo( this.#snapPoints[ previousIndex ], "api", duration );
     }
 
 

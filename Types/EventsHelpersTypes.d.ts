@@ -4,6 +4,8 @@
  *
  */
 
+type DeviceOrientationType = 'landscape-primary' | 'portrait-primary' | 'landscape-secondary' | 'portrait-secondary' | '';
+
 type DeviceOrientationOptionsType = {
     onOrientationChange: ( ( type: DeviceOrientationType ) => void );
 }
@@ -66,6 +68,11 @@ type FireOptionsType = {
  *
  */
 
+
+type GestureDirectionType = 'up' | 'down' | 'left' | 'right' | 'up-right' | 'down-right' | 'up-left' | 'down-left' | 'none';
+
+
+type GestureModeType = 'touch' | 'mouse' | 'pointer' | 'click';
 
 type GestureManagerType = {
     off();
@@ -272,6 +279,8 @@ type Breakpoint = {
     handler: ( e: MediaQueryListEvent ) => void
 }
 
+type MediaQueriesEventsCallbackType = "enter" | "leave" | "both";
+
 type MediaQueriesEventsCallback = ( breakpoint: Breakpoint, isMatching?: Boolean ) => void;
 
 type MediaQueriesEventsListOptions = {
@@ -320,7 +329,10 @@ type TouchHoverOptions = {
  *
  */
 
- type ScrollInfoType = {
+
+type WindowEventsType  =  'both' | 'force' | 'resize' | 'scroll';
+
+type ScrollInfoType = {
     top:  number;
     left: number;
 }

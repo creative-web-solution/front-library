@@ -3,14 +3,6 @@ import { documentSize } from '@creative-web-solution/front-library/DOM/DocumentS
 import { windowSize }   from '@creative-web-solution/front-library/DOM/WindowSize';
 
 
-export enum WindowEventsType {
-    'both',
-    'force',
-    'resize',
-    'scroll'
-}
-
-
 /**
  * Window events handler
  * @class
@@ -113,7 +105,7 @@ export default class WindowEvents {
                     "documentInfo": this.#documentInfo,
                     "viewportInfo": this.#viewportInfo
                 },
-                WindowEventsType.resize,
+                'resize',
                 originalEvent
             );
         } );
@@ -133,7 +125,7 @@ export default class WindowEvents {
                     "documentInfo": this.#documentInfo,
                     "viewportInfo": this.#viewportInfo
                 },
-                WindowEventsType.scroll,
+                'scroll',
                 originalEvent
             );
         } );
@@ -141,10 +133,10 @@ export default class WindowEvents {
 
 
     private updateValue( type?: WindowEventsType ) {
-        if ( type !== WindowEventsType.resize ) {
+        if ( type !== 'resize' ) {
             this.#scrollInfo = windowScroll();
         }
-        if ( type !== WindowEventsType.scroll ) {
+        if ( type !== 'scroll' ) {
             this.#documentInfo = documentSize();
             this.#windowInfo   = windowSize();
         }
@@ -169,7 +161,7 @@ export default class WindowEvents {
 
         const FNC = ( ( ev: Event ) => {
                         return () => {
-                            const TYPE = ev.type === 'scroll' ? WindowEventsType.scroll : WindowEventsType.resize;
+                            const TYPE = ev.type === 'scroll' ? 'scroll' : 'resize';
                             this.updateValue( TYPE );
                             this.refresh( TYPE, ev );
                             this.#tick = false;
@@ -192,11 +184,11 @@ export default class WindowEvents {
      * @param type - resize | scroll | undefined (both)
      */
     register( callback: WindowEventsCallbackType, type?: WindowEventsType ): this {
-        if ( type !== WindowEventsType.scroll ) {
+        if ( type !== 'scroll' ) {
             this.#resizeFunctionSet.add( callback );
         }
 
-        if ( type !== WindowEventsType.resize ) {
+        if ( type !== 'resize' ) {
             this.#scrollFunctionSet.add( callback );
         }
 
@@ -218,11 +210,11 @@ export default class WindowEvents {
      * @param type - resize | scroll | undefined (both)
      */
     remove( callback: WindowEventsCallbackType, type?: WindowEventsType ): this {
-        if ( type !== WindowEventsType.scroll ) {
+        if ( type !== 'scroll' ) {
             this.#resizeFunctionSet.delete( callback );
         }
 
-        if ( type !== WindowEventsType.resize ) {
+        if ( type !== 'resize' ) {
             this.#scrollFunctionSet.delete( callback );
         }
 
@@ -255,11 +247,11 @@ export default class WindowEvents {
      * @param type - resize | scroll | undefined (both)
      */
     refresh( type?: WindowEventsType, _oe?: Event ): this {
-        if ( type !== WindowEventsType.scroll ) {
+        if ( type !== 'scroll' ) {
             this.updateResize( _oe );
         }
 
-        if ( type !== WindowEventsType.resize ) {
+        if ( type !== 'resize' ) {
             this.updateScroll( _oe );
         }
 
@@ -279,7 +271,7 @@ export default class WindowEvents {
                 "documentInfo": this.#documentInfo,
                 "viewportInfo": this.#viewportInfo
             },
-            WindowEventsType.force
+            'force'
         );
 
         return this;

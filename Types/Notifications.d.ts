@@ -1,3 +1,5 @@
+type NotificationType =  'info' | 'success' | 'warning' | 'danger';
+
 type NotificationsOptionsType = {
     /** @default document.body */
     $wrapper?: HTMLElement;

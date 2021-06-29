@@ -7,18 +7,13 @@ import { outerHeight, outerWidth } from '@creative-web-solution/front-library/DO
 import { position }             from '@creative-web-solution/front-library/DOM/Position';
 
 
-export enum AutocompleteLayerPosition {
-    'top',
-    'bottom'
-};
-
 const defaultOptions = {
     "$panelWrapper": document.body,
     "maxHeight": 200,
     "useCache": false,
     "minchar": 3,
     "updateOnSelect": true,
-    "layerPosition": AutocompleteLayerPosition.top,
+    "layerPosition": "top",
     "cssPositionning": false,
     "queryParams": query => {
         return { search: query };
@@ -174,7 +169,7 @@ export default class Autocomplete {
             fieldHeight = outerHeight( this.#$field );
 
             topVal =
-                this.#options.layerPosition === AutocompleteLayerPosition.top
+                this.#options.layerPosition === "top"
                     ? parentFieldOffset.top - wrapperHeight + 1
                     : parentFieldOffset.top + fieldHeight + 1;
 

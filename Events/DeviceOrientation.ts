@@ -1,11 +1,3 @@
-export enum DeviceOrientationType {
-    LandscapePrimary   = 'landscape-primary',
-    PortraitPrimary    = 'portrait-primary',
-    LandscapeSecondary = 'landscape-secondary',
-    PortraitSecondary  = 'portrait-secondary',
-    Unknown            = ''
-}
-
 /**
  * Handle device orientation change
  *
@@ -26,17 +18,17 @@ export enum DeviceOrientationType {
  */
 export default class DeviceOrientation {
 
-    #orientationName: DeviceOrientationType = DeviceOrientationType.Unknown;
+    #orientationName: DeviceOrientationType = '';
 
     #ORIENTATION_CONVERTION_TABLE: { [ keys: string ]: DeviceOrientationType } = {
-        "landscape-primary":   DeviceOrientationType.LandscapePrimary,
-        "landscapePrimary":    DeviceOrientationType.LandscapePrimary,
-        "portrait-primary":    DeviceOrientationType.PortraitPrimary,
-        "portraitPrimary":     DeviceOrientationType.PortraitPrimary,
-        "landscape-secondary": DeviceOrientationType.LandscapeSecondary,
-        "landscapeSecondary":  DeviceOrientationType.LandscapeSecondary,
-        "portrait-secondary":  DeviceOrientationType.PortraitSecondary,
-        "portraitSecondary":   DeviceOrientationType.PortraitSecondary
+        "landscape-primary":   "landscape-primary",
+        "landscapePrimary":    "landscape-primary",
+        "portrait-primary":    "portrait-primary",
+        "portraitPrimary":     "portrait-primary",
+        "landscape-secondary": "landscape-secondary",
+        "landscapeSecondary":  "landscape-secondary",
+        "portrait-secondary":  "portrait-secondary",
+        "portraitSecondary":   "portrait-secondary"
     };
 
     #PREFIX =
@@ -99,21 +91,21 @@ export default class DeviceOrientation {
 
 
     private checkWindowOrientation = (): void => {
-        let type: DeviceOrientationType = DeviceOrientationType.Unknown;
+        let type: DeviceOrientationType = '';
 
         const orientation: number | string = window.orientation;
 
         if ( orientation === -90 ) {
-            type = DeviceOrientationType.LandscapeSecondary;
+            type = "landscape-secondary";
         }
         else if ( orientation === 90 ) {
-            type = DeviceOrientationType.LandscapePrimary;
+            type = "landscape-primary";
         }
         else if ( orientation === 0 ) {
-            type = DeviceOrientationType.PortraitPrimary;
+            type = "portrait-primary";
         }
         else if ( orientation === 180 ) {
-            type = DeviceOrientationType.PortraitSecondary;
+            type = "portrait-secondary";
         }
 
         this.processOrientation( type );

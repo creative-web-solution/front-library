@@ -3,19 +3,13 @@ import { append }                           from '@creative-web-solution/front-l
 import { createMat4, orthoMat4, scaleMat4 } from '@creative-web-solution/front-library/WebGL/Tools/Matrix';
 
 
-export enum GLImageTransitionFit {
-    FIT_COVER    = 'cover',
-    FIT_CONTAINS = 'contains'
-}
-
-
 const DEFAULT_OPTIONS = {
     "$wrapper":          document.body,
     "context":           "webgl",
     "backgroundColor":   [ 0, 0, 0, 1 ],
     "dummyTextureColor": [ 0, 0, 1, 1 ],
     "duration":          1,
-    "fitMode":           GLImageTransitionFit.FIT_COVER
+    "fitMode":           "cover"
 };
 
 
@@ -383,7 +377,7 @@ export default class GLImageTransition {
         let horizontalDrawAspect, verticalDrawAspect;
 
 
-        if ( this.#OPTIONS.fitMode ===  GLImageTransitionFit.FIT_CONTAINS ) {
+        if ( this.#OPTIONS.fitMode ===  "contains" ) {
             horizontalDrawAspect = 1;
             verticalDrawAspect   = this.#canvasAspect / this.#imagesInfo.aspect;
 

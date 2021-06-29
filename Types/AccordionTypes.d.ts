@@ -1,3 +1,5 @@
+type AutocompleteLayerPositionType  = 'top' | 'bottom';
+
 type AccordionAnimationFunctionType = ( $tab: HTMLElement, $panel: HTMLElement ) => Promise<void>;
 type AccordionCallbackType          = ( $tab: HTMLElement, $panel: HTMLElement ) => void;
 type AccordionCloseCallbackType     = ( $tab: HTMLElement, $panel: HTMLElement, autoclose: boolean ) => void;

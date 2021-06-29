@@ -2,14 +2,6 @@ import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
 import { slice }  from '@creative-web-solution/front-library/Helpers/Slice';
 
 
-
-export enum MediaQueriesEventsCallbackType {
-    enter = 0,
-    leave = 1,
-    both  = 2
-}
-
-
 /**
  * Manage media queries events
  *
@@ -168,9 +160,9 @@ export default class MediaQueriesEvents {
     private processList( list, breakpoint, isMatching ) {
         list.forEach( obj => {
             if (
-                obj.type === MediaQueriesEventsCallbackType.both ||
-                isMatching && obj.type === MediaQueriesEventsCallbackType.enter ||
-                !isMatching && obj.type === MediaQueriesEventsCallbackType.leave
+                obj.type === 'both' ||
+                isMatching && obj.type === 'enter' ||
+                !isMatching && obj.type === 'leave'
             ) {
                 obj.callback( breakpoint, isMatching )
             }
@@ -255,7 +247,7 @@ export default class MediaQueriesEvents {
      * @param breakpointName - Name of the breakpoint
      * @param [type=MediaQueriesEvents.TYPE_ON_ENTER] - Select when the function will be called: when entering the query, when leaving it, or on both
     */
-    on( callback: MediaQueriesEventsCallback, breakpointName: string, type = MediaQueriesEventsCallbackType.enter ): this {
+    on( callback: MediaQueriesEventsCallback, breakpointName: string, type: MediaQueriesEventsCallbackType = 'enter' ): this {
         if ( !this.#functionHash[ breakpointName ] ) {
             return this;
         }
@@ -294,7 +286,7 @@ export default class MediaQueriesEvents {
      * @param {MediaQueriesEvents_Handler} callback - Function to call on mediaquery change
      * @param {String} [type=MediaQueriesEvents.TYPE_ON_ENTER] - Select when the function will be called: when entering the query, when leaving it, or on both
     */
-    register( callback: MediaQueriesEventsCallback, type = MediaQueriesEventsCallbackType.enter ): this {
+    register( callback: MediaQueriesEventsCallback, type: MediaQueriesEventsCallbackType = 'enter' ): this {
         this.#functionHash[ this.#globalHashName ].push({
             callback,
             type
