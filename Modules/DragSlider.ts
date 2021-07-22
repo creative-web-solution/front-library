@@ -1,12 +1,12 @@
-import { wait }                    from '@creative-web-solution/front-library/Helpers/Wait';
-import { debounce }                from '@creative-web-solution/front-library/Helpers/Debounce';
-import { offset }                  from '@creative-web-solution/front-library/DOM/Offset';
-import { gesture, gestureOff }     from '@creative-web-solution/front-library/Events/Gesture';
-import { prop }                    from '@creative-web-solution/front-library/DOM/Styles';
-import { aClass, rClass, tClass }  from '@creative-web-solution/front-library/DOM/Class';
-import { on, off }                 from '@creative-web-solution/front-library/Events/EventsManager';
-import { isTouchDevice }           from '@creative-web-solution/front-library/Tools/TouchDeviceSupport';
-import { copy }                    from '@creative-web-solution/front-library/Helpers/Extend';
+import { wait }                    from '../Helpers/Wait';
+import { debounce }                from '../Helpers/Debounce';
+import { offset }                  from '../DOM/Offset';
+import { gesture, gestureOff }     from '../Events/Gesture';
+import { prop }                    from '../DOM/Styles';
+import { aClass, rClass, tClass }  from '../DOM/Class';
+import { on, off }                 from '../Events/EventsManager';
+import { isTouchDevice }           from '../Tools/TouchDeviceSupport';
+import { copy }                    from '../Helpers/Extend';
 
 
 /**

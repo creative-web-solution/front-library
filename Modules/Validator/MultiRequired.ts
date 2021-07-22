@@ -1,4 +1,4 @@
-import { getValue }           from '@creative-web-solution/front-library/Helpers/GetValue';
+import { getValue }           from '../../Helpers/GetValue';
 import isEmpty                from './Tools/IsEmpty';
 import { addValidator }       from './index';
 import { isRadioListChecked } from './Tools/RadioButton';

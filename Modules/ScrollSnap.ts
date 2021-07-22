@@ -1,11 +1,11 @@
-import { on, off }             from '@creative-web-solution/front-library/Events/EventsManager';
-import { gesture, gestureOff } from '@creative-web-solution/front-library/Events/Gesture';
-import { extend }              from '@creative-web-solution/front-library/Helpers/Extend';
-import { wait }                from '@creative-web-solution/front-library/Helpers/Wait';
-import { aClass, rClass }      from '@creative-web-solution/front-library/DOM/Class';
-import { prop }                from '@creative-web-solution/front-library/DOM/Styles';
-import { position }            from '@creative-web-solution/front-library/DOM/Position';
-import { width, height }       from '@creative-web-solution/front-library/DOM/Size';
+import { on, off }             from '../Events/EventsManager';
+import { gesture, gestureOff } from '../Events/Gesture';
+import { extend }              from '../Helpers/Extend';
+import { wait }                from '../Helpers/Wait';
+import { aClass, rClass }      from '../DOM/Class';
+import { prop }                from '../DOM/Styles';
+import { position }            from '../DOM/Position';
+import { width, height }       from '../DOM/Size';
 
 
 const defaultOptions: ScrollSnapOptionsType = {

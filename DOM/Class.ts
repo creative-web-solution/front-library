@@ -1,4 +1,4 @@
-import { isFunction } from '@creative-web-solution/front-library/Helpers/Type';
+import { isFunction } from '../Helpers/Type';
 
 
 function normalizeCssClass( cssClass: string[] | string ): string[] {

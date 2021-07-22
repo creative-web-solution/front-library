@@ -1,4 +1,4 @@
-import { slice } from '@creative-web-solution/front-library/Helpers/Slice';
+import { slice } from '../Helpers/Slice';
 
 
 let passiveSupported = false,

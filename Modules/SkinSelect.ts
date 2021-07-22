@@ -1,15 +1,15 @@
-import { fire, on, off }  from '@creative-web-solution/front-library/Events/EventsManager';
-import { extend }         from '@creative-web-solution/front-library/Helpers/Extend';
-import { isNumber }       from '@creative-web-solution/front-library/Helpers/Type';
-import template           from '@creative-web-solution/front-library/Modules/Template';
-import { wrap }           from '@creative-web-solution/front-library/DOM/Wrap';
-import { strToDOM }       from '@creative-web-solution/front-library/DOM/StrToDOM';
-import { index }          from '@creative-web-solution/front-library/DOM/Index';
-import { hClass, aClass } from '@creative-web-solution/front-library/DOM/Class';
-import { rClass }         from '@creative-web-solution/front-library/DOM/Class';
-import { position }       from '@creative-web-solution/front-library/DOM/Position';
-import { height }         from '@creative-web-solution/front-library/DOM/Size';
-import { outerHeight }    from '@creative-web-solution/front-library/DOM/OuterSize';
+import { fire, on, off }  from '../Events/EventsManager';
+import { extend }         from '../Helpers/Extend';
+import { isNumber }       from '../Helpers/Type';
+import { wrap }           from '../DOM/Wrap';
+import { strToDOM }       from '../DOM/StrToDOM';
+import { index }          from '../DOM/Index';
+import { hClass, aClass } from '../DOM/Class';
+import { rClass }         from '../DOM/Class';
+import { position }       from '../DOM/Position';
+import { height }         from '../DOM/Size';
+import { outerHeight }    from '../DOM/OuterSize';
+import template           from './Template';
 
 
 const defaultOptions: SkinSelectOptionsType = {

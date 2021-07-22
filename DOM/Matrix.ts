@@ -1,5 +1,5 @@
-import { prop }                  from '@creative-web-solution/front-library/DOM/Styles';
-import { transformPropertyName } from '@creative-web-solution/front-library/Tools/PrefixedProperties';
+import { prop }                  from './Styles';
+import { transformPropertyName } from '../Tools/PrefixedProperties';
 
 /**
  * Get the matrix of a DOM element

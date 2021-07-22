@@ -1,6 +1,6 @@
-import { gesture, gestureOff } from '@creative-web-solution/front-library/Events/Gesture';
-import { rClass, aClass }      from '@creative-web-solution/front-library/DOM/Class';
-import { wait }                from '@creative-web-solution/front-library/Helpers/Wait';
+import { gesture, gestureOff } from './Gesture';
+import { rClass, aClass }      from '../DOM/Class';
+import { wait }                from '../Helpers/Wait';
 
 
 /**

@@ -1,6 +1,6 @@
-import { on }        from '@creative-web-solution/front-library/Events/EventsManager';
-import { UrlParser } from '@creative-web-solution/front-library/Helpers/UrlParser';
-import { slice }     from '@creative-web-solution/front-library/Helpers/Slice';
+import { on }        from './EventsManager';
+import { UrlParser } from '../Helpers/UrlParser';
+import { slice }     from '../Helpers/Slice';
 
 
 /**

@@ -1,10 +1,10 @@
-import { gesture, gestureOff } from '@creative-web-solution/front-library/Events/Gesture';
-import { extend }              from '@creative-web-solution/front-library/Helpers/Extend';
-import { append, remove }      from '@creative-web-solution/front-library/DOM/Manipulation';
-import { height }              from '@creative-web-solution/front-library/DOM/Size';
-import { offset }              from '@creative-web-solution/front-library/DOM/Offset';
-import { outerHeight, outerWidth } from '@creative-web-solution/front-library/DOM/OuterSize';
-import { position }             from '@creative-web-solution/front-library/DOM/Position';
+import { gesture, gestureOff }     from '../Events/Gesture';
+import { extend }                  from '../Helpers/Extend';
+import { append, remove }          from '../DOM/Manipulation';
+import { height }                  from '../DOM/Size';
+import { offset }                  from '../DOM/Offset';
+import { outerHeight, outerWidth } from '../DOM/OuterSize';
+import { position }                from '../DOM/Position';
 
 
 const defaultOptions = {

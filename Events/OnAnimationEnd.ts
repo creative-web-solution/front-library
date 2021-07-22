@@ -1,4 +1,4 @@
-import { animationendEventName } from '@creative-web-solution/front-library/Tools/PrefixedProperties';
+import { animationendEventName } from '../Tools/PrefixedProperties';
 
 
 /**

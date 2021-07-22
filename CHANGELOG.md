@@ -2,7 +2,8 @@
 
 ## 7.0.0
 
-Move to TypeScript
+* Move to TypeScript
+* Minor fix
 
 
 ## 6.2.5

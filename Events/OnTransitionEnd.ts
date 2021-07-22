@@ -1,4 +1,4 @@
-import { transitionendEventName }   from '@creative-web-solution/front-library/Tools/PrefixedProperties';
+import { transitionendEventName }   from '../Tools/PrefixedProperties';
 
 
 /**

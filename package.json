@@ -13,12 +13,16 @@
   "license": "MIT",
   "private": false,
   "engines": {
-    "node": ">=9.0.0",
-    "npm": ">=5.0.0"
+    "node": ">=12.0.0",
+    "npm": ">=6.0.0"
   },
   "scripts": {},
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "babelify": "10.0.0",
+    "@babel/preset-env": "^7.14.8",
+    "@babel/preset-typescript": "^7.14.5"
+  },
   "browserify": {
     "transform": [
       [
@@ -26,7 +30,8 @@
         {
           "extensions": [ ".tsx", ".ts" ],
           "presets": [
-            "@babel/preset-env"
+            "@babel/preset-env",
+            "@babel/preset-typescript"
           ]
         }
       ]

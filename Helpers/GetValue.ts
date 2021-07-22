@@ -1,4 +1,4 @@
-import { isString, isNumber } from '@creative-web-solution/front-library/Helpers/Type';
+import { isString, isNumber } from './Type';
 
 
 function cleanFieldsValue( value: any ): string {

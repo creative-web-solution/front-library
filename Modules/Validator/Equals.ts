@@ -1,4 +1,4 @@
-import { getValue }     from '@creative-web-solution/front-library/Helpers/GetValue';
+import { getValue }     from '../../Helpers/GetValue';
 import { addValidator } from './index';
 
 

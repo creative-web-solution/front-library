@@ -1,6 +1,6 @@
-import { aClass }                           from '@creative-web-solution/front-library/DOM/Class';
-import { append }                           from '@creative-web-solution/front-library/DOM/Manipulation';
-import { createMat4, orthoMat4, scaleMat4 } from '@creative-web-solution/front-library/WebGL/Tools/Matrix';
+import { aClass }                           from '../../DOM/Class';
+import { append }                           from '../../DOM/Manipulation';
+import { createMat4, orthoMat4, scaleMat4 } from '../../WebGL/Tools/Matrix';
 
 
 const DEFAULT_OPTIONS = {

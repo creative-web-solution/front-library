@@ -1,4 +1,4 @@
-import { extend }                   from '@creative-web-solution/front-library/Helpers/Extend';
+import { extend }                   from '../../Helpers/Extend';
 import validatorFunctionsController from './Internal/ValidatorFunctionsController';
 import Input                        from './Internal/Input';
 

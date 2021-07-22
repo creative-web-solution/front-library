@@ -1,4 +1,4 @@
-import { isArray } from '@creative-web-solution/front-library/Helpers/Type';
+import { isArray } from './Type';
 
 
 /**

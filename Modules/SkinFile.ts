@@ -1,7 +1,7 @@
-import { extend }              from '@creative-web-solution/front-library/Helpers/Extend';
-import { strToDOM }            from '@creative-web-solution/front-library/DOM/StrToDOM';
-import { insertAfter, append } from '@creative-web-solution/front-library/DOM/Manipulation';
-import { on }                  from '@creative-web-solution/front-library/Events/EventsManager';
+import { extend }              from '../Helpers/Extend';
+import { strToDOM }            from '../DOM/StrToDOM';
+import { insertAfter, append } from '../DOM/Manipulation';
+import { on }                  from '../Events/EventsManager';
 
 
 const defaultOptions: SkinFileOptionsType = {
