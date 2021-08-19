@@ -1,9 +1,8 @@
 # CHANGELOG
 
-## 7.0.0
+## 7.0.1
 
-* Move to TypeScript
-* Minor fix
+Move to TypeScript
 
 
 ## 6.2.5
