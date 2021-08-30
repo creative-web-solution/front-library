@@ -50,6 +50,7 @@ let passiveSupported = false,
     }
 }() );
 
+function passiveTestFnc() {return;}
 
 (function () {
     try {
@@ -60,7 +61,6 @@ let passiveSupported = false,
             }
         } );
 
-        function passiveTestFnc() {}
 
         window.addEventListener( 'test', passiveTestFnc, options );
         window.removeEventListener( 'test', passiveTestFnc, options );
@@ -71,7 +71,7 @@ let passiveSupported = false,
 }() );
 
 
-function getDelegation( $element: Node, selector: string, callback: ( e: Event ) => void ) {
+function getDelegation( $element: Node, selector: string, callback: ( e: Event, $target: Element ) => void ) {
     return e => {
         const $target = e.target.closest( selector );
 
@@ -79,7 +79,7 @@ function getDelegation( $element: Node, selector: string, callback: ( e: Event )
             return;
         }
 
-        callback.call( $target, e );
+        callback.call( $target, e, $target );
     };
 }
 

@@ -1,5 +1,11 @@
 # CHANGELOG
 
+
+## 7.0.2
+
+* EventsManager: Fix event delegation
+
+
 ## 7.0.1
 
 Move to TypeScript
