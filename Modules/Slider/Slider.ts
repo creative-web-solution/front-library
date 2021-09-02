@@ -56,10 +56,10 @@ export default class Slider {
     #$slider:       HTMLElement;
     #$slides:       NodeList;
     #$list:         HTMLElement;
-    #slidesList:     Slide[];
-    #nbSlides:       number;
-    #nbPages:        number;
-    #currentSlide!:  Slide;
+    #slidesList:    Slide[];
+    #nbSlides:      number;
+    #nbPages:       number;
+    #currentSlide;
     #STATE_IDLE     = 'idle';
     #STATE_MOVING   = 'moving';
     #state          = this.#STATE_IDLE;
@@ -119,30 +119,28 @@ export default class Slider {
 
     constructor( $slider, userOptions: SliderOptionsType = {} ) {
 
-
         this.#options = extend( defaultOptions, userOptions );
 
         if ( !this.#options.slidePerPage || this.#options.slidePerPage < 1 ) {
             throw 'SLIDER: There must be at least one slide visible';
         }
 
-        this.#$slider  = $slider;
-        this.#$list    = $slider.querySelector( this.#options.listSelector );
-        this.#$slides  = this.#$list.querySelectorAll( this.#options.itemsSelector! );
-        this.#nbSlides = this.#$slides.length;
+        this.#$slider   = $slider;
+        this.#$list     = $slider.querySelector( this.#options.listSelector );
+        this.#$slides   = this.#$list.querySelectorAll( this.#options.itemsSelector! );
+        this.#nbSlides  = this.#$slides.length;
 
         this.#slidesList = [];
         this.#nbSlides   = this.#$slides.length;
         this.#nbPages    = Math.ceil( this.#nbSlides / this.#options.slidePerPage );
 
 
-
         if ( !this.isEnabled() ) {
             return;
         }
 
-
-        this.#$slides.forEach( ( $slide, index ) => {
+        for ( let index = 0, len = this.#$slides.length; index < len; ++index ) {
+            const $slide = this.#$slides[ index ];
             let slide = new Slide( {
                 "nbSlideVisibleBefore": this.#options.nbSlideVisibleBefore!,
                 "nbSlideVisibleAfter":  this.#options.nbSlideVisibleAfter!,
@@ -164,7 +162,7 @@ export default class Slider {
             }
 
             this.#slidesList.push( slide );
-        });
+        }
 
         aClass( $slider, this.#options.activeClass! );
 

@@ -8,7 +8,7 @@ export class Slide {
     #options;
     #$slide:        HTMLElement;
     #$links:        NodeList;
-    #lastOffset!:   number;
+    #lastOffset:    number;
     #size:          number;
     #currentPage:   number;
     #offsetToGo:    number;
@@ -62,6 +62,8 @@ export class Slide {
         this.#$links  = this.#$slide.querySelectorAll( 'a,button,input,textarea,select' );
 
         this.#size    = 100; // %
+
+        this.#lastOffset = -1;
 
         this.#currentPage = Math.floor( options.index / options.slidePerPage ) + 1;
         this.#offsetToGo = options.index;

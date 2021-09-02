@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 7.0.4
+
+* Slider: Fix typescript error
 
 ## 7.0.3
 
