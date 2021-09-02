@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 7.0.3
+
+* Add modules
+
+
 ## 7.0.2
 
 * EventsManager: Fix event delegation
