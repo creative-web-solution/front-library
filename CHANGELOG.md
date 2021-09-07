@@ -1,8 +1,15 @@
 # CHANGELOG
 
+
+## 7.0.5
+
+* ImageLoad: Fix bug
+
+
 ## 7.0.4
 
 * Slider: Fix typescript error
+
 
 ## 7.0.3
 

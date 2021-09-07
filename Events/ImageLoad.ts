@@ -60,7 +60,9 @@ function isDataURI( src ) {
  * @returns Return a standard Promise + an .off() function to cancel event
  */
 export function onImageLoad( $element: Element, manageError?: boolean, callback?: ( $element: Element, type: ImageLoadEventType ) => void ): ImagePromiseType {
-    return new Promise( function( this: ImagePromiseType, resolve, reject ) {
+    let _remove;
+
+    const PROM: ImagePromiseType = new Promise( function( this: ImagePromiseType, resolve, reject ) {
         let $img;
 
         function onImageLoaded( e ) {
@@ -81,7 +83,7 @@ export function onImageLoad( $element: Element, manageError?: boolean, callback?
         }
 
 
-        function _remove() {
+        _remove = function() {
             if ( !$img ) {
                 return;
             }
@@ -119,10 +121,11 @@ export function onImageLoad( $element: Element, manageError?: boolean, callback?
             $img.addEventListener( 'error', onImageLoaded );
             $img.addEventListener( 'load', onImageLoaded );
         } );
-
-
-        this.off = _remove;
     } ) as ImagePromiseType;
+
+    PROM.off = _remove;
+
+    return PROM;
 }
 
 
