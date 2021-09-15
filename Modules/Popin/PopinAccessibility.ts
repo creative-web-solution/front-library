@@ -3,9 +3,9 @@ import { toggleTabIndex, FOCUSABLE_ELEMENTS_SELECTOR } from './Tools';
 
 export default class PopinAccessibility {
 
-    #$elements!:     NodeList;
-    #$firstElement!: HTMLElement;
-    #$lastElement!:  HTMLElement;
+    #$elements:      NodeList | undefined;
+    #$firstElement:  HTMLElement | undefined;
+    #$lastElement:   HTMLElement | undefined;
     #$popin:         HTMLElement;
 
 
@@ -27,25 +27,25 @@ export default class PopinAccessibility {
 
 
     handleBackwardTab( e ) {
-        if ( this.#$elements.length < 1 || !this.#$firstElement ) {
+        if ( !this.#$elements?.length || !this.#$firstElement ) {
             e.preventDefault();
             return;
         }
         if ( document.activeElement === this.#$firstElement ) {
             e.preventDefault();
-            this.#$lastElement.focus();
+            this.#$lastElement?.focus();
         }
     }
 
 
     handleForwardTab( e ) {
-        if ( this.#$elements.length < 1 || !this.#$lastElement ) {
+        if ( this.#$elements?.length || !this.#$lastElement ) {
             e.preventDefault();
             return;
         }
         if ( document.activeElement === this.#$lastElement ) {
             e.preventDefault();
-            this.#$firstElement.focus();
+            this.#$firstElement?.focus();
         }
     }
 

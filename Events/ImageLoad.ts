@@ -137,7 +137,7 @@ export function onImageLoad( $element: Element, manageError?: boolean, callback?
  * @param callback - Function called on each image load ($element, eventType:string) => {}
  *
  * @example
- * onAllImagesLoad( $images, partialCallback, manageError ).then( () => {} )
+ * onAllImagesLoad( $images, manageError, partialCallback ).then( () => {} )
  *
  * // To allow event cancelation, don't chain .then() directly after onAllImagesLoad
  * let preload = onAllImagesLoad( $images, manageError, callback );

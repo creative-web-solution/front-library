@@ -1,6 +1,13 @@
 # CHANGELOG
 
 
+## 7.0.6
+
+* onTransitionEnd: handle pseudo element and specific css property
+* onAnimationEnd: handle pseudo element and specific animation name
+* Popin: Fix typescript error
+
+
 ## 7.0.5
 
 * ImageLoad: Fix bug

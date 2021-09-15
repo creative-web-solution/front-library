@@ -16,9 +16,19 @@ import { transitionendEventName }   from '../Tools/PrefixedProperties';
  *
  * transitionEnd.off()
  *
+ * // To watch for a specific CSS property transition end:
+ * onTransitionEnd( $elem, {
+ * "property": "opacity"
+ * } )
+ *
+ * // To watch a transition end on a pseudo element like "::after":
+ * onTransitionEnd( $elem, {
+ * "pseudoElement": "after"
+ * } )
+ *
  * @returns Return a standard Promise + an .off() function to cancel event
  */
-export default function onTransitionEnd( $element: Element ): Promise<any> & { off(); } {
+export default function onTransitionEnd( $element: Element, options: { pseudoElement?: 'after' | 'before' | 'both', property?: string[] } = {} ): Promise<any> & { off(); } {
     let _resolve;
 
     const promise = new Promise( function( resolve ) {
@@ -35,7 +45,14 @@ export default function onTransitionEnd( $element: Element ): Promise<any> & { o
 
 
     function onTransitionEnd( e ) {
-        if ( e.target !== $element ) {
+        if (
+            e.target !== $element ||
+            ( options.property && !options.property.includes( e.propertyName ) ) ||
+            ( options.pseudoElement === 'after' && e.pseudoElement !== '::after' ) ||
+            ( options.pseudoElement === 'before' && e.pseudoElement !== '::before' ) ||
+            ( options.pseudoElement === 'both' && !e.pseudoElement ) ||
+            ( !options.pseudoElement && e.pseudoElement !== '' )
+        ) {
             return;
         }
 

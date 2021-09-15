@@ -24,7 +24,7 @@ export default class Popin {
     #loadingPromise:    Promise<void> | null = null;
     #loaderOpened:      boolean = false;
     #popinOpened:       boolean = false;
-    #$loader!:          HTMLElement;
+    #$loader:           HTMLElement;
     #templates:         PopinTemplatesOptionsType;
     #selectors:         PopinSelectorsOptionsType;
     #animations:        PopinAnimationsOptionsType;
@@ -63,6 +63,8 @@ export default class Popin {
         this.#templates =  this.#options.templates!;
         this.#selectors =  this.#options.selectors!;
         this.#animations = this.#options.animations!;
+        // Add loader in the popin
+        this.#$loader = strToDOM( this.#templates.popinLoader! ) as HTMLElement;
 
         if ( $popin ) {
             this.#$popin = $popin;
@@ -74,9 +76,6 @@ export default class Popin {
             // Add popin template
             this.#$popin = strToDOM( popinHtml ) as HTMLElement;
             append( this.#$popin, document.body );
-
-            // Add loader in the popin
-            this.#$loader = strToDOM( this.#templates.popinLoader! ) as HTMLElement;
 
             append( this.#$loader, this.#$popin) ;
         }
