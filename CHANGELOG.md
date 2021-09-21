@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 7.0.7
+
+* Add transition helpers function : `transitionWatcher`, `animationWatcher` and `killWatcher`
+
+
 ## 7.0.6
 
 * onTransitionEnd: handle pseudo element and specific css property

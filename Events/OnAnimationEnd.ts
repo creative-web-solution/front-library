@@ -18,7 +18,7 @@ import { animationendEventName } from '../Tools/PrefixedProperties';
  *
  * // To watch for a animation end:
  * onAnimationEnd( $elem, {
- * "animationName": "name-of-my-css-animation"
+ * "animationName": [ "name-of-my-css-animation" ]
  * } )
  *
  * // To watch a animation end on a pseudo element like "::after":
@@ -28,7 +28,7 @@ import { animationendEventName } from '../Tools/PrefixedProperties';
  *
  * @returns Return a standard Promise + an .off() function to cancel event
  */
-export default function onAnimationEnd( $element: Element, options: { pseudoElement?: 'after' | 'before' | 'both', animationName?: string } = {} ): Promise<any> & { off(); } {
+export default function onAnimationEnd( $element: Element, options: { pseudoElement?: 'after' | 'before' | 'both', animationName?: string[] } = {} ): Promise<any> & { off(); } {
     let _resolve;
 
     const promise = new Promise( function( resolve ) {
@@ -44,7 +44,7 @@ export default function onAnimationEnd( $element: Element, options: { pseudoElem
     function onAnimationEnd( e ) {
         if (
             e.target !== $element ||
-            ( options.animationName && options.animationName !== e.animationName ) ||
+            ( options.animationName && !options.animationName.includes( e.animationName ) ) ||
             ( options.pseudoElement === 'after' && e.pseudoElement !== '::after' ) ||
             ( options.pseudoElement === 'before' && e.pseudoElement !== '::before' ) ||
             ( options.pseudoElement === 'both' && !e.pseudoElement ) ||
