@@ -9,7 +9,7 @@ addValidator( 'max', '[max]', ( $input, value, isLiveValidation ) => {
         $input,
         value,
         "isValid": value === '' ||
-                    parseFloat( value as string ) <= parseFloat( $input.getAttribute( 'max' )! ),
+                    parseFloat( value as string ) <= parseFloat( $input.getAttribute( 'max' ) as string ),
         "label": "max",
         isLiveValidation
     });

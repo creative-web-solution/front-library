@@ -5,12 +5,7 @@ import { getValue } from '../../../Helpers/GetValue';
  * Create a query with the fields of a form.
  * Use a fallback for browser that doesn't support new URLSearchParams( formData ).toString()
  *
- * @function getQueryFromForm
- *
- * @param $form
- * @param [selector='select,input,textarea'] Only used for browser with no native new URLSearchParams( formData ).toString()
- *
- * @returns {String}
+ * @param selector - Only used for browser with no native new URLSearchParams( formData ).toString()
  */
 export default function getQueryFromForm( $form: HTMLFormElement, selector = 'select,input,textarea' ): string {
     let query;

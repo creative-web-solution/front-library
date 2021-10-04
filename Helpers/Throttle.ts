@@ -1,7 +1,6 @@
 /**
  * Throttle
  *
- * @param callback
  * @param limit - In millisecond
  *
  * @example

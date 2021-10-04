@@ -50,8 +50,8 @@ export default class GLImageTransition {
     #deltaTime!:            number;
     #imagesInfo!:           { width: number, height: number, aspect: number };
 
-    #SHADER_PRESET:         GLImageTransitionPreset;
-    #OPTIONS:               GLImageTransitionOptionsType;
+    #SHADER_PRESET:         FLib.GLImageTransition.Preset;
+    #OPTIONS:               FLib.GLImageTransition.Options;
     #DURATION:              number;
     #$CANVAS:               HTMLCanvasElement;
     #GL:                    WebGLRenderingContext;
@@ -74,70 +74,70 @@ export default class GLImageTransition {
     #TEXTURE_2:             WebGLTexture;
 
 
-    get $canvas() {
+    get $canvas(): HTMLCanvasElement {
         return this.#$CANVAS;
     }
-    get context() {
+    get context(): WebGLRenderingContext {
         return this.#GL;
     }
-    get size() {
+    get size(): { width: number, height: number } {
         return this.#canvasSize;
     }
-    get aspect() {
+    get aspect(): number {
         return this.#canvasAspect;
     }
 
 
-    constructor( userOptions: GLImageTransitionOptionsType = {}) {
+    constructor( userOptions: Partial<FLib.GLImageTransition.Options> = {}) {
 
-        this.#OPTIONS       = Object.assign( {}, DEFAULT_OPTIONS, userOptions );
+        this.#OPTIONS       = Object.assign( {}, DEFAULT_OPTIONS, userOptions ) as FLib.GLImageTransition.Options;
 
         if ( !this.#OPTIONS.preset ) {
             throw 'You must add a preset that implement GLImageTransitionPreset in the options object ';
         }
 
         this.#SHADER_PRESET = this.#OPTIONS.preset;
-        this.#DURATION      = this.#OPTIONS.duration! * 1000; // convert in ms
+        this.#DURATION      = this.#OPTIONS.duration * 1000; // convert in ms
 
         this.#$CANVAS = document.createElement( 'canvas' );
         this.#OPTIONS.canvasCssClass && aClass( this.#$CANVAS, this.#OPTIONS.canvasCssClass );
 
-        append( this.#$CANVAS, this.#OPTIONS.$wrapper! );
+        append( this.#$CANVAS, this.#OPTIONS.$wrapper );
 
-        this.#GL = this.#$CANVAS.getContext( this.#OPTIONS.context! ) as WebGLRenderingContext;
+        this.#GL = this.#$CANVAS.getContext( this.#OPTIONS.context ) as WebGLRenderingContext;
 
         if ( !this.#GL ) {
             throw 'Unable to initialize WebGL. Your browser may not support it.';
         }
 
         // Convert 0 -> 1 colors in 0 -> 255
-        this.#OPTIONS.dummyTextureColor = this.#OPTIONS.dummyTextureColor!.map( v => v * 255 );
+        this.#OPTIONS.dummyTextureColor = this.#OPTIONS.dummyTextureColor.map( v => v * 255 );
 
 
-        this.#VERTEX_BUFFER = this.createBuffer( this.#GL.ARRAY_BUFFER, new Float32Array([
+        this.#VERTEX_BUFFER = this.#createBuffer( this.#GL.ARRAY_BUFFER, new Float32Array([
             -1.0,  1.0, 0.0,
             -1.0, -1.0, 0.0,
             1.0, -1.0, 0.0,
             1.0,  1.0, 0.0
         ]) );
 
-        this.#TEXTURE_BUFFER = this.createBuffer( this.#GL.ARRAY_BUFFER, new Float32Array([
+        this.#TEXTURE_BUFFER = this.#createBuffer( this.#GL.ARRAY_BUFFER, new Float32Array([
             0.0, 0.0,
             0.0, 1.0,
             1.0, 1.0,
             1.0, 0.0
         ]) );
 
-        this.#INDEX_BUFFER = this.createBuffer( this.#GL.ELEMENT_ARRAY_BUFFER, new Uint16Array([
+        this.#INDEX_BUFFER = this.#createBuffer( this.#GL.ELEMENT_ARRAY_BUFFER, new Uint16Array([
             3, 2, 1,
             3, 1, 0
         ]) );
 
 
-        this.#VERTEX_SHADER   = this.createShader( this.#GL.VERTEX_SHADER,   VERTEX_SHADER_SOURCE );
-        this.#FRAGMENT_SHADER = this.createShader( this.#GL.FRAGMENT_SHADER, this.#SHADER_PRESET.fsSource );
+        this.#VERTEX_SHADER   = this.#createShader( this.#GL.VERTEX_SHADER,   VERTEX_SHADER_SOURCE );
+        this.#FRAGMENT_SHADER = this.#createShader( this.#GL.FRAGMENT_SHADER, this.#SHADER_PRESET.fsSource );
 
-        this.#SHADER_PROGRAM = this.#GL.createProgram()!;
+        this.#SHADER_PROGRAM = this.#GL.createProgram() as WebGLProgram;
 
         this.#GL.attachShader( this.#SHADER_PROGRAM, this.#VERTEX_SHADER);
         this.#GL.attachShader( this.#SHADER_PROGRAM, this.#FRAGMENT_SHADER);
@@ -150,18 +150,18 @@ export default class GLImageTransition {
         this.#A_VERTEX_POSITION   = this.#GL.getAttribLocation( this.#SHADER_PROGRAM, 'aVertexPosition' );
         this.#A_TEXTURE_COORDS    = this.#GL.getAttribLocation( this.#SHADER_PROGRAM, 'aTextureCoord' );
 
-        this.#U_PROJECTION_MATRIX = this.#GL.getUniformLocation( this.#SHADER_PROGRAM, 'uProjectionMatrix' )!;
-        this.#U_MODEL_VIEW_MATRIX = this.#GL.getUniformLocation( this.#SHADER_PROGRAM, 'uModelViewMatrix' )!;
-        this.#U_SAMPLER           = this.#GL.getUniformLocation( this.#SHADER_PROGRAM, 'uSampler' )!;
-        this.#U_SAMPLER_2         = this.#GL.getUniformLocation( this.#SHADER_PROGRAM, 'uSampler2' )!;
-        this.#U_PROGRESS          = this.#GL.getUniformLocation( this.#SHADER_PROGRAM, 'uProgress' )!;
-        this.#U_TIME              = this.#GL.getUniformLocation( this.#SHADER_PROGRAM, 'uTime' )!;
-        this.#U_DELTA_TIME        = this.#GL.getUniformLocation( this.#SHADER_PROGRAM, 'uDeltaTime' )!;
+        this.#U_PROJECTION_MATRIX = this.#GL.getUniformLocation( this.#SHADER_PROGRAM, 'uProjectionMatrix' ) as WebGLUniformLocation;
+        this.#U_MODEL_VIEW_MATRIX = this.#GL.getUniformLocation( this.#SHADER_PROGRAM, 'uModelViewMatrix' ) as WebGLUniformLocation;
+        this.#U_SAMPLER           = this.#GL.getUniformLocation( this.#SHADER_PROGRAM, 'uSampler' ) as WebGLUniformLocation;
+        this.#U_SAMPLER_2         = this.#GL.getUniformLocation( this.#SHADER_PROGRAM, 'uSampler2' ) as WebGLUniformLocation;
+        this.#U_PROGRESS          = this.#GL.getUniformLocation( this.#SHADER_PROGRAM, 'uProgress' ) as WebGLUniformLocation;
+        this.#U_TIME              = this.#GL.getUniformLocation( this.#SHADER_PROGRAM, 'uTime' ) as WebGLUniformLocation;
+        this.#U_DELTA_TIME        = this.#GL.getUniformLocation( this.#SHADER_PROGRAM, 'uDeltaTime' ) as WebGLUniformLocation;
 
         this.#SHADER_PRESET.addUniform && this.#SHADER_PRESET.addUniform( this.#GL, this.#SHADER_PROGRAM );
 
-        this.#TEXTURE_1           = this.createTexture();
-        this.#TEXTURE_2           = this.createTexture();
+        this.#TEXTURE_1           = this.#createTexture();
+        this.#TEXTURE_2           = this.#createTexture();
 
         this.#canvasSize = {
             "width":  -1,
@@ -186,14 +186,14 @@ export default class GLImageTransition {
         }
 
 
-        this.clear();
+        this.#clear();
     }
 
 
     /**
      * Clean objects and remove all bindings
      */
-    destroy() {
+    destroy(): this {
         this.#GL.deleteBuffer( this.#VERTEX_BUFFER );
         this.#GL.deleteBuffer( this.#TEXTURE_BUFFER );
         this.#GL.deleteBuffer( this.#INDEX_BUFFER );
@@ -202,17 +202,14 @@ export default class GLImageTransition {
         this.#GL.deleteShader( this.#VERTEX_SHADER );
 
         window.removeEventListener( 'resize', this.#onResize );
-    };
+
+        return this;
+    }
 
 
-    /**
-     *
-     * @param {Number} width
-     * @param {Number} height
-     */
-    updateCanvasSize( width, height ) {
+    updateCanvasSize( width: number, height: number ): this {
         if ( width === this.#canvasSize.width && height === this.#canvasSize.height ) {
-            return;
+            return this;
         }
 
         this.#canvasSize = {
@@ -224,32 +221,38 @@ export default class GLImageTransition {
 
         this.#$CANVAS.setAttribute( 'width',  `${ this.#canvasSize.width }` );
         this.#$CANVAS.setAttribute( 'height', `${ this.#canvasSize.height }` );
-    };
+
+        return this;
+    }
 
 
     /**
      * Start the rendering loop
      */
-    startRender() {
+    startRender(): this {
         this.#rafID = requestAnimationFrame( this.#render );
-    };
+
+        return this;
+    }
 
 
     /**
      * Stop the rendering loop
      */
-    stopRender() {
+    stopRender(): this {
         cancelAnimationFrame( this.#rafID );
-    };
+
+        return this;
+    }
 
 
     /**
      * Load and init of the first displayed image
      */
     loadAndInitImage( url: string ): this {
-        this.loadImage( url, this.#TEXTURE_1, true )
+        this.#loadImage( url, this.#TEXTURE_1, true )
             .then( $image => {
-                let { naturalWidth, naturalHeight } = $image;
+                const { naturalWidth, naturalHeight } = $image;
                 this.#imagesInfo = {
                     "width":  naturalWidth,
                     "height": naturalHeight,
@@ -260,7 +263,7 @@ export default class GLImageTransition {
         this.#isImage1 = true;
 
         return this;
-    };
+    }
 
 
     /**
@@ -270,9 +273,9 @@ export default class GLImageTransition {
      */
     initImage( $image: HTMLImageElement ): this {
 
-        this.setTexture( this.#TEXTURE_1, $image );
+        this.#setTexture( this.#TEXTURE_1, $image );
 
-        let { naturalWidth, naturalHeight } = $image;
+        const { naturalWidth, naturalHeight } = $image;
 
         this.#imagesInfo = {
             "width":  naturalWidth,
@@ -283,7 +286,7 @@ export default class GLImageTransition {
         this.#isImage1 = true;
 
         return this;
-    };
+    }
 
 
     /**
@@ -297,13 +300,13 @@ export default class GLImageTransition {
         const currentTexture = this.#isImage1 ? this.#TEXTURE_2 : this.#TEXTURE_1;
         const transitionEdge = this.#isImage1 ? 1 : 0;
 
-        this.loadImage( url, currentTexture, false )
+        this.#loadImage( url, currentTexture, false )
             .then( () => {
-                this.tweenTransition( transitionEdge );
+                this.#tweenTransition( transitionEdge );
             } );
 
         return this;
-    };
+    }
 
 
     /**
@@ -317,20 +320,20 @@ export default class GLImageTransition {
         }
 
         if ( this.#isImage1 ) {
-            this.setTexture( this.#TEXTURE_2, $image );
-            this.tweenTransition( 1 );
+            this.#setTexture( this.#TEXTURE_2, $image );
+            this.#tweenTransition( 1 );
 
             return this;
         }
 
-        this.setTexture( this.#TEXTURE_1, $image );
-        this.tweenTransition( 0 );
+        this.#setTexture( this.#TEXTURE_1, $image );
+        this.#tweenTransition( 0 );
 
         return this;
-    };
+    }
 
 
-    private setTexture( texture: WebGLTexture, $image: TexImageSource ) {
+    #setTexture = ( texture: WebGLTexture, $image: TexImageSource ): void => {
         this.#GL.bindTexture( this.#GL.TEXTURE_2D, texture );
         this.#GL.texImage2D( this.#GL.TEXTURE_2D, 0, this.#GL.RGBA, this.#GL.RGBA, this.#GL.UNSIGNED_BYTE, $image);
 
@@ -340,7 +343,7 @@ export default class GLImageTransition {
     }
 
 
-    private loadImage( url: string, texture: WebGLTexture, isInit: boolean ): Promise<HTMLImageElement> {
+    #loadImage = ( url: string, texture: WebGLTexture, isInit: boolean ): Promise<HTMLImageElement> => {
 
         return new Promise( ( resolve ) => {
 
@@ -350,7 +353,7 @@ export default class GLImageTransition {
 
             $IMAGE.addEventListener( 'load', () => {
 
-                this.setTexture( texture, $IMAGE );
+                this.#setTexture( texture, $IMAGE );
 
                 this.#OPTIONS.onImageLoaded && this.#OPTIONS.onImageLoaded.call( $IMAGE, url, isInit );
 
@@ -361,7 +364,7 @@ export default class GLImageTransition {
             $IMAGE.addEventListener( 'error', () => {
                 this.#OPTIONS.onImageError && this.#OPTIONS.onImageError.call( $IMAGE, url, isInit );
 
-                this.setDummyTexture( texture );
+                this.#setDummyTexture( texture );
 
                 resolve( $IMAGE );
             } );
@@ -373,7 +376,7 @@ export default class GLImageTransition {
     }
 
 
-    private getAspect(): { x: number, y: number } {
+    #getAspect = (): { x: number, y: number } => {
         let horizontalDrawAspect, verticalDrawAspect;
 
 
@@ -403,7 +406,7 @@ export default class GLImageTransition {
     }
 
 
-    private _tween() {
+    #_tween = (): void => {
         if ( this.#transition.time >= this.#DURATION ) {
             this.#transition.value      = this.#transition.edge;
             this.#transition.isTweening = false;
@@ -424,11 +427,11 @@ export default class GLImageTransition {
 
         this.#transition.time += this.#deltaTime;
 
-        requestAnimationFrame( this._tween.bind( this ) );
+        requestAnimationFrame( this.#_tween.bind( this ) );
     }
 
 
-    private tweenTransition( edge: number ) {
+    #tweenTransition = ( edge: number ): void => {
         if ( this.#transition.isTweening ) {
             return;
         }
@@ -446,16 +449,16 @@ export default class GLImageTransition {
 
         this.#transition.isTweening = true;
 
-        requestAnimationFrame( this._tween.bind( this ) );
+        requestAnimationFrame( this.#_tween.bind( this ) );
     }
 
 
-    #render = ( time ) => {
+    #render = ( time: number ): void => {
 
         this.#deltaTime    = time - this.#lastLoopTime;
         this.#lastLoopTime = time;
 
-        this.clear();
+        this.#clear();
 
         if ( !this.#imagesInfo ) {
             this.#rafID = requestAnimationFrame( this.#render );
@@ -463,7 +466,7 @@ export default class GLImageTransition {
         }
 
         const projectionMatrix = createMat4();
-        const aspectDelta      = this.getAspect();
+        const aspectDelta      = this.#getAspect();
 
         orthoMat4( projectionMatrix, -1, 1, -1, 1, 0.0, 10.0 );
 
@@ -532,13 +535,13 @@ export default class GLImageTransition {
     }
 
 
-    private createTexture(): WebGLTexture {
-        return this.setDummyTexture( this.#GL.createTexture() as WebGLTexture );
+    #createTexture = (): WebGLTexture => {
+        return this.#setDummyTexture( this.#GL.createTexture() as WebGLTexture );
     }
 
 
-    private setDummyTexture( texture: WebGLTexture ): WebGLTexture {
-        const pixel = new Uint8Array( this.#OPTIONS.dummyTextureColor! );
+    #setDummyTexture = ( texture: WebGLTexture ): WebGLTexture => {
+        const pixel = new Uint8Array( this.#OPTIONS.dummyTextureColor );
 
         this.#GL.bindTexture( this.#GL.TEXTURE_2D, texture );
 
@@ -551,8 +554,8 @@ export default class GLImageTransition {
     }
 
 
-    private createShader( type: number, source: string ): WebGLShader {
-        const SHADER = this.#GL.createShader( type )!;
+    #createShader = ( type: number, source: string ): WebGLShader => {
+        const SHADER = this.#GL.createShader( type ) as WebGLShader;
 
         this.#GL.shaderSource( SHADER, source );
         this.#GL.compileShader( SHADER );
@@ -567,18 +570,18 @@ export default class GLImageTransition {
     }
 
 
-    private createBuffer( target: number, data: Float32Array | Uint16Array ): WebGLBuffer {
-        const buffer = this.#GL.createBuffer();
+    #createBuffer = ( target: number, data: Float32Array | Uint16Array ): WebGLBuffer => {
+        const buffer = this.#GL.createBuffer() as WebGLBuffer;
 
         this.#GL.bindBuffer( target, buffer );
         this.#GL.bufferData( target, data, this.#GL.STATIC_DRAW );
 
-        return buffer!;
+        return buffer;
     }
 
 
-    private clear() {
-        let [ r, v, b, a ] = this.#OPTIONS.backgroundColor!;
+    #clear = (): void => {
+        const [ r, v, b, a ] = this.#OPTIONS.backgroundColor;
 
         // Clear the canvas
         this.#GL.clearColor( r, v, b, a );
@@ -599,7 +602,7 @@ export default class GLImageTransition {
     }
 
 
-    #onResize = () => {
+    #onResize = (): void => {
         this.updateCanvasSize( this.#$CANVAS.clientWidth, this.#$CANVAS.clientHeight );
     }
 }

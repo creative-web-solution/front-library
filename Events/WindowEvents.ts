@@ -5,17 +5,16 @@ import { windowSize }   from '../DOM/WindowSize';
 
 /**
  * Window events handler
- * @class
  *
  * @example
- *
+ * ```ts
  * let w = new WindowEvents( window );
  *
- * or to change throttle delay :
+ * // or to change throttle delay :
  *
  * let w = new WindowEvents( window, 150 );
  *
- * let callback = ( { windowInfo, scrollInfo, documentInfo, viewportInfo }, type, event ) => {};
+ * let callback = ( { windowInfo, scrollInfo, documentInfo, viewportInfo }, type, event ) =&gt; {};
  *
  * w.register( callback, 'resize' ); // type = 'resize', 'scroll' or undefined for both
  * w.remove( callback, 'resize' );
@@ -34,6 +33,7 @@ import { windowSize }   from '../DOM/WindowSize';
  * { width, height } = w.windowInfo;
  * { width, height } = w.documentInfo;
  * { top, left, bottom, right, width, height } = w.viewportInfo;
+ * ```
  */
 export default class WindowEvents {
 
@@ -52,21 +52,21 @@ export default class WindowEvents {
     /**
      * Get the last stored scroll position
      */
-    get scrollInfo() {
+    get scrollInfo(): FLib.Events.WindowEvents.ScrollInfo {
         return this.#scrollInfo;
     }
 
     /**
      * Get the last stored window size
      */
-    get windowInfo() {
+    get windowInfo(): FLib.Events.WindowEvents.WindowInfo {
         return this.#windowInfo;
     }
 
     /**
      * Get the last stored document size
      */
-    get documentInfo() {
+    get documentInfo(): FLib.Events.WindowEvents.DocumentInfo {
         return this.#documentInfo;
     }
 
@@ -77,29 +77,29 @@ export default class WindowEvents {
      * The viewport is the displayed part of the document.<br>
      * So, its top and left are the scroll position and its width and height are the window size.<br>
      */
-    get viewportInfo() {
+    get viewportInfo(): FLib.Events.WindowEvents.ViewportInfo {
         return this.#viewportInfo;
     }
 
 
     /**
      * @param $window - DOM object on which the events will be checked
-     * @param [throttleDelay=-1] - Throttle delay in ms. If < 0, it use requestAnimationFrame
+     * @param throttleDelay - Throttle delay in ms. If &lt; 0, it use requestAnimationFrame
      */
-    constructor( $window, throttleDelay = -1 ) {
+    constructor( $window: HTMLElement | Window, throttleDelay = -1 ) {
         this.#$window       = $window;
         this.#throttleDelay = throttleDelay;
     }
 
 
     // Call each registered function for resize event
-    private updateResize( originalEvent ) {
+    #updateResize = ( originalEvent?: Event ): void => {
         if ( !this.#resizeFunctionSet.size ) {
             return;
         }
 
         this.#resizeFunctionSet.forEach( fcn => {
-            ( fcn as WindowEventsCallbackType )( {
+            ( fcn as FLib.Events.WindowEvents.Callback )( {
                     "windowInfo":   this.#windowInfo,
                     "scrollInfo":   this.#scrollInfo,
                     "documentInfo": this.#documentInfo,
@@ -113,13 +113,13 @@ export default class WindowEvents {
 
 
     // Call each registered function for scroll event
-    private updateScroll( originalEvent ) {
+    #updateScroll = ( originalEvent?: Event ): void => {
         if ( !this.#scrollFunctionSet.size ) {
             return;
         }
 
         this.#scrollFunctionSet.forEach( fcn => {
-            ( fcn as WindowEventsCallbackType )( {
+            ( fcn as FLib.Events.WindowEvents.Callback )( {
                     "windowInfo":   this.#windowInfo,
                     "scrollInfo":   this.#scrollInfo,
                     "documentInfo": this.#documentInfo,
@@ -132,7 +132,7 @@ export default class WindowEvents {
     }
 
 
-    private updateValue( type?: WindowEventsType ) {
+    #updateValue = ( type?: FLib.Events.WindowEvents.Type ): void => {
         if ( type !== 'resize' ) {
             this.#scrollInfo = windowScroll();
         }
@@ -152,7 +152,7 @@ export default class WindowEvents {
     }
 
 
-    #changeHandler = ( e: Event ) => {
+    #changeHandler = ( e: Event ): void => {
         if ( this.#tick ) {
             return;
         }
@@ -162,7 +162,7 @@ export default class WindowEvents {
         const FNC = ( ( ev: Event ) => {
                         return () => {
                             const TYPE = ev.type === 'scroll' ? 'scroll' : 'resize';
-                            this.updateValue( TYPE );
+                            this.#updateValue( TYPE );
                             this.refresh( TYPE, ev );
                             this.#tick = false;
                         }
@@ -180,10 +180,9 @@ export default class WindowEvents {
     /**
      * Register a function on a type of event
      *
-     * @param callback
      * @param type - resize | scroll | undefined (both)
      */
-    register( callback: WindowEventsCallbackType, type?: WindowEventsType ): this {
+    register( callback: FLib.Events.WindowEvents.Callback, type?: FLib.Events.WindowEvents.Type ): this {
         if ( type !== 'scroll' ) {
             this.#resizeFunctionSet.add( callback );
         }
@@ -195,7 +194,7 @@ export default class WindowEvents {
         if ( !this.#isActive && ( this.#resizeFunctionSet.size || this.#scrollFunctionSet.size ) ) {
             this.#$window.addEventListener( 'resize', this.#changeHandler );
             this.#$window.addEventListener( 'scroll', this.#changeHandler );
-            this.updateValue();
+            this.#updateValue();
             this.#isActive = true;
         }
 
@@ -206,10 +205,9 @@ export default class WindowEvents {
     /**
      * Unregister a function for a type of event
      *
-     * @param callback
      * @param type - resize | scroll | undefined (both)
      */
-    remove( callback: WindowEventsCallbackType, type?: WindowEventsType ): this {
+    remove( callback: FLib.Events.WindowEvents.Callback, type?: FLib.Events.WindowEvents.Type  ): this {
         if ( type !== 'scroll' ) {
             this.#resizeFunctionSet.delete( callback );
         }
@@ -234,8 +232,8 @@ export default class WindowEvents {
      *
      * @param type - resize | scroll | undefined (both)
      */
-    update( type?: WindowEventsType ): this {
-        this.updateValue( type );
+    update( type?: FLib.Events.WindowEvents.Type  ): this {
+        this.#updateValue( type );
 
         return this;
     }
@@ -246,13 +244,13 @@ export default class WindowEvents {
      *
      * @param type - resize | scroll | undefined (both)
      */
-    refresh( type?: WindowEventsType, _oe?: Event ): this {
+    refresh( type?: FLib.Events.WindowEvents.Type , _oe?: Event ): this {
         if ( type !== 'scroll' ) {
-            this.updateResize( _oe );
+            this.#updateResize( _oe );
         }
 
         if ( type !== 'resize' ) {
-            this.updateScroll( _oe );
+            this.#updateScroll( _oe );
         }
 
         return this;
@@ -261,10 +259,8 @@ export default class WindowEvents {
 
     /**
      * Call a function with the last stored positions and sizes
-     *
-     * @param callback
      */
-    get( callback: WindowEventsCallbackType ): this {
+    get( callback: FLib.Events.WindowEvents.Callback ): this {
         callback({
                 "windowInfo":   this.#windowInfo,
                 "scrollInfo":   this.#scrollInfo,

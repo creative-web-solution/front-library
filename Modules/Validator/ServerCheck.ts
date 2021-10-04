@@ -8,18 +8,26 @@ import { addValidator } from './index';
  * data-servercheck-method="get|post"
  *
  * Return JSON format:
+ *
+ * @example
+ * ```json
  * {
- * 		"isValid": true|false
+ *      "isValid": true|false
  * }
+ * ```
  *
  * Validator parameters:
+ *
+ * @example
+ * ```json
  * {
- * 		"beforeCall": function( $input, value ),
- * 		"afterCall": function( $input, value ),
- * 		"normalize": fuction( response ){ return { "isValid": true|false } },
- * 		"onFail": function( $input, value ),
- * 		"allowLiveValidation": true|false,
+ *      "beforeCall": function( $input, value ),
+ *      "afterCall": function( $input, value ),
+ *      "normalize": fuction( response ){ return { "isValid": true|false } },
+ *      "onFail": function( $input, value ),
+ *      "allowLiveValidation": true|false,
  * }
+ * ```
  */
 addValidator(
     'servercheck',
@@ -27,10 +35,10 @@ addValidator(
     true,
     ( $input, value, isLiveValidation, options = {} ) => {
 
-        return new Promise<ValidatorValidationState>( resolve => {
-            let paramName, url, method, data, myHeaders;
+        return new Promise<FLib.Validator.ValidationState>( resolve => {
+            let url, method;
 
-            let { beforeCall, afterCall, normalize, onFail } = options;
+            const { beforeCall, afterCall, normalize, onFail } = options;
 
             if ( !( "AbortController" in window ) ) {
                 throw 'This plugin uses fecth and AbortController. You may need to add a polyfill for this browser.';
@@ -47,19 +55,19 @@ addValidator(
                  } );
             }
 
-            paramName = $input.getAttribute( 'name' );
+            const paramName = $input.getAttribute( 'name' );
             url = $input.getAttribute( 'data-servercheck' );
             method = $input.getAttribute( 'data-servercheck-method' ) || 'GET';
             method = method.toUpperCase();
 
-            data = `${ paramName }=${ value }`;
+            const data = `${ paramName }=${ value }`;
 
             if ( method === 'GET' ) {
                 url = [ url, url.indexOf('?') > -1 ? '&' : '?', data ].join( '' );
             }
 
             // Helper to create state
-            function state( isValid ): ValidatorValidationState {
+            function state( isValid ): FLib.Validator.ValidationState {
                 return {
                     $input,
                     value,
@@ -73,7 +81,7 @@ addValidator(
                 beforeCall( $input, value );
             }
 
-            myHeaders = new Headers();
+            const myHeaders = new Headers();
             myHeaders.append( 'X-Requested-With', 'XMLHttpRequest' );
 
             fetch(
@@ -89,9 +97,9 @@ addValidator(
                     return response;
                 }
                 else {
-                    let error = new Error( response.statusText );
-                    /** @ts-expect-error */
+                    const error: Error & { response? } = new Error( response.statusText );
                     error.response = response;
+
                     throw error;
                 }
             } )

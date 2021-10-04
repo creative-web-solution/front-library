@@ -18,44 +18,44 @@ export class Slide {
     #id:            string;
 
 
-    get id() {
+    get id(): string {
         return this.#id;
     }
 
-    get index() {
+    get index(): number {
         return this.#options.index;
     }
 
-    get position() {
+    get position(): number {
         return this.#options.index + 1;
     }
 
-    get currentPage() {
+    get currentPage(): number {
         return this.#currentPage;
     }
 
-    get isFirst() {
+    get isFirst(): boolean {
         return this.#options.index === 0;
     }
 
-    get isLast() {
+    get isLast(): boolean {
         return this.#isLast;
     }
 
-    get offsetToGo() {
+    get offsetToGo(): number {
         return this.#offsetToGo;
     }
 
-    get delay() {
+    get delay(): number {
         return this.#delay;
     }
 
-    get x() {
+    get x(): number {
         return this.#x;
     }
 
 
-    constructor( options: SlideOptionsType ) {
+    constructor( options: FLib.Slider.SlideOptions ) {
         this.#options = options;
         this.#$slide  = options.$slide;
         this.#id      = options.$slide.id;
@@ -82,7 +82,7 @@ export class Slide {
         this.#x = 0;
 
         if ( !this.#id ) {
-            this.#id = this.#$slide.id = this.getNextSlideId();
+            this.#id = this.#$slide.id = this.#getNextSlideId();
         }
 
         this.#$slide.setAttribute( 'role', 'tabpanel' )
@@ -90,14 +90,14 @@ export class Slide {
     }
 
 
-    private getNextSlideId() {
+    #getNextSlideId = (): string => {
         return `__mdl_sld_${ ++customeSlideId }`;
     }
 
 
-    private toggleElementsFocusability( activate: boolean ) {
+    #toggleElementsFocusability = ( activate: boolean ): void => {
         if ( !this.#$links.length ) {
-            return
+            return;
         }
 
         this.#$links.forEach( $link => {
@@ -106,23 +106,23 @@ export class Slide {
     }
 
 
-    isVisible( offset?: number ) {
+    isVisible( offset?: number ): boolean {
         offset = offset || this.#lastOffset;
 
         return (
             offset >= -1 * this.#options.nbSlideVisibleBefore &&
             offset < this.#options.nbSlideVisibleAfter + this.#options.slidePerPage
         );
-    };
+    }
 
 
-    isActive( offset?: number ) {
+    isActive( offset?: number ): boolean {
         offset = offset || this.#lastOffset
         return offset >= 0 && offset < this.#options.slidePerPage
     }
 
 
-    private willMove( offset: number, direction: SlideDirectionType ) {
+    #willMove = ( offset: number, direction: FLib.Slider.SlideDirection ): boolean => {
         if ( direction === -1 ) {
             return (
                 offset >= -1 * this.#options.nbSlideVisibleBefore - 1 &&
@@ -138,39 +138,36 @@ export class Slide {
     }
 
 
-    private getXMax( offset: number ) {
-        return (
-            this.#size *
-            Math.min( offset, this.#options.nbSlideVisibleAfter + this.#options.slidePerPage )
-        );
+    #getXMax = ( offset: number ): number => {
+        return this.#size * Math.min( offset, this.#options.nbSlideVisibleAfter + this.#options.slidePerPage );
     }
 
 
-    private getXMin( offset: number ) {
+    #getXMin = ( offset: number ): number => {
         return this.#size * Math.max( offset, -1 * this.#options.nbSlideVisibleBefore - 1 );
     }
 
 
-    getHeight() {
+    getHeight(): number {
         return outerHeight( this.#$slide );
-    };
+    }
 
 
-    setOffsetToGo( offset ) {
+    setOffsetToGo( offset: number ): void {
         this.#lastOffset = this.#offsetToGo;
         this.#offsetToGo = offset;
-    };
+    }
 
 
-    init() {
+    init(): void {
         if ( this.#offsetToGo === 0 ) {
             this.#x = 0;
         }
         else if ( this.#offsetToGo > 0 ) {
-            this.#x = this.getXMax( this.offsetToGo );
+            this.#x = this.#getXMax( this.offsetToGo );
         }
         else if ( this.#offsetToGo < 0 ) {
-            this.#x = this.getXMin( this.offsetToGo );
+            this.#x = this.#getXMin( this.offsetToGo );
         }
 
         this.#options._setStyle( this.#$slide, {
@@ -185,21 +182,21 @@ export class Slide {
     }
 
 
-    initMoveTo( direction: SlideDirectionType ) {
+    initMoveTo( direction: FLib.Slider.SlideDirection ): void {
         let x;
 
         if (
             this.isVisible( this.#lastOffset ) ||
-            !this.willMove( this.#offsetToGo, direction )
+            !this.#willMove( this.#offsetToGo, direction )
         ) {
             return;
         }
 
         if ( direction === -1 ) {
-            x = this.getXMax( this.#offsetToGo - 1 );
+            x = this.#getXMax( this.#offsetToGo - 1 );
         }
         else {
-            x = this.getXMin( this.#offsetToGo + 1 );
+            x = this.#getXMin( this.#offsetToGo + 1 );
         }
 
         this.#x = x;
@@ -211,13 +208,13 @@ export class Slide {
     }
 
 
-    moveTo( direction: SlideDirectionType, easing ) {
-        let x, positionning, _resolve;
+    moveTo( direction: FLib.Slider.SlideDirection, easing ): Promise<any> {
+        let _resolve;
 
         if (
             !(
-                this.willMove( this.#offsetToGo, direction ) ||
-                this.willMove( this.#lastOffset, direction )
+                this.#willMove( this.#offsetToGo, direction ) ||
+                this.#willMove( this.#lastOffset, direction )
             )
         ) {
             this.#lastOffset = this.#offsetToGo;
@@ -225,8 +222,8 @@ export class Slide {
         }
 
         this.#lastOffset = this.#offsetToGo;
-        positionning     = this.#offsetToGo === 0 ? 'relative' : 'absolute';
-        x                = this.offsetToGo * this.#size;
+        const positionning     = this.#offsetToGo === 0 ? 'relative' : 'absolute';
+        const x                = this.offsetToGo * this.#size;
 
         this.#x          = x;
 
@@ -251,22 +248,22 @@ export class Slide {
         } );
 
         return promise;
-    };
+    }
 
 
-    activate() {
+    activate(): void {
         this.#$slide.setAttribute( 'aria-hidden', "false" );
-        this.toggleElementsFocusability( true );
-    };
+        this.#toggleElementsFocusability( true );
+    }
 
 
-    deactivate() {
+    deactivate(): void {
         this.#$slide.setAttribute( 'aria-hidden', "true" );
-        this.toggleElementsFocusability( false );
-    };
+        this.#toggleElementsFocusability( false );
+    }
 
 
-    destroy() {
+    destroy(): void {
         this.#$slide.removeAttribute( 'aria-hidden' );
         this.#$links.forEach( $link => {
             ( $link as HTMLElement ).removeAttribute( 'tabindex' );
@@ -276,10 +273,10 @@ export class Slide {
         this.#options._setStyle( this.#$slide, {
             "clearProps": "all"
         } );
-    };
+    }
 
 
-    getSlideProperties(): SlidePropertiesType {
+    getSlideProperties(): FLib.Slider.SlideProperties {
         return {
             "$slide":    this.#$slide,
             "id":        this.id,
@@ -293,5 +290,5 @@ export class Slide {
             "page":      this.currentPage,
             "pageIndex": this.currentPage - 1,
         }
-    };
+    }
 }

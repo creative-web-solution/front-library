@@ -6,7 +6,7 @@ import { addValidator } from './index';
  * "Two fields equals" validation
  */
 addValidator( 'equals', '[data-equals]', ( $input, value, isLiveValidation ) => {
-    const name    = $input.getAttribute( 'data-equals' )!;
+    const name    = $input.getAttribute( 'data-equals' ) as string;
     const $target = document.getElementById( name );
 
     return Promise.resolve({

@@ -1,9 +1,8 @@
 /**
  * Parse an URL
  *
- * @param url
- *
  * @example
+ * ```ts
  * let url = new UrlParser( 'https://username:password@demo.domain.com:1337/section/page.html?param=1&param=2#anchor' );
  *
  * // Update the anchor and regenerate url
@@ -32,6 +31,7 @@
  *
  * // Remove all query param
  * url.removeAll()
+ * ```
  */
 export class UrlParser {
     /** Complete url without userInfo and anchor. Ex: https://demo.domain.com:1337/section/page.html?param=2 */
@@ -40,7 +40,7 @@ export class UrlParser {
     absolute2    = '';
     /** Ex: anchor */
     anchor       = '';
-    /** Ex: username:password@demo.domain.com:1337 */
+    /** Ex: username:password\@demo.domain.com:1337 */
     authority    = '';
     /** Ex: /section/ */
     directory    = '';
@@ -63,8 +63,8 @@ export class UrlParser {
     protocol     = '';
     /** Ex: param=2 */
     query        = '';
-    /** Ex: { "param": "2" } */
-    queryKey: { [ key: string ]: string }     = {};
+    /** Ex: `{` "param": "2" `}` */
+    queryKey: Record<string, string>     = {};
     /** Ex: Url without host, credential and anchor */
     relative     = '';
     /** Ex: Url without host, credential but with anchor */
@@ -89,7 +89,7 @@ export class UrlParser {
     /*
         Rebuild the complete url
     */
-    private rebuild() {
+    #rebuild = (): void => {
         let portToAdd, queryToAdd;
 
         queryToAdd = '';
@@ -162,7 +162,7 @@ export class UrlParser {
     /**
      * Init
      */
-    init( url: string ) {
+    init( url: string ): void {
         let location, result;
 
         const parseUri = function( str: string ) {
@@ -240,19 +240,17 @@ export class UrlParser {
             this[ key ] = result[ key ];
         } );
 
-        this.rebuild();
+        this.#rebuild();
     }
 
 
     /**
      * Change the anchor
-     *
-     * @param anchor
      */
     setAnchor( anchor: string ): this {
         this.anchor = anchor;
 
-        this.rebuild();
+        this.#rebuild();
 
         return this;
     }
@@ -260,8 +258,6 @@ export class UrlParser {
 
     /**
      * Get the value of a query param
-     *
-     * @param key
      *
      * @returns The parameter value or undefined
      */
@@ -276,11 +272,8 @@ export class UrlParser {
 
     /**
      * Add/modify one or several query param
-     *
-     * @param keys
-     * @param value
      */
-    setParam( keys: string | { [ keys: string ]: string }, value?: string ): this {
+    setParam( keys: string | Record<string, string>, value?: string ): this {
         if ( !this.queryKey ) {
             this.queryKey = {};
         }
@@ -294,7 +287,7 @@ export class UrlParser {
             } );
         }
 
-        this.rebuild();
+        this.#rebuild();
 
         return this;
     }
@@ -302,8 +295,6 @@ export class UrlParser {
 
     /**
      * Remove one or several query param
-     *
-     * @param keys
      */
     removeParam( keys: string | string[] ): this {
         if ( !this.queryKey ) {
@@ -319,7 +310,7 @@ export class UrlParser {
             } );
         }
 
-        this.rebuild();
+        this.#rebuild();
 
         return this;
     }
@@ -331,7 +322,7 @@ export class UrlParser {
     removeAll(): this {
         this.queryKey = {};
 
-        this.rebuild();
+        this.#rebuild();
 
         return this;
     }

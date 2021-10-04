@@ -4,12 +4,10 @@ import { animationendEventName } from '../Tools/PrefixedProperties';
 /**
  * Bind a one time animationend event on a DOM object
  *
- * @param $elem
- *
  * @example
+ * ```ts
  * onAnimationEnd( $elem ).then( () => {} );
  *
- * @example
  * // To remove the event binding, don't chain .then() directly after onAnimationEnd:
  * let animationEnd = onAnimationEnd( $element );
  * animationEnd.then( () => {} );
@@ -25,6 +23,7 @@ import { animationendEventName } from '../Tools/PrefixedProperties';
  * onAnimationEnd( $elem, {
  * "pseudoElement": "after"
  * } )
+ * ```
  *
  * @returns Return a standard Promise + an .off() function to cancel event
  */

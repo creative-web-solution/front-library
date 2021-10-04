@@ -6,6 +6,7 @@ import { slice }  from '../Helpers/Slice';
  * Wrapper for the IntersectionObserver API
  *
  * @example
+ * ```ts
  * let io = new IntersectObserver( {
  *      "onIntersecting": callback
  * } );
@@ -26,17 +27,16 @@ import { slice }  from '../Helpers/Slice';
  *
  * // To remove all elements from the observer
  * io.clear();
- *
- * @param options
+ * ```
  */
 export default class IntersectObserver {
 
     #elementObserver: IntersectionObserver;
-    #options:         IntersectObserverOptionsType;
+    #options:         FLib.Events.IntersectObserver.Options;
     #observedElements;
 
 
-    constructor( options: IntersectObserverOptionsType ) {
+    constructor( options: FLib.Events.IntersectObserver.Options ) {
         this.#options = extend( {
             "onIntersecting": null,
             "onlyOnce": false,
@@ -52,15 +52,15 @@ export default class IntersectObserver {
         }
 
         this.#observedElements = [];
-        this.#elementObserver  = new IntersectionObserver( this.intersect.bind( this ), this.#options.ioOptions );
+        this.#elementObserver  = new IntersectionObserver( this.#intersect.bind( this ), this.#options.ioOptions );
     }
 
 
-    private intersect( entries: IntersectionObserverEntry[] ) {
+    #intersect = ( entries: IntersectionObserverEntry[] ): void => {
         entries.forEach( ( entry: IntersectionObserverEntry ) => {
             if ( this.#options.onlyOnce && entry.isIntersecting ) {
                 this.#options.onIntersecting.call( entry.target, entry.target, entry );
-                this.unobserve( entry.target );
+                this.#unobserve( entry.target );
                 return;
             }
             else if ( !this.#options.onlyOnce ) {
@@ -70,13 +70,13 @@ export default class IntersectObserver {
     }
 
 
-    private unobserve( $element: Element ) {
+    #unobserve = ( $element: Element ): void => {
         this.#elementObserver.unobserve( $element );
         slice( this.#observedElements, $element )
     }
 
 
-    private observe( $element: Element ) {
+    #observe = ( $element: Element ): void => {
         if ( this.#observedElements.includes( $element ) ) {
             return;
         }
@@ -87,26 +87,24 @@ export default class IntersectObserver {
     }
 
 
-    private toggle( $elements: Element | NodeList | Element[], isAddAction ) {
+    #toggle = ( $elements: Element | NodeList | Element[], isAddAction?: boolean ): void => {
         if ( ( $elements instanceof NodeList || $elements instanceof Array ) && typeof $elements.forEach !== 'undefined' ) {
             $elements.forEach( $element => {
-                isAddAction ? this.observe( $element ) : this.unobserve( $element );
+                isAddAction ? this.#observe( $element ) : this.#unobserve( $element );
             } );
 
             return;
         }
 
-        isAddAction ? this.observe( $elements as Element ) : this.unobserve( $elements as Element );
+        isAddAction ? this.#observe( $elements as Element ) : this.#unobserve( $elements as Element );
     }
 
 
     /**
      * Add elements to be observed
-     *
-     * @param $elements
      */
     add( $elements: Element | NodeList | Element[] ): this {
-        this.toggle( $elements, true );
+        this.#toggle( $elements, true );
 
         return this;
     }
@@ -114,11 +112,9 @@ export default class IntersectObserver {
 
     /**
      * Stop some elements to be observed
-     *
-     * @param $elements
      */
     remove( $elements: Element | NodeList | Element[] ): this {
-        this.toggle( $elements, false );
+        this.#toggle( $elements, false );
 
         return this;
     }
@@ -132,7 +128,7 @@ export default class IntersectObserver {
             return this;
         }
 
-        this.toggle( this.#observedElements, false );
+        this.#toggle( this.#observedElements, false );
 
         this.#observedElements.length = 0;
 

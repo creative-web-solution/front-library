@@ -4,8 +4,6 @@ import { isArray } from './Type';
 /**
  * Create a sequential list of promises (which resolves one after another)
  *
- * @param promisesArray
- *
  * @example
  * prom = sequence( arrayOfPromise )
  */

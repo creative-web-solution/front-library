@@ -1,11 +1,10 @@
 /**
  * Handle device orientation change
  *
- * @param options
- *
  * @example
+ * ```ts
  * let ori = new DeviceOrientation({
- *     onOrientationChange: orientationName => {
+ *     onOrientationChange: orientationName = {
  *         console.log(orientationName)
  *     }
  * })
@@ -15,12 +14,13 @@
  *
  * // Remove event binding
  * ori.off()
+ * ```
  */
 export default class DeviceOrientation {
 
-    #orientationName: DeviceOrientationType = '';
+    #orientationName: FLib.Events.DeviceOrientation.Type = '';
 
-    #ORIENTATION_CONVERTION_TABLE: { [ keys: string ]: DeviceOrientationType } = {
+    #ORIENTATION_CONVERTION_TABLE: Record<string, FLib.Events.DeviceOrientation.Type> = {
         "landscape-primary":   "landscape-primary",
         "landscapePrimary":    "landscape-primary",
         "portrait-primary":    "portrait-primary",
@@ -38,19 +38,19 @@ export default class DeviceOrientation {
                 ? 'moz'
                 : 'msOrientation' in window.screen ? 'ms' : null;
 
-    #options: DeviceOrientationOptionsType;
+    #options: FLib.Events.DeviceOrientation.Options;
 
-    get orientation(): DeviceOrientationType {
+    get orientation(): FLib.Events.DeviceOrientation.Type {
         return this.#orientationName
     }
 
 
-    constructor( options: DeviceOrientationOptionsType ) {
+    constructor( options: FLib.Events.DeviceOrientation.Options ) {
         this.#options = options;
 
         if ( !this.#PREFIX ) {
-            window.addEventListener( 'orientationchange', this.checkWindowOrientation );
-            this.checkWindowOrientation();
+            window.addEventListener( 'orientationchange', this.#checkWindowOrientation );
+            this.#checkWindowOrientation();
             return;
         }
 
@@ -61,27 +61,27 @@ export default class DeviceOrientation {
         ) {
             window.screen.orientation.addEventListener(
                 'change',
-                this.checkScreenOrientation
+                this.#checkScreenOrientation
             );
-            this.checkScreenOrientation();
+            this.#checkScreenOrientation();
         }
         else {
             // @ts-expect-error
             window.screen.addEventListener(
                 `${ this.#PREFIX }orientationchange`,
-                this.checkScreenOrientation
+                this.#checkScreenOrientation
             );
-            this.checkScreenOrientation();
+            this.#checkScreenOrientation();
         }
     }
 
 
-    private getOrientationProperty(): string {
+    #getOrientationProperty = (): string => {
         return this.#PREFIX + ( this.#PREFIX === '' ? 'o' : 'O' ) + 'rientation'
     }
 
 
-    private processOrientation( type: DeviceOrientationType ): void {
+    #processOrientation = ( type: FLib.Events.DeviceOrientation.Type ): void => {
         this.#orientationName = type;
 
         if ( type && this.#options.onOrientationChange ) {
@@ -90,8 +90,8 @@ export default class DeviceOrientation {
     }
 
 
-    private checkWindowOrientation = (): void => {
-        let type: DeviceOrientationType = '';
+    #checkWindowOrientation = (): void => {
+        let type: FLib.Events.DeviceOrientation.Type = '';
 
         const orientation: number | string = window.orientation;
 
@@ -108,14 +108,14 @@ export default class DeviceOrientation {
             type = "portrait-secondary";
         }
 
-        this.processOrientation( type );
+        this.#processOrientation( type );
     }
 
 
-    private checkScreenOrientation(): void {
-        let type: DeviceOrientationType;
+    #checkScreenOrientation = (): void => {
+        let type: FLib.Events.DeviceOrientation.Type;
 
-        const orientation = window.screen[ this.getOrientationProperty() ];
+        const orientation = window.screen[ this.#getOrientationProperty() ];
 
         if ( typeof orientation === 'undefined' ) {
             return;
@@ -128,30 +128,26 @@ export default class DeviceOrientation {
             type = this.#ORIENTATION_CONVERTION_TABLE[ orientation ];
         }
 
-        this.processOrientation( type );
+        this.#processOrientation( type );
     }
 
 
     /**
      * Return the current normalized orientation
-     *
-     * @return {String} landscape-primary, portrait-primary, landscape-secondary, portrait-secondary
      */
-    getOrientation(): DeviceOrientationType {
+    getOrientation(): FLib.Events.DeviceOrientation.Type {
         return this.#orientationName;
     }
 
 
     /**
      * Remove all binding
-     *
-     * @returns {DeviceOrientation}
      */
     off(): this {
         if ( !this.#PREFIX ) {
             window.removeEventListener(
                 'orientationchange',
-                this.checkWindowOrientation
+                this.#checkWindowOrientation
             );
             return this;
         }
@@ -162,14 +158,14 @@ export default class DeviceOrientation {
         ) {
             window.screen.orientation.removeEventListener(
                 'change',
-                this.checkScreenOrientation
+                this.#checkScreenOrientation
             );
         }
         else {
             // @ts-expect-error
             window.screen.removeEventListener(
                 `${ this.#PREFIX }orientationchange`,
-                this.checkScreenOrientation
+                this.#checkScreenOrientation
             );
         }
 

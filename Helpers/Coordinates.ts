@@ -5,13 +5,6 @@ function degToRad( angle: number ): number {
 
 /**
  * Compute the distance (in km) between 2 coordinates
- *
- * @param latitude1
- * @param longitude1
- * @param latitude2
- * @param longitude2
- *
- * @return The distance in kilometers between 2 points
  */
 export function distance( latitude1: number, longitude1: number, latitude2: number, longitude2: number ): number {
     let dist: number;

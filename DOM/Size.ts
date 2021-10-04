@@ -4,8 +4,6 @@ import { prop, getStyle } from './Styles';
 /**
  * Compute the width of an element
  *
- * @param $element
- *
  * @example
  * elementWidth = width( $element )
  *
@@ -18,8 +16,6 @@ export function width( $element: Element ): number {
 
 /**
  * Compute the height of an element
- *
- * @param $element
  *
  * @example
  * elementHeight = height( $element )
@@ -34,14 +30,14 @@ export function height( $element: Element ): number {
 /**
  * Compute the size of an element
  *
- * @param $element
- *
  * @example
+ * ```ts
  * {width, height} = size( $element )
+ * ```
  *
  * @returns The width and height of an element
  */
-export function size( $element: Element ): DOMSizeType {
+export function size( $element: Element ): FLib.DOM.Size {
     const style  = getStyle( $element );
     const width  = style[ 'width' ];
     const height = style[ 'height' ];

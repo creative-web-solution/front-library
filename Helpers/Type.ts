@@ -6,9 +6,6 @@ const CORE_HAS_OWN   = CLASS_TO_TYPE.hasOwnProperty;
 /**
  * Check the type of an object
  *
- * @param obj
- * @param type
- *
  * @example
  * boolean = isType( obj, 'String' )
  *
@@ -22,8 +19,6 @@ export function isType( obj: any, type: string ): boolean {
 /**
  * Return true if the objec is an Array
  *
- * @param obj
- *
  * @example
  * boolean = isArray( obj )
  */
@@ -34,8 +29,6 @@ export function isArray( obj: any ): boolean {
 
 /**
  * Return true if the object is a Function
- *
- * @param obj
  *
  * @example
  * boolean = isFunction( obj )
@@ -48,8 +41,6 @@ export function isFunction( obj: any ): boolean {
 /**
  * Return true if the object is a String
  *
- * @param obj
- *
  * @example
  * boolean = isString( obj )
  */
@@ -60,8 +51,6 @@ export function isString( obj: any ): boolean {
 
 /**
  * Return true if the object is a Number
- *
- * @param obj
  *
  * @example
  * boolean = isNumber( obj )
@@ -82,9 +71,7 @@ export function isNumber( obj: any ): boolean {
 
 
 /**
- * Return true if obj is {} or an object created with "new Object"
- *
- * @param obj
+ * Return true if obj is `{}` or an object created with "new Object"
  */
 export function isPlainObject( obj: any ): boolean {
     // Detect obvious negatives

@@ -4,15 +4,15 @@ import { transformPropertyName } from '../Tools/PrefixedProperties';
 /**
  * Get the matrix of a DOM element
  *
- * @param $elem
- *
  * @example
+ * ```ts
  * { m11, m21, m31, m41, m12, m22, m32, m42, m13, m23, m33, m43, m14, m24, m34, m44 } = getMatrix ( $elem )
+ * ```
  *
  * @returns the translate properties
  */
-export function getMatrix( $elem: Element ): MatrixMatrixType {
-    let matrix: MatrixMatrixType;
+export function getMatrix( $elem: Element ): FLib.Matrix.Matrix {
+    let matrix: FLib.Matrix.Matrix;
 
     const matrixString = prop( $elem, transformPropertyName );
     const c            = matrixString.split( /\s*[(),]\s*/ ).slice( 1, -1 );
@@ -88,15 +88,15 @@ export function getMatrix( $elem: Element ): MatrixMatrixType {
 /**
  * Get the translation values of a DOM element
  *
- * @param $elem
- *
  * @example
+ * ```ts
  * { tx, ty, tz } = getTranslate ( $elem )
+ * ```
  *
  * @returns the translate properties
  */
-export function getTranslate( $elem: Element ): MatrixTranslateType {
-    const matrix: MatrixMatrixType = getMatrix( $elem );
+export function getTranslate( $elem: Element ): FLib.Matrix.Translate {
+    const matrix: FLib.Matrix.Matrix = getMatrix( $elem );
 
     return {
         "tx": matrix.m41,
@@ -109,17 +109,17 @@ export function getTranslate( $elem: Element ): MatrixTranslateType {
 /**
  * Get the transform values of a DOM element
  *
- * @param $elem
- *
  * @example
+ * ```ts
  * { tx, ty, tz, rx, ry, rz } = getTransform ( $elem )
+ * ```
  *
  * @returns the transform properties
  */
-export function getTransform( $elem: Element ): MatrixTransformType {
+export function getTransform( $elem: Element ): FLib.Matrix.Transform {
     let rotateX: number, rotateZ: number;
 
-    const matrix: MatrixMatrixType = getMatrix( $elem );
+    const matrix: FLib.Matrix.Matrix = getMatrix( $elem );
     const rotateY: number = Math.asin( -matrix.m13 );
 
     if ( Math.cos(rotateY) !== 0 ) {

@@ -1,5 +1,6 @@
 import { addValidator } from './index';
 
+
 addValidator( 'recaptcha', '.js--recaptcha', ( $input, value, isLiveValidation ) => {
     return Promise.resolve({
         $input,

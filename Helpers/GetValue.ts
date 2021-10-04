@@ -17,8 +17,6 @@ function cleanFieldsValue( value: any ): string {
 /**
  * Get the value of a form field (get from jQuery)
  *
- * @param $input
- *
  * @example value = getValue( $input )
  *
  * @returns The value of the form field

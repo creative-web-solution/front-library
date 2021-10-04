@@ -9,33 +9,27 @@ import { rClass }         from '../DOM/Class';
 import { position }       from '../DOM/Position';
 import { height }         from '../DOM/Size';
 import { outerHeight }    from '../DOM/OuterSize';
-import template           from './Template';
+import quickTemplate      from './QuickTemplate';
 
 
-const defaultOptions: SkinSelectOptionsType = {
+const defaultOptions: FLib.SkinSelect.Options = {
     "full":                false,
     "extraClass":          [],
     "className":           "select-skin",
     "itemClassName":       "select-itm",
     "selectWrapClassName": "select",
     "layerClassName":      "select-layer",
+    "listClassName":       "select-list",
     "hoverItemClass":      "hover",
     "openedListClass":     "show",
     "activeOptionClass":   "on",
     "disabledClass":       "disabled",
     "invalidClass":        "invalid",
     "loadingClass":        "loading",
-    "listTpl": [
-        '<div class="select-layer">',
-        '<ul class="select-list">',
-        '<% for ( var i = 0, len = list.length; i < len; ++i ) { %>',
-        '<li class="select-itm<%= list[ i ].selected ? " on" : "" %>" data-value="<%= list[ i ].value %>">',
-        '<%= list[ i ].text %>',
-        '</li>',
-        '<% } %>',
-        '</ul>',
-        '</div>'
-    ].join('')
+    "listTpl": {
+        "wrapper": "<div class=\"{{ layerClassName }}\"><ul class=\"{{ listClassName }}\">{{ items }}</ul></div>",
+        "item":    "<li class=\"{{ itemClassName }}{{ onClass }}\" data-value=\"{{ value }}\">{{ text }}</li>"
+    }
 };
 
 
@@ -44,19 +38,19 @@ const defaultOptions: SkinSelectOptionsType = {
  * You can access the skin API in the __skinAPI property of the $select HTMLElement or its wrapper.
  */
 export default class SkinSelect {
-    #$select:           CustomSelectType;
+    #$select:           FLib.SkinSelect.CustomSelect;
     #loading!:          boolean;
-    #options!:          SkinSelectOptionsType;
+    #options!:          FLib.SkinSelect.Options;
     #extraClass!:       string;
-    #$parent!:          CustomSelectParentType;
+    #$parent!:          FLib.SkinSelect.CustomSelectParent;
     #$title!:           HTMLElement;
     #isListOpened!:     boolean;
     #$options!:         NodeList;
-    #$lastOption!:      HTMLElement | null;
+    #$lastOption!:      HTMLElement | null;
     #focusedItemIndex!: number;
     #$layer!:           HTMLElement;
 
-    constructor( $select: HTMLSelectElement, userOptions?: SkinSelectOptionsType ) {
+    constructor( $select: HTMLSelectElement, userOptions?: Partial<FLib.SkinSelect.Options> ) {
 
         this.#$select = $select;
 
@@ -77,7 +71,7 @@ export default class SkinSelect {
         this.#$parent = $select.parentNode as HTMLElement;
 
         // Create skin
-        if ( !hClass( this.#$parent, this.#options.className! ) ) {
+        if ( !hClass( this.#$parent, this.#options.className ) ) {
             this.#$parent = wrap(
                 this.#$select,
                 `<span class="${ this.#options.className } ${ this.#extraClass }"></span>`
@@ -89,7 +83,7 @@ export default class SkinSelect {
 
         if ( !$TITLE ) {
             this.#$title = document.createElement( 'SPAN' );
-            aClass( this.#$title, this.#options.selectWrapClassName! );
+            aClass( this.#$title, this.#options.selectWrapClassName );
             this.#$parent.appendChild( this.#$title );
         }
         else {
@@ -137,8 +131,8 @@ export default class SkinSelect {
     }
 
 
-    #closeList = () => {
-        this.#$parent.classList.remove( this.#options.openedListClass! );
+    #closeList = (): void => {
+        this.#$parent.classList.remove( this.#options.openedListClass );
 
         off( document.body, {
             "eventsName": "click",
@@ -147,12 +141,11 @@ export default class SkinSelect {
 
         this.#isListOpened = false;
 
-        this.removeItemFocus();
-
+        this.#removeItemFocus();
     }
 
 
-    #openList = () => {
+    #openList = (): void => {
         if ( this.#$select.disabled || this.#loading ) {
             return;
         }
@@ -162,7 +155,7 @@ export default class SkinSelect {
             return;
         }
 
-        this.#$parent.classList.add( this.#options.openedListClass! );
+        this.#$parent.classList.add( this.#options.openedListClass );
 
         window.requestAnimationFrame( () => {
             on( document.body, {
@@ -177,14 +170,14 @@ export default class SkinSelect {
                 this.#focusedItemIndex = this.#focusedItemIndex > -1 ? this.#focusedItemIndex : 0;
             }
 
-            this.focusItem( this.#focusedItemIndex );
+            this.#focusItem( this.#focusedItemIndex );
         }
 
         this.#isListOpened = true;
     }
 
 
-    private enableDisable( fnName: string, disabled: boolean ) {
+    #enableDisable = ( fnName: string, disabled: boolean ): void => {
         this.#$select.disabled = disabled;
         this.#$parent.classList[ fnName ]( this.#options.disabledClass );
     }
@@ -193,20 +186,24 @@ export default class SkinSelect {
     /**
      * Force the select to be enable
      */
-    enable() {
-        this.enableDisable( 'remove', false );
+    enable(): this {
+        this.#enableDisable( 'remove', false );
+
+        return this
     }
 
 
     /**
      * Force the select to be disable
      */
-    disable() {
-        this.enableDisable( 'add', true );
+    disable(): this {
+        this.#enableDisable( 'add', true );
+
+        return this
     }
 
 
-    private loadingStatus( fnName: string, isLoading: boolean ) {
+    #loadingStatus = ( fnName: string, isLoading: boolean ): void => {
         this.#loading = isLoading;
         this.#$parent.classList[ fnName ]( this.#options.loadingClass );
     }
@@ -215,20 +212,24 @@ export default class SkinSelect {
     /**
      * Add the loading css class to the main element
      */
-    setLoading() {
-        this.loadingStatus( 'add', true );
+    setLoading(): this {
+        this.#loadingStatus( 'add', true );
+
+        return this;
     }
 
 
     /**
      * Remove the loading css class to the main element
      */
-    unsetLoading() {
-        this.loadingStatus( 'remove', false );
+    unsetLoading(): this {
+        this.#loadingStatus( 'remove', false );
+
+        return this;
     }
 
 
-    private validInvalid( fnName: string ) {
+    #validInvalid = ( fnName: string ): void => {
         this.#$parent.classList[ fnName ]( this.#options.invalidClass );
     }
 
@@ -236,52 +237,55 @@ export default class SkinSelect {
     /**
      * Force the state of the select to invalid
      */
-    setInvalid() {
-        this.validInvalid( 'add' );
-    };
+    setInvalid(): this {
+        this.#validInvalid( 'add' );
+
+        return this;
+    }
 
 
     /**
      * Force the state of the select to valid
      */
-    setValid() {
-        this.validInvalid( 'remove' );
-    };
+    setValid(): this {
+        this.#validInvalid( 'remove' );
+
+        return this;
+    }
 
 
     /**
      * Force the update of title with the currently selected element text
      */
-    updateTitle() {
-        let title;
+    updateTitle(): this {
 
         if ( this.#$select.selectedIndex < 0 ) {
             this.#$title.innerHTML = '';
             this.#closeList();
-            return;
+            return this;
         }
 
-        title = this.#$select.options[ this.#$select.selectedIndex ].text;
+        const title = this.#$select.options[ this.#$select.selectedIndex ].text;
 
         this.#$title.innerHTML = title;
 
         this.#closeList();
+
+        return this;
     }
 
 
     /**
      * Select an option
-     *
-     * @param {HTMLElement|Number} optionOrIndex
      */
-    select( optionOrIndex: HTMLElement | number ) {
-        let _index, option, isParameterANumber;
+    select( optionOrIndex: HTMLElement | number ): this {
+        let _index, option;
 
         if ( this.#$select.disabled || this.#loading ) {
-            return;
+            return this;
         }
 
-        isParameterANumber = isNumber( optionOrIndex );
+        const isParameterANumber = isNumber( optionOrIndex );
 
         if ( isParameterANumber ) {
             _index = optionOrIndex;
@@ -291,7 +295,7 @@ export default class SkinSelect {
         }
 
         if ( _index < 0 || _index > this.#$select.options.length ) {
-            return;
+            return this;
         }
 
         this.#$select.options[ _index ].selected = true;
@@ -300,7 +304,7 @@ export default class SkinSelect {
             option = this.#$parent.querySelectorAll( `.${ this.#options.itemClassName }` )[ _index ];
 
             if ( this.#$lastOption ) {
-                this.#$lastOption.classList.remove( this.#options.activeOptionClass! );
+                this.#$lastOption.classList.remove( this.#options.activeOptionClass );
             }
 
             if ( option ) {
@@ -312,15 +316,17 @@ export default class SkinSelect {
         fire( this.#$select, {
             "eventsName": "change"
         } );
+
+        return this;
     }
 
 
-    private setSelectOptions( data: SkinSelectOptionArrayType[] ) {
-        let normalizedData, hasSelectedOption;
+    #setSelectOptions = ( data: FLib.SkinSelect.OptionArray[] ): void => {
+        let hasSelectedOption;
 
         this.#$select.options.length = 0;
 
-        normalizedData = data.map( dt => {
+        const normalizedData = data.map( dt => {
             if ( dt.selected ) {
                 hasSelectedOption = true;
             }
@@ -347,24 +353,23 @@ export default class SkinSelect {
     /**
      * Update the options list. If optionsArray is not set, only update the html of the skinned options list.
      *
-     * @param optionsArray
-     *
      * @example
+     * ```ts
      * selectAPI.updateOptions( [{"text": "Option 1", "value": "value 1", "selected": true}, ...] )
+     * ```
      */
-    updateOptions( optionsArray?: SkinSelectOptionArrayType[] ) {
-        let htmlList;
+    updateOptions( optionsArray?: FLib.SkinSelect.OptionArray[] ): this {
 
         this.#$lastOption      = null;
         this.#focusedItemIndex = -1;
 
         if ( optionsArray ) {
-            this.setSelectOptions( optionsArray );
+            this.#setSelectOptions( optionsArray );
             this.updateTitle();
         }
 
         if ( !this.#options.full ) {
-            return;
+            return this;
         }
 
         this.#$select.style.display = 'none';
@@ -375,31 +380,46 @@ export default class SkinSelect {
             this.#$layer.parentNode.removeChild( this.#$layer );
         }
 
-        htmlList = template( this.#options.listTpl!, { "list": this.#$select.options } );
-        this.#$parent.appendChild( strToDOM( htmlList ) );
+        // let htmlList = template( this.#options.listTpl, { "list": this.#$select.options } );
+        const HTML_LIST: string[] = [];
+
+        for ( const opt of Array.from( this.#$select.options ) ) {
+            HTML_LIST.push( quickTemplate( this.#options.listTpl.item, {
+                "onClass": opt.selected ? " on" : "",
+                "text":    opt.text,
+                "value":   opt.value
+            } ) );
+        }
+
+        this.#$parent.appendChild( strToDOM( quickTemplate( this.#options.listTpl.wrapper, {
+            "items": HTML_LIST.join( '' )
+        } ) ) );
+
 
         this.#$layer     = this.#$parent.querySelector( `.${ this.#options.layerClassName }` ) as HTMLElement;
         this.#$options   = this.#$layer.querySelectorAll( 'li' );
 
         this.#$lastOption = this.#$parent.querySelector( `li.${ this.#options.activeOptionClass }` );
+
+        return this;
     }
 
 
-    #changeHandler = () => {
+    #changeHandler = (): void => {
         this.updateTitle();
     }
 
 
     // Handle click on the skinned ul>li list
-    #fakeOptionsClickHandler = ( e ) => {
-        if ( !e.target.matches( '.' + this.#options.itemClassName ) ) {
+    #fakeOptionsClickHandler = ( e: MouseEvent ): void => {
+        if ( !(e.target as HTMLElement).matches( '.' + this.#options.itemClassName ) ) {
             return;
         }
-        this.select( e.target );
+        this.select( e.target as HTMLElement );
     }
 
 
-    private focusItem( index ) {
+    #focusItem = ( index: number ): void => {
         if ( index < 0 ) {
             index = this.#$options.length - 1;
         }
@@ -410,24 +430,24 @@ export default class SkinSelect {
             return;
         }
 
-        this.removeItemFocus();
+        this.#removeItemFocus();
 
-        aClass( this.#$options[ index ], this.#options.hoverItemClass! );
-        this.updateListScroll( this.#$options[ index ] );
+        aClass( this.#$options[ index ], this.#options.hoverItemClass );
+        this.#updateListScroll( this.#$options[ index ] as HTMLElement );
 
         this.#focusedItemIndex = index;
     }
 
 
-    private removeItemFocus() {
+    #removeItemFocus = (): void => {
         if ( this.#focusedItemIndex !== null && this.#$options && this.#$options[ this.#focusedItemIndex ] ) {
-            rClass( this.#$options[ this.#focusedItemIndex ], this.#options.hoverItemClass! );
+            rClass( this.#$options[ this.#focusedItemIndex ], this.#options.hoverItemClass );
             this.#focusedItemIndex = -1;
         }
     }
 
 
-    private updateListScroll( $item ) {
+    #updateListScroll = ( $item: HTMLElement ): void => {
         let itemPos, itemHeight, layerScrollTop, layerHeight;
 
         if ( this.#$layer ) {
@@ -446,7 +466,7 @@ export default class SkinSelect {
     }
 
 
-    #onKeydown = ( e ) => {
+    #onKeydown = ( e: KeyboardEvent ): void => {
         switch ( e.keyCode ) {
             case 38: // UP
             case 40: // DOWN
@@ -458,17 +478,17 @@ export default class SkinSelect {
     }
 
 
-    #onKeyup = ( e ) => {
+    #onKeyup = ( e: KeyboardEvent ): void => {
         switch ( e.keyCode ) {
             case 38: // UP
-                this.focusItem( this.#focusedItemIndex - 1 );
+                this.#focusItem( this.#focusedItemIndex - 1 );
                 break;
             case 40: // DOWN
                 if ( !this.#isListOpened ) {
                     this.#openList();
                     break;
                 }
-                this.focusItem( this.#focusedItemIndex + 1 );
+                this.#focusItem( this.#focusedItemIndex + 1 );
                 break;
 
             case 13: // ENTER
@@ -493,31 +513,29 @@ export default class SkinSelect {
  * Skin a select DOM element
  *
  * @example
+ * ```ts
  * // Call with default options:
  * skinSelect( $select, {
  *  "full": false,
- *  "extraClass": ['otherClassName'],
+ *  "extraClass": [],
  *  "className": "select-skin",
  *  "itemClassName": "select-itm",
  *  "selectWrapClassName": "select",
+ *  "layerClassName": "select-layer",
+ *  "listClassName": "select-list",
+ *  "hoverItemClass": "hover",
  *  "openedListClass": "show",
  *  "activeOptionClass": "on",
  *  "disabledClass": "disabled",
+ *  "invalidClass": "invalid",
  *  "loadingClass": "loading",
- *  "listTpl": [
- *          '<div class="select-layer">',
- *              '<ul class="select-list">',
- *                  '<% for ( var i = 0, len = list.length; i < len; ++i ) { %>',
- *                      '<li class="select-itm<%= list[ i ].selected ? " on" : "" %>" data-value="<%= list[ i ].value %>">',
- *                      '<%= list[ i ].text %>',
- *                      '</li>',
- *                  '<% } %>',
- *              '</ul>',
- *          '</div>'
- *      ].join( '' )
- * } );
+ *  "listTpl": {
+ *      "wrapper": "<div class=\"{{ layerClassName }}\"><ul class=\"{{ listClassName }}\">{{ items }}</ul></div>",
+ *      "item": "<li class=\"{{ itemClassName }}{{ onClass }}\" data-value=\"{{ value }}\">{{ text }}</li>"
+ *  }
+ * ```
 */
-export function skinSelect( $select: HTMLSelectElement, options: SkinSelectOptionsType ): SkinSelect {
+export function skinSelect( $select: HTMLSelectElement, options: Partial<FLib.SkinSelect.Options> ): SkinSelect {
     return new SkinSelect( $select, options );
 }
 
@@ -528,13 +546,11 @@ export function skinSelect( $select: HTMLSelectElement, options: SkinSelectOptio
  * @example
  * // See skinSelect for example of options
  * skinSelectAll( $wrapper, options )
- *
- * @returns {SkinSelect[]}
  */
-export function skinSelectAll( $wrapper: HTMLElement, userOptions: SkinSelectAllOptionsType = {} ): SkinSelect[] {
+export function skinSelectAll( $wrapper: HTMLElement, userOptions: Partial<FLib.SkinSelect.AllOptions> = {} ): SkinSelect[] {
     const skinList: SkinSelect[] = [];
 
-    const defaultOptions: SkinSelectAllOptionsType = {
+    const defaultOptions: Partial<FLib.SkinSelect.AllOptions> = {
         "full": false,
         "extraClass": []
     };

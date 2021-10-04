@@ -70,8 +70,6 @@ export function insertAfter( $what: Element, $after: Element ): Element {
 /**
  * Clone a DOM element
  *
- * @param $element
- *
  * @example
  * $clonedElement = clone( $element )
  *
@@ -85,7 +83,6 @@ export function clone( $element: Node ): Node {
 /**
  * Remove an element from the DOM
  *
- * @param $element
  * @param $parentNode - If undefined the parentNode will be used
  *
  * @example

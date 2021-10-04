@@ -11,7 +11,7 @@ function normalizeCssClass( cssClass: string[] | string ): string[] {
 }
 
 
-function isIterable( obj: ClassInputType ): boolean {
+function isIterable( obj: FLib.DOM.ClassInput ): boolean {
     return ( obj instanceof NodeList || obj instanceof Array ) && typeof obj.forEach !== 'undefined'
 }
 
@@ -30,7 +30,7 @@ function applyToggle( $element: Element, cleanedCssClass: string[], forceAdd?: b
 
 
 // Use to toggle class only
-function classToggle( $elements: ClassInputType, cssClass: string | string[], forceAdd?: boolean ): ClassInputType {
+function classToggle( $elements: FLib.DOM.ClassInput, cssClass: string | string[], forceAdd?: boolean ): FLib.DOM.ClassInput {
     const cleanedCssClass: string[] = normalizeCssClass( cssClass );
 
     if ( isIterable( $elements ) ) {
@@ -47,7 +47,7 @@ function classToggle( $elements: ClassInputType, cssClass: string | string[], fo
 
 
 // Used to add/remove class only
-function classChange( $elements: ClassInputType, cssClass: string | string[], add: boolean ): ClassInputType {
+function classChange( $elements: FLib.DOM.ClassInput, cssClass: string | string[], add: boolean ): FLib.DOM.ClassInput {
     const functionName: 'add' | 'remove' = add ? 'add' : 'remove';
     const cleanedCssClass: string[]      = normalizeCssClass( cssClass );
 
@@ -86,8 +86,6 @@ function classReplace( $element: Element, oldCssClass: string, newCssClass:strin
  *
  * @example
  * boolean = hClass( $element, "css-class" )
- *
- * @return - true if a class is present on a DOM element
  */
 export function hClass( $element: Element, cssClass: string ): boolean {
     return $element.classList.contains( cssClass );
@@ -105,7 +103,7 @@ export function hClass( $element: Element, cssClass: string ): boolean {
  *
  * @returns $elements
  */
-export function aClass( $elements: ClassInputType, cssClass: string | string[] ): ClassInputType {
+export function aClass( $elements: FLib.DOM.ClassInput, cssClass: string | string[] ): FLib.DOM.ClassInput {
     return classChange( $elements, cssClass, true );
 }
 
@@ -120,7 +118,7 @@ export function aClass( $elements: ClassInputType, cssClass: string | string[] )
  *
  * @returns $elements
  */
-export function rClass( $elements: ClassInputType, cssClass: string | string[] ): ClassInputType {
+export function rClass( $elements: FLib.DOM.ClassInput, cssClass: string | string[] ): FLib.DOM.ClassInput {
     return classChange( $elements, cssClass, false );
 }
 
@@ -140,7 +138,7 @@ export function rClass( $elements: ClassInputType, cssClass: string | string[] )
  *
  * @returns $elements
  */
-export function tClass( $elements: ClassInputType, cssClass: string | string[], forceAdd?: boolean ): ClassInputType {
+export function tClass( $elements: FLib.DOM.ClassInput, cssClass: string | string[], forceAdd?: boolean ): FLib.DOM.ClassInput {
     return classToggle(
         $elements,
         cssClass,
@@ -153,16 +151,16 @@ export function tClass( $elements: ClassInputType, cssClass: string | string[], 
  * Replace a css class by another.
  * Remove oldCssClass and add newCssClass only if oldCssClass exists
  *
- * @param $elements
- * @param oldCssClass
- * @param newCssClass
+ * @param $elements - DOM element or array of DOM element
+ * @param oldCssClass - Class name to replace
+ * @param newCssClass - Class name used to replace the old one
  *
  * @example
  * sClass( $elements, "old-css-class", "new-css-class" )
  *
  * @returns $elements
  */
-export function sClass( $elements: ClassInputType, oldCssClass: string, newCssClass: string ): ClassInputType {
+export function sClass( $elements: FLib.DOM.ClassInput, oldCssClass: string, newCssClass: string ): FLib.DOM.ClassInput {
 
     if ( isIterable( $elements ) ) {
         ($elements as Element[]).forEach( $element => {

@@ -4,7 +4,7 @@ import { extend } from '../Helpers/Extend';
 let ytAPILoadingPromise;
 
 
-const defaultOptions = {
+const defaultOptions: Partial<FLib.YouTubePlayer.Options> = {
     "apiUrl": "//www.youtube.com/iframe_api",
     "playerVars": {
         "autoplay": 0,
@@ -22,13 +22,14 @@ const defaultOptions = {
  * @see extra/modules/youtube.md
  *
  * @example
+ * ```ts
  * let YouTubePlayer = new YouTubePlayer( {
  *         "height": 1920,
  *         "width": 1080,
  *         "videoId": "youtube-video-id-here",
  *         "$wrapper": $wrapper,
  *         "apiUrl": "//www.youtube.com/iframe_api",
- *         "onPlayerStateChange": ( newState ) => {
+ *         "onPlayerStateChange": ( newState ) =&gt; {
  *             if ( newState.data === YT.PlayerState.ENDED ) {
  *                  // Code here for video ended
  *             }
@@ -44,14 +45,15 @@ const defaultOptions = {
  *     }
  * );
  *
- * YouTubePlayer.load().then( ytPlayerInstance => {} );
+ * YouTubePlayer.load().then( ytPlayerInstance =&gt; {} );
+ * ```
 */
 export default class YouTubePlayer {
 
-    #options: YouTubePlayerOptionsType;
+    #options: FLib.YouTubePlayer.Options;
 
 
-    constructor( userOptions: YouTubePlayerOptionsType ) {
+    constructor( userOptions: Partial<FLib.YouTubePlayer.Options> ) {
         this.#options = extend( defaultOptions, userOptions );
 
         if ( !this.#options.$wrapper ) {
@@ -60,8 +62,8 @@ export default class YouTubePlayer {
     }
 
 
-    private loadYouTubeAPI() {
-        let tag, firstScriptTag, _resolve;
+    #loadYouTubeAPI = (): Promise<void> => {
+        let _resolve;
 
         if ( ytAPILoadingPromise ) {
             return ytAPILoadingPromise;
@@ -75,23 +77,23 @@ export default class YouTubePlayer {
             _resolve = resolve;
         } );
 
-        (window as YouTubePlayerWindowType).onYouTubeIframeAPIReady = function() {
+        (window as FLib.YouTubePlayer.PlayerWindow).onYouTubeIframeAPIReady = function() {
             _resolve();
 
-            (window as YouTubePlayerWindowType).onYouTubeIframeAPIReady = null;
+            (window as FLib.YouTubePlayer.PlayerWindow).onYouTubeIframeAPIReady = null;
         }
 
-        tag            = document.createElement( 'script' );
-        tag.src        = this.#options.apiUrl;
-        firstScriptTag = document.getElementsByTagName( 'script' )[ 0 ];
+        const tag            = document.createElement( 'script' );
+        tag.src              = this.#options.apiUrl;
+        const firstScriptTag = document.getElementsByTagName( 'script' )[ 0 ] as HTMLScriptElement;
 
-        firstScriptTag.parentNode.insertBefore( tag, firstScriptTag );
+        firstScriptTag.parentNode?.insertBefore( tag, firstScriptTag );
 
         return ytAPILoadingPromise;
     }
 
 
-    private initPlayer( $wrapper: YouTubePlayerWrapper ) {
+    #initPlayer = ( $wrapper: FLib.YouTubePlayer.PlayerWrapper ): Promise<YT.Player> => {
         let _resolve;
 
         const promise = new Promise( function( resolve ) {
@@ -126,8 +128,8 @@ export default class YouTubePlayer {
      * @returns
      */
     load(): Promise<YT.Player> {
-        return this.loadYouTubeAPI().then( () => {
-            return this.initPlayer( this.#options.$wrapper as YouTubePlayerWrapper );
+        return this.#loadYouTubeAPI().then( () => {
+            return this.#initPlayer( this.#options.$wrapper as FLib.YouTubePlayer.PlayerWrapper );
         } );
     }
 }

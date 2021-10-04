@@ -1,12 +1,9 @@
 // Regular expression from Symfony
-const RE_EMAIL = /^[a-zA-Z0-9.!#$%&\'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
-const RE_EMAIL_LOOSE = /^.+\@\S+\.\S+$/;
+const RE_EMAIL = /^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+const RE_EMAIL_LOOSE = /^.+@\S+\.\S+$/;
 
 /**
  * Test if the value is an email
- *
- * @param value
- * @param [loose]
  *
  * @see extra/modules/validator.md for details
  */

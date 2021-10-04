@@ -1,21 +1,22 @@
-/// <reference path="AccordionTypes.d.ts" />
-/// <reference path="AutocompleteTypes.d.ts" />
-/// <reference path="DOMTypes.d.ts" />
-/// <reference path="DragSliderTypes.d.ts" />
-/// <reference path="EventsHelpersTypes.d.ts" />
-/// <reference path="GLImageTransition.d.ts" />
-/// <reference path="Global.d.ts" />
-/// <reference path="GlobalStateTypes.d.ts" />
-/// <reference path="HelpersTypes.d.ts" />
-/// <reference path="MediaPreloaderTypes.d.ts" />
-/// <reference path="Notifications.d.ts" />
-/// <reference path="PopinTypes.d.ts" />
-/// <reference path="ScrollSnapTypes.d.ts" />
-/// <reference path="SkinCheckboxTypes.d.ts" />
-/// <reference path="SkinFileTypes.d.ts" />
-/// <reference path="SkinRadioTypes.d.ts" />
-/// <reference path="SkinSelectTypes.d.ts" />
-/// <reference path="SliderTypes.d.ts" />
-/// <reference path="TabsTypes.d.ts" />
-/// <reference path="ValidatorTypes.d.ts" />
-/// <reference path="YouTubePlayerTypes.d.ts" />
+declare namespace FLib {}
+
+import './Accordion';
+import './Autocomplete';
+import './DOM';
+import './DragSlider';
+import './EventsHelpers';
+import './GLImageTransition';
+import './Global';
+import './GlobalState';
+import './Helpers';
+import './Notifications';
+import './Popin';
+import './ScrollSnap';
+import './SkinCheckbox';
+import './SkinFile';
+import './SkinRadio';
+import './SkinSelect';
+import './Slider';
+import './Tabs';
+import './Validator';
+import './YouTubePlayer';

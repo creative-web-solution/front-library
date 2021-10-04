@@ -2,18 +2,18 @@
  * Return the position of an element or
  * The position relative to another element
  *
- * @param $element
  * @param $target - If set, the position of $element will be computed relatively to this element
  *
  * @example
+ * ```ts
  * { top, left } = position( $element )
  *
- * @example
  * { top, left } = position( $element, $target )
+ * ```
  *
  * @returns The coordinate of the object
  */
-export function position( $element: HTMLElement, $target?: HTMLElement ): DOMPositionType {
+export function position( $element: HTMLElement, $target?: HTMLElement ): FLib.DOM.Position {
 
     if ( !$target ) {
         return {

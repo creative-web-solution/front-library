@@ -1,6 +1,7 @@
 import isNumber         from './Tools/IsNumber';
 import { addValidator } from './index';
 
+
 /**
  * Number validation
  */

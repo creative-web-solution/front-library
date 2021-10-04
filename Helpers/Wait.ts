@@ -1,6 +1,6 @@
 /**
  * Return a promise and wait for 'waitFor' millisecond to resolve it.
- * If 'waitFor' < 0 => wait for an animation frame
+ * If 'waitFor' &lt; 0 =&gt; wait for an animation frame
  *
  * @param waitFor - Number in ms or 'idle'
  *

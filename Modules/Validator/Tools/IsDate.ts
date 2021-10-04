@@ -1,12 +1,11 @@
 /**
  * Test if the value is a date
  *
- * @param value
- * @param [format="d/m/y"] d for day, m for month and y for year. Only in lowercase. January = 1
+ * @param format - d for day, m for month and y for year. Only in lowercase. January = 1
  *
  * @see extra/modules/validator.md for details
  */
-export default function isDate( value: string, format: string = 'd/m/y' ): boolean {
+export default function isDate( value: string, format = 'd/m/y' ): boolean {
     const RE_SEPARATOR = ( /[^dmy]/ ).exec( format );
 
     if ( !RE_SEPARATOR ) {

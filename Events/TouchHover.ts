@@ -5,21 +5,18 @@ import { wait }                from '../Helpers/Wait';
 
 /**
  * Simulate hover (on touch) on mobile device. Touch a second time to follow the link.
- * @class
  *
- * @example new TouchHover( {
+ * @example
+ * ```ts
+ * new TouchHover( {
  *     "cssClass": 'hover',
  *     "selector": '.link',
  *     "$wrapper": $myWrapper
  * } );
- *
- * @param {Object} options
- * @param {String} options.cssClass
- * @param {String} options.selector
- * @param {HTMLEvent} options.$wrapper
+ * ```
  */
 export default class TouchHover {
-    #options:                 TouchHoverOptions ;
+    #options:                 FLib.Events.TouchHover.Options;
     #$lastElem:               Element | null = null;
     #hasClickOutsideListener: boolean;
 
@@ -29,7 +26,7 @@ export default class TouchHover {
     #clickOutsideHandlerName  = Symbol( 'touchhover2' );
 
 
-    constructor( options: TouchHoverOptions ) {
+    constructor( options: FLib.Events.TouchHover.Options ) {
         this.#options                 = options;
         this.#hasClickOutsideListener = false;
         this.#options.$wrapper        = this.#options.$wrapper || this.#$body;
@@ -40,7 +37,7 @@ export default class TouchHover {
 
         gesture( this.#options.$wrapper, this.#gestureHandlerName, {
             "selector":     this.#options.selector,
-            "end":          this.toggleClass.bind( this ),
+            "end":          this.#toggleClass.bind( this ),
             "preventClick": ( e, $target ) => {
                 return $target[ this.#hasBeenTouchedOnce ];
             }
@@ -48,7 +45,7 @@ export default class TouchHover {
     }
 
 
-    private onClickOutside( e, $target ) {
+    #onClickOutside = ( e: Event, $target: HTMLElement ): void => {
 
         if ( $target.closest( this.#options.selector ) ) {
             return;
@@ -58,20 +55,20 @@ export default class TouchHover {
 
         this.#hasClickOutsideListener = false;
 
-        this.removeClass();
+        this.#removeClass();
     }
 
 
-    private addClass( $target ) {
+    #addClass = ( $target: HTMLElement ): void => {
         $target[ this.#hasBeenTouchedOnce ] = true;
 
-        aClass( $target, this.#options.cssClass );
+        aClass( $target as HTMLElement, this.#options.cssClass );
         this.#$lastElem = $target;
 
         if ( !this.#hasClickOutsideListener ) {
             wait().then( () => {
                 gesture( this.#$body, this.#clickOutsideHandlerName, {
-                    "end": this.onClickOutside.bind( this )
+                    "end": this.#onClickOutside.bind( this )
                 } );
             } );
 
@@ -80,7 +77,7 @@ export default class TouchHover {
     }
 
 
-    private removeClass() {
+    #removeClass = (): void => {
         if ( this.#$lastElem ) {
             rClass( this.#$lastElem, this.#options.cssClass );
 
@@ -90,24 +87,24 @@ export default class TouchHover {
     }
 
 
-    private toggleClass( e, $target ) {
+    #toggleClass = ( e: Event, $target: HTMLElement ): void => {
         if ( $target !== this.#$lastElem ) {
-            this.removeClass();
+            this.#removeClass();
         }
 
         if ( $target[ this.#hasBeenTouchedOnce ] ) {
-            this.removeClass();
+            this.#removeClass();
             return;
         }
 
-        this.addClass( $target );
+        this.#addClass( $target );
     }
 
 
     /**
      * Remove all binded events
      */
-    destroy() {
+    destroy(): this {
         gestureOff( this.#options.$wrapper, this.#gestureHandlerName );
         gestureOff( this.#$body, this.#clickOutsideHandlerName );
 

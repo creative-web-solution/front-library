@@ -1,8 +1,6 @@
 /**
  * Return the next element in the DOM
  *
- * @param $element
- *
  * @example
  * $nextElement = next($element)
  *
@@ -16,8 +14,6 @@ export function next( $element: Element ): Element | null {
 /**
  * Return the previous element in the DOM
  *
- * @param $element
- *
  * @example
  * $previousElement = previous($element)
  *
@@ -30,8 +26,6 @@ export function previous( $element: Element ): Element | null {
 
 /**
  * Return all the children of a DOM element
- *
- * @param $element
  *
  * @example
  * $elements = children($element)

@@ -1,14 +1,14 @@
 /**
  * Preset sample
  */
-export default class PresetSample implements GLImageTransitionPreset {
+export default class PresetSample implements FLib.GLImageTransition.Preset {
 
     #myUniformValue: number;
     #U_MY_UNIFORM!:  WebGLUniformLocation | null;
 
 
     // Fragment shader source code
-    get fsSource() {
+    get fsSource(): string {
         return `
             #ifdef GL_ES
             precision mediump float;
@@ -33,13 +33,13 @@ export default class PresetSample implements GLImageTransitionPreset {
                 gl_FragColor = vec4( color, 1.0 );
             }
         `;
-    };
+    }
 
-    get myUniformValue() {
+    get myUniformValue(): number {
         return this.#myUniformValue;
     }
 
-    get U_MY_UNIFORM() {
+    get U_MY_UNIFORM(): WebGLUniformLocation | null {
         return this.#U_MY_UNIFORM;
     }
 
@@ -55,7 +55,7 @@ export default class PresetSample implements GLImageTransitionPreset {
     /**
      * Create specific uniforms for this preset
      */
-    addUniform( GL: WebGLRenderingContext, SHADER_PROGRAM: WebGLProgram ) {
+    addUniform( GL: WebGLRenderingContext, SHADER_PROGRAM: WebGLProgram ): void {
         this.#U_MY_UNIFORM = GL.getUniformLocation( SHADER_PROGRAM, 'uMyUniform' );
     }
 
@@ -63,7 +63,7 @@ export default class PresetSample implements GLImageTransitionPreset {
     /**
      * Update the uniforms of this preset during render
      */
-    updateUniform( GL: WebGLRenderingContext ) {
+    updateUniform( GL: WebGLRenderingContext ): void {
         GL.uniform1f( this.#U_MY_UNIFORM, this.#myUniformValue );
     }
 
@@ -71,13 +71,15 @@ export default class PresetSample implements GLImageTransitionPreset {
     /**
      * Called each time before a transition
      */
-    onTransitionStart() {
+    onTransitionStart(): void {
+        // Code here
     }
 
 
     /**
      * Called each time after a transition
      */
-    onTransitionEnd() {
+    onTransitionEnd(): void {
+        // Code here
     }
 }

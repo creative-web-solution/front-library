@@ -8,7 +8,7 @@ import { position }            from '../DOM/Position';
 import { width, height }       from '../DOM/Size';
 
 
-const defaultOptions: ScrollSnapOptionsType = {
+const defaultOptions: FLib.ScrollSnap.Options = {
     "lockedClass":        "locked",
     "minItemsToActivate": 2,
     "direction":          "h",
@@ -39,21 +39,21 @@ class ScrollTo {
     #animationFrame;
     #duration!:      number;
     #startPosition!: number;
-    #snapItem!:      ScrollSnapItemType;
-    #snapItemType!:  ScrollSnapSnapType;
-    #scrollPropName: ScrollSnapScrollPropertyType;
+    #snapItem!:      FLib.ScrollSnap.Item;
+    #snapItemType!:  FLib.ScrollSnap.SnapType;
+    #scrollPropName: FLib.ScrollSnap.ScrollPropertyType;
     #$element:       HTMLElement;
-    #callback:       ScrollToCallbackType;
+    #callback:       FLib.ScrollSnap.ScrollToCallback;
 
 
-    constructor( $element: HTMLElement, direction: ScrollSnapDirectionType, callback: ScrollToCallbackType ) {
+    constructor( $element: HTMLElement, direction: FLib.ScrollSnap.DirectionType, callback: FLib.ScrollSnap.ScrollToCallback ) {
         this.#$element       = $element;
         this.#callback       = callback;
         this.#scrollPropName = direction === 'v' ? 'scrollTop' : 'scrollLeft';
     }
 
 
-    private step( timestamp: number ) {
+    #step = ( timestamp: number ) => {
         if ( !this.#startTime ) {
             this.#startTime = timestamp;
         }
@@ -70,7 +70,7 @@ class ScrollTo {
         }
 
         if ( elapsed < this.#duration ) {
-            this.#animationFrame = window.requestAnimationFrame( this.step.bind( this ) );
+            this.#animationFrame = window.requestAnimationFrame( this.#step.bind( this ) );
         }
         else {
             if ( typeof this.#callback === 'function' ) {
@@ -82,7 +82,7 @@ class ScrollTo {
     }
 
 
-    scrollTo( item: ScrollSnapItemType, type: ScrollSnapSnapType, _duration?: number ) {
+    scrollTo( item: FLib.ScrollSnap.Item, type: FLib.ScrollSnap.SnapType, _duration?: number ) {
         if ( !item ) {
             return;
         }
@@ -106,7 +106,7 @@ class ScrollTo {
 
         this.#duration       = typeof _duration !== 'undefined' ? _duration : delta; // ms
 
-        this.#animationFrame = window.requestAnimationFrame( this.step.bind( this ) );
+        this.#animationFrame = window.requestAnimationFrame( this.#step.bind( this ) );
     }
 
 
@@ -137,7 +137,7 @@ class ScrollTo {
 export default class ScrollSnap {
 
     #$snapItems!:               NodeList;
-    #snapPoints:                ScrollSnapItemType[];
+    #snapPoints:                FLib.ScrollSnap.Item[];
     #halfSize: {
         coord: number;
         index: number;
@@ -150,15 +150,15 @@ export default class ScrollSnap {
     #minItemsToActivate:        number;
     #scrollerSize!:             number;
     #offsetSize!:               number;
-    #options:                   ScrollSnapOptionsType;
+    #options:                   FLib.ScrollSnap.Options;
     #hasSwipe:                  boolean;
     #touchended:                boolean;
-    #currentSnapItem!:          ScrollSnapItemType;
+    #currentSnapItem!:          FLib.ScrollSnap.Item;
     #areEventsBinded!:          boolean;
-    #lastTouchPosition!:        GestureCoordsType;
+    #lastTouchPosition!:        FLib.Events.Gesture.Coords;
     #IS_VERTICAL_MODE:          boolean;
-    #SCROLL_PROPERTY_NAME:      ScrollSnapScrollPropertyType;
-    #SCROLL_SIZE_PROPERTY_NAME: ScrollSnapSizePropertyType;
+    #SCROLL_PROPERTY_NAME:      FLib.ScrollSnap.ScrollPropertyType;
+    #SCROLL_SIZE_PROPERTY_NAME: FLib.ScrollSnap.SizePropertyType;
     #$scroller:                 HTMLElement
 
     #TIMEOUT_DELAY              = 100;
@@ -168,7 +168,7 @@ export default class ScrollSnap {
     #SCROLL_END_TRESHOLD        = 5;
 
 
-    constructor( $scroller: HTMLElement, userOptions: ScrollSnapOptionsType = {} ) {
+    constructor( $scroller: HTMLElement, userOptions: FLib.ScrollSnap.Options = {} ) {
 
         this.#$scroller = $scroller;
         this.#options   = extend( defaultOptions, userOptions );
@@ -194,7 +194,7 @@ export default class ScrollSnap {
         // Store the coordinate of the middle and the DOM object of each item
         this.#halfSize = [];
 
-        this.#scrollToHandler = new ScrollTo( $scroller, this.#options.direction as ScrollSnapDirectionType, this.resetState.bind( this ) );
+        this.#scrollToHandler = new ScrollTo( $scroller, this.#options.direction as FLib.ScrollSnap.DirectionType, this.#resetState.bind( this ) );
 
         this.refresh( {
             "snapTo": this.#options.snapTo
@@ -202,8 +202,8 @@ export default class ScrollSnap {
     }
 
 
-    private getScrollPositionInformation() {
-        let scrollPos = this.#$scroller[ this.#SCROLL_PROPERTY_NAME ];
+    #getScrollPositionInformation = (): { scrollAtStart: boolean, scrollAtEnd: boolean } => {
+        const scrollPos = this.#$scroller[ this.#SCROLL_PROPERTY_NAME ];
 
         return {
             "scrollAtStart": scrollPos === 0,
@@ -212,13 +212,13 @@ export default class ScrollSnap {
     }
 
 
-    private resetState( snapItem: ScrollSnapItemType, type: ScrollSnapSnapType ) {
+    #resetState = ( snapItem: FLib.ScrollSnap.Item, type: FLib.ScrollSnap.SnapType ): void => {
         this.#state           = this.#STATE_IDLE;
         this.#touchended      = true;
 
         this.#currentSnapItem = snapItem;
 
-        this.bindEvents();
+        this.#bindEvents();
 
         if ( this.#options.onSnapEnd ) {
             this.#options.onSnapEnd( {
@@ -227,16 +227,16 @@ export default class ScrollSnap {
                 type,
                 "scrollerSize": this.#scrollerSize,
                 "offsetSize":   this.#offsetSize,
-                ...this.getScrollPositionInformation()
+                ...this.#getScrollPositionInformation()
             } );
         }
 
-        this.processLimit( snapItem, type, true );
+        this.#processLimit( snapItem, type, true );
     }
 
 
-    private getCurrentSection( scrollPos: number ) {
-        let len = this.#halfSize.length;
+    #getCurrentSection = ( scrollPos: number ): number => {
+        const len = this.#halfSize.length;
 
         if ( scrollPos <= 0 ) {
             return 0;
@@ -252,25 +252,25 @@ export default class ScrollSnap {
     }
 
 
-    private cancelAutoScroll() {
+    #cancelAutoScroll = (): void => {
         clearTimeout( this.#scrollTimeoutId );
         this.#scrollToHandler.cancelAnimation();
         window.cancelAnimationFrame( this.#scrollTickTimeout );
     }
 
 
-    #interuptAnimation = () => {
+    #interuptAnimation = (): void => {
         off( this.#$scroller, {
             "eventsName": "wheel",
             "callback": this.#interuptAnimation
         } );
-        this.cancelAutoScroll();
+        this.#cancelAutoScroll();
         this.#state = this.#STATE_IDLE;
         this.#touchended = true;
     }
 
 
-    private handleInterruption() {
+    #handleInterruption = (): void => {
         on( this.#$scroller, {
             "eventsName": "wheel",
             "callback": this.#interuptAnimation
@@ -279,11 +279,11 @@ export default class ScrollSnap {
 
 
     /* Return true if the start or the end is reached */
-    private processLimit( snapItem: ScrollSnapItemType, type: ScrollSnapSnapType, fromResetState?: boolean ) {
+    #processLimit = ( snapItem: FLib.ScrollSnap.Item, type: FLib.ScrollSnap.SnapType, fromResetState?: boolean ): boolean => {
 
         if ( this.#$scroller[ this.#SCROLL_PROPERTY_NAME ] + this.#scrollerSize >= this.#$scroller[ this.#SCROLL_SIZE_PROPERTY_NAME ] - this.#SCROLL_END_TRESHOLD ) {
             if ( !fromResetState ) {
-                this.resetState( snapItem, type );
+                this.#resetState( snapItem, type );
             }
 
             if ( this.#options.onReachEnd ) {
@@ -293,14 +293,14 @@ export default class ScrollSnap {
                     type,
                     "scrollerSize": this.#scrollerSize,
                     "offsetSize":   this.#offsetSize,
-                    ...this.getScrollPositionInformation()
+                    ...this.#getScrollPositionInformation()
                 } );
             }
             return true;
         }
         else if ( this.#$scroller[ this.#SCROLL_PROPERTY_NAME ] === 0 )  {
             if ( !fromResetState ) {
-                this.resetState(snapItem, type);
+                this.#resetState(snapItem, type);
             }
 
             if ( this.#options.onReachStart ) {
@@ -319,10 +319,10 @@ export default class ScrollSnap {
     }
 
 
-    private processScroll() {
-        let snapItem = this.#snapPoints[ this.getCurrentSection( this.#$scroller[ this.#SCROLL_PROPERTY_NAME ] ) ];
+    #processScroll = (): void => {
+        const snapItem = this.#snapPoints[ this.#getCurrentSection( this.#$scroller[ this.#SCROLL_PROPERTY_NAME ] ) ];
 
-        if ( this.processLimit( snapItem, 'scroll' ) ) {
+        if ( this.#processLimit( snapItem, 'scroll' ) ) {
             return;
         }
 
@@ -333,7 +333,7 @@ export default class ScrollSnap {
                 "type":         "scroll",
                 "scrollerSize": this.#scrollerSize,
                 "offsetSize":   this.#offsetSize,
-                ...this.getScrollPositionInformation()
+                ...this.#getScrollPositionInformation()
             } );
         }
 
@@ -343,31 +343,31 @@ export default class ScrollSnap {
         );
         this.#state = this.#STATE_MOVING;
 
-        this.handleInterruption();
+        this.#handleInterruption();
     }
 
 
-    private debounceScroll() {
+    #debounceScroll = (): void => {
         clearTimeout( this.#scrollTimeoutId );
         window.cancelAnimationFrame( this.#scrollTickTimeout );
-        this.#scrollTickTimeout = window.requestAnimationFrame( this.processScroll.bind( this ) );
+        this.#scrollTickTimeout = window.requestAnimationFrame( this.#processScroll.bind( this ) );
     }
 
 
-    #onScroll = () => {
+    #onScroll = (): void => {
         if ( this.#state !== this.#STATE_IDLE || !this.#touchended ) {
             return;
         }
 
         this.#state = this.#STATE_IDLE;
 
-        this.cancelAutoScroll();
+        this.#cancelAutoScroll();
 
-        this.#scrollTimeoutId = setTimeout( this.debounceScroll.bind( this ), this.#TIMEOUT_DELAY );
+        this.#scrollTimeoutId = setTimeout( this.#debounceScroll.bind( this ), this.#TIMEOUT_DELAY );
     }
 
 
-    private removeEvents() {
+    #removeEvents = (): void => {
         if ( !this.#areEventsBinded ) {
             return;
         }
@@ -382,7 +382,7 @@ export default class ScrollSnap {
     }
 
 
-    private bindEvents() {
+    #bindEvents = (): void => {
         if ( this.#areEventsBinded ) {
             return;
         }
@@ -402,9 +402,9 @@ export default class ScrollSnap {
     }
 
 
-    private updateOptions( newOptions: ScrollSnapOptionsType ) {
+    #updateOptions = ( newOptions: FLib.ScrollSnap.Options ): void => {
 
-        let { offset, $offsetElement, direction } = newOptions;
+        const { offset, $offsetElement, direction } = newOptions;
 
         if ( direction ) {
             this.#options.direction = direction;
@@ -423,12 +423,11 @@ export default class ScrollSnap {
     /**
      * Refresh the scroller and snap to the asked item
      */
-    refresh( _options: ScrollSnapRefreshOptionType = {} ) {
-        let propPos;
+    refresh( _options: FLib.ScrollSnap.RefreshOption = {} ): this {
+        let { snapTo } = _options;
+        const { $itemToSnapOn } = _options;
 
-        let { snapTo, $itemToSnapOn } = _options;
-
-        this.updateOptions( _options );
+        this.#updateOptions( _options );
 
         if ( !snapTo ) {
             snapTo = this.#options.snapTo;
@@ -437,7 +436,7 @@ export default class ScrollSnap {
             this.#options.snapTo = snapTo;
         }
 
-        propPos                 = this.#IS_VERTICAL_MODE ? 'top' : 'left';
+        const propPos           = this.#IS_VERTICAL_MODE ? 'top' : 'left';
         this.#offsetSize        = 0;
         this.#snapPoints.length = 0;
         this.#halfSize.length   = 0;
@@ -455,13 +454,13 @@ export default class ScrollSnap {
             this.#state      = this.#STATE_LOCKED;
             this.#touchended = true;
 
-            this.removeEvents();
+            this.#removeEvents();
             aClass( this.#$scroller, this.#options.lockedClass as string );
 
-            return;
+            return this;
         }
 
-        this.bindEvents();
+        this.#bindEvents();
 
         this.#state      = this.#STATE_IDLE;
         this.#touchended = true;
@@ -480,8 +479,8 @@ export default class ScrollSnap {
 
         this.#$snapItems.forEach( ( $item, index ) => {
             const $ITM = $item as HTMLElement;
-            let _position = position( $ITM );
-            let snapItem: ScrollSnapItemType = {
+            const _position = position( $ITM );
+            const snapItem: FLib.ScrollSnap.Item = {
                 "coord":   _position[ propPos ] - this.#offsetSize,
                 "index":   index,
                 "isFirst": index === 0,
@@ -519,25 +518,25 @@ export default class ScrollSnap {
                 });
             }
         });
+
+        return this;
     }
 
 
     // Scroll event fired only on touchmove and at the end of the scrolling
     // on some old iOS or on all iOS (up to 11) in PWA or hybrid app...
-    #onSwipe = () => {
-        let scrollPos;
-
+    #onSwipe = (): void => {
         this.#hasSwipe = true;
 
         // Cancel scroll watching fired on touchmove,
         // Allow us to wait for the last scroll event fired one time at the end of the scrolling for bad iOS scroll behaviour
-        this.cancelAutoScroll();
+        this.#cancelAutoScroll();
 
         if ( hasIosBadScroll !== undefined ) {
             return;
         }
 
-        scrollPos = this.#$scroller[ this.#SCROLL_PROPERTY_NAME ];
+        const scrollPos = this.#$scroller[ this.#SCROLL_PROPERTY_NAME ];
 
         setTimeout( () => {
             hasIosBadScroll = scrollPos === this.#$scroller[ this.#SCROLL_PROPERTY_NAME ]
@@ -545,25 +544,24 @@ export default class ScrollSnap {
     }
 
 
-    private onInitMove() {
+    #onInitMove = (): void => {
         if ( this.#state === this.#STATE_MOVING ) {
             this.#interuptAnimation();
         }
         this.#hasSwipe   = false;
         this.#touchended = false;
-        this.cancelAutoScroll();
-
+        this.#cancelAutoScroll();
     }
 
 
-    #onTouchstart = ( e: Event, $targetElement: HTMLElement, position: GestureCoordsType ) => {
-        this.onInitMove()
+    #onTouchstart = ( e: Event, $targetElement: HTMLElement, position: FLib.Events.Gesture.Coords ): void => {
+        this.#onInitMove()
         this.#lastTouchPosition = position;
     }
 
 
-    #onTouchend = ( e: Event, $targetElement: HTMLElement, position: GestureCoordsType) => {
-        let deltaX = Math.abs( this.#lastTouchPosition.pageX - position.pageX );
+    #onTouchend = ( e: Event, $targetElement: HTMLElement, position: FLib.Events.Gesture.Coords): void => {
+        const deltaX = Math.abs( this.#lastTouchPosition.pageX - position.pageX );
 
         if ( this.#state === this.#STATE_MOVING || deltaX < 2  ) {
             return;
@@ -573,9 +571,9 @@ export default class ScrollSnap {
 
         // Cancel scroll watching fired on touchmove,
         // Allow us to wait for the last scroll event fired one time at the end of the scrolling for bad iOS scroll behaviour
-        this.cancelAutoScroll();
+        this.#cancelAutoScroll();
         if ( !this.#hasSwipe ) {
-            this.#scrollTimeoutId = setTimeout( this.debounceScroll.bind( this ), this.#TIMEOUT_DELAY );
+            this.#scrollTimeoutId = setTimeout( this.#debounceScroll.bind( this ), this.#TIMEOUT_DELAY );
         }
     }
 
@@ -583,19 +581,18 @@ export default class ScrollSnap {
     /**
      * Scroll to a specific index
      *
-     * @param index
-     * @param [duration] - In ms
+     * @param duration - In ms
      */
-    scrollToIndex( index: number, duration?: number ) {
+    scrollToIndex( index: number, duration?: number ): this {
 
         if ( index < 0 || !this.#snapPoints[ index ] ) {
-            return;
+            return this;
         }
 
         this.#state = this.#STATE_MOVING;
 
-        this.removeEvents();
-        this.onInitMove();
+        this.#removeEvents();
+        this.#onInitMove();
         this.#touchended = true;
 
 
@@ -606,31 +603,32 @@ export default class ScrollSnap {
                 "type":         "api",
                 "scrollerSize": this.#scrollerSize,
                 "offsetSize":   this.#offsetSize,
-                ...this.getScrollPositionInformation()
+                ...this.#getScrollPositionInformation()
             } );
         }
 
         this.#scrollToHandler.scrollTo( this.#snapPoints[ index ], "api", duration );
+
+        return this;
     }
 
 
     /**
      * Scroll to a specific item
      *
-     * @param $item
-     * @param [duration] - In ms
+     * @param duration - In ms
      */
-    scrollToItem( $item: HTMLElement, duration?: number ) {
+    scrollToItem( $item: HTMLElement, duration?: number ): this {
         const snapItem = this.#snapPoints.find( snapPoint => snapPoint.$item === $item );
 
         if ( !snapItem ) {
-            return;
+            return this;
         }
 
         this.#state = this.#STATE_MOVING;
 
-        this.removeEvents();
-        this.onInitMove();
+        this.#removeEvents();
+        this.#onInitMove();
         this.#touchended = true;
 
         this.#currentSnapItem = snapItem;
@@ -642,7 +640,7 @@ export default class ScrollSnap {
                 "type":         "api",
                 "scrollerSize": this.#scrollerSize,
                 "offsetSize":   this.#offsetSize,
-                ...this.getScrollPositionInformation()
+                ...this.#getScrollPositionInformation()
             } );
         }
 
@@ -653,29 +651,30 @@ export default class ScrollSnap {
             else {
                 this.#options._setScroll?.( this.#$scroller, snapItem.coord, 0 );
             }
-            wait().then( () => this.resetState( snapItem, "api" ) );
+            wait().then( () => this.#resetState( snapItem, "api" ) );
         }
         else {
             this.#scrollToHandler.scrollTo( snapItem, "api", duration );
         }
 
+        return this;
     }
 
 
     /**
      * Scroll to the next item
      *
-     * @param [duration] - In ms
+     * @param duration - In ms
      */
-    next( duration?: number ) {
-        let nextIndex = this.#currentSnapItem.index + 1;
+    next( duration?: number ): this {
+        const nextIndex = this.#currentSnapItem.index + 1;
 
         if ( !this.#snapPoints[ nextIndex ] ) {
-            return;
+            return this;
         }
 
-        this.removeEvents();
-        this.onInitMove();
+        this.#removeEvents();
+        this.#onInitMove();
         this.#touchended = true;
 
         this.#state = this.#STATE_MOVING;
@@ -687,27 +686,30 @@ export default class ScrollSnap {
                 "type":         "api",
                 "scrollerSize": this.#scrollerSize,
                 "offsetSize":   this.#offsetSize,
-                ...this.getScrollPositionInformation()
+                ...this.#getScrollPositionInformation()
             } );
         }
 
         this.#scrollToHandler.scrollTo( this.#snapPoints[ nextIndex ], "api", duration );
+
+        return this;
     }
 
 
     /**
      * Scroll to the previous item
-     * @param [duration] - In ms
+     *
+     * @param duration - In ms
      */
-    previous( duration?: number ) {
-        let previousIndex = this.#currentSnapItem.index - 1;
+    previous( duration?: number ): this {
+        const previousIndex = this.#currentSnapItem.index - 1;
 
         if ( previousIndex < 0 || !this.#snapPoints[ previousIndex ] ) {
-            return;
+            return this;
         }
 
-        this.removeEvents();
-        this.onInitMove();
+        this.#removeEvents();
+        this.#onInitMove();
         this.#touchended = true;
 
         this.#state = this.#STATE_MOVING;
@@ -719,19 +721,21 @@ export default class ScrollSnap {
                 "type":         "api",
                 "scrollerSize": this.#scrollerSize,
                 "offsetSize":   this.#offsetSize,
-                ...this.getScrollPositionInformation()
+                ...this.#getScrollPositionInformation()
             } );
         }
 
         this.#scrollToHandler.scrollTo( this.#snapPoints[ previousIndex ], "api", duration );
+
+        return this;
     }
 
 
     /**
      * Remove all events, css class or inline styles
      */
-    clean() {
-        this.cancelAutoScroll();
+    clean(): this {
+        this.#cancelAutoScroll();
         off( this.#$scroller, {
             "eventsName": "scroll",
             "callback":   this.#onScroll
@@ -741,6 +745,8 @@ export default class ScrollSnap {
             "callback":   this.#interuptAnimation
         } );
         gestureOff( this.#$scroller, 'scrollSnapTouchSwipe' );
+
+        return this;
     }
 }
 

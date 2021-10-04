@@ -1,24 +1,20 @@
 /**
  * Debounce
  *
- * @param callback
- * @param threshold
- * @param immediate
- *
  * @example
  * debouncedFunction = debounce( myFunction, 200 )
  */
 export function debounce(
                     callback: ( ...args: any[] ) => void,
                     threshold = 100,
-                    immediate: boolean = false
+                    immediate = false
                 ): ( ...args: any[] ) => void {
-    let timeout: ReturnType<typeof setTimeout> | undefined;
+    let timeout: ReturnType<typeof setTimeout> | undefined;
 
     return function<Type>( this: Type, ...args: any[] ) {
 
         const later = () => {
-            timeout =  undefined;
+            timeout = undefined;
 
             if ( !immediate ) {
                 callback.apply( this, args );

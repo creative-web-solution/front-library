@@ -13,6 +13,7 @@ import { Slide }                    from './Slide';
  * @see extra/modules/slider.md
  *
  * @example
+ * ```ts
  * let controls = new SliderControls(
  *  slider,
  *  {
@@ -26,6 +27,7 @@ import { Slide }                    from './Slide';
  *      "gestureOptions": Object
  *  }
  * );
+ * ```
 */
 export default class SliderControls {
 
@@ -33,22 +35,22 @@ export default class SliderControls {
     #autoslideTimeoutId;
     #keyboardPreviousButton;
     #keyboardNextButton;
-    #$bullets:                      NodeList | null = null;
+    #$bullets:                      NodeListOf<HTMLElement> | null = null;
     #paginationKeyboardControls;
     #inSlideKeyboardControls;
-    #isAutoslideEnabled:            boolean = false;
-    #options:                       SliderControlsOptionsType;
+    #isAutoslideEnabled             = false;
+    #options:                       FLib.Slider.ControlsOptions;
 
 
     /**
      * Controlled slider
      */
-    get slider() {
+    get slider(): Slider {
         return this.#slider;
     }
 
 
-    constructor( slider, options: SliderControlsOptionsType ) {
+    constructor( slider: Slider, options: FLib.Slider.ControlsOptions ) {
         this.#slider  = slider;
         this.#options = options;
 
@@ -64,14 +66,14 @@ export default class SliderControls {
         on( slider, {
             "eventsName": "before",
             "callback": data => {
-                this.updateBullets( data.targetSlide, data.currentSlide );
+                this.#updateBullets( data.targetSlide, data.currentSlide );
             }
         } );
 
         on( slider, {
             "eventsName": "start",
             "callback": data => {
-                this.updateBullets( data.currentSlide );
+                this.#updateBullets( data.currentSlide );
             }
         } );
 
@@ -81,12 +83,12 @@ export default class SliderControls {
 
         if ( this.#$bullets ) {
             this.#$bullets.forEach( ( $bullet, index ) => {
-                let matchSlide = slider.getSlide( index );
+                const matchSlide = slider.getSlide( index );
 
-                ($bullet as HTMLElement).setAttribute( 'role', 'tab' );
-                ($bullet as HTMLElement).setAttribute( 'aria-selected', 'false' );
-                ($bullet as HTMLElement).setAttribute( 'tabindex', '-1' );
-                ($bullet as HTMLElement).setAttribute( 'aria-controls', matchSlide.id );
+                $bullet.setAttribute( 'role', 'tab' );
+                $bullet.setAttribute( 'aria-selected', 'false' );
+                $bullet.setAttribute( 'tabindex', '-1' );
+                $bullet.setAttribute( 'aria-controls', matchSlide.id );
             } );
         }
 
@@ -94,20 +96,20 @@ export default class SliderControls {
 
         if ( options.$btPrev ) {
             gesture( options.$btPrev, '__sliderBtPrev', {
-                "tap": this.onPrev.bind( this ),
+                "tap": this.#onPrev.bind( this ),
             } );
         }
 
         if ( options.$btNext ) {
             gesture( options.$btNext, '__sliderBtNext', {
-                "tap": this.onNext.bind( this ),
+                "tap": this.#onNext.bind( this ),
             } );
         }
 
-        if ( this.#$bullets ) {
-            gesture( options.$pagination!, '__sliderBtPagination', {
+        if ( this.#$bullets && options.$pagination ) {
+            gesture( options.$pagination, '__sliderBtPagination', {
                 "selector": options.paginationItemsSelector,
-                "tap": this.onPager.bind( this ),
+                "tap": this.#onPager.bind( this ),
             } );
         }
 
@@ -134,9 +136,7 @@ export default class SliderControls {
                         {
                             "swipeLeft": ( e: Event, $target: HTMLElement, type: string ) => {
                                 this.next();
-                                if ( options.gestureOptions!.swipeLeft ) {
-                                    options.gestureOptions!.swipeLeft.call( this, e, $target, type  );
-                                }
+                                options.gestureOptions?.swipeLeft?.call( this, e, $target, type  );
                             }
                         }
                     );
@@ -148,9 +148,7 @@ export default class SliderControls {
                         {
                             "swipeRight": ( e: Event, $target: HTMLElement, type: string ) => {
                                 this.previous();
-                                if ( options.gestureOptions!.swipeRight ) {
-                                    options.gestureOptions!.swipeRight.call( this, e, $target, type );
-                                }
+                                options.gestureOptions?.swipeRight?.call( this, e, $target, type );
                             }
                         }
                     );
@@ -168,14 +166,14 @@ export default class SliderControls {
                 {
                     "onUp": e => {
                         if ( e.ctrlKey ) {
-                            this.updateBulletsFocus();
+                            this.#updateBulletsFocus();
                         }
                     },
                     "onPageUp": e => {
                         if (e.ctrlKey) {
                             one(slider, {
                                 "eventsName": "before",
-                                "callback": this.updateBulletsFocus
+                                "callback": this.#updateBulletsFocus
                             });
                             slider.previous();
                         }
@@ -184,7 +182,7 @@ export default class SliderControls {
                         if (e.ctrlKey) {
                             one(slider, {
                                 "eventsName": "before",
-                                "callback": this.updateBulletsFocus
+                                "callback": this.#updateBulletsFocus
                             });
                             slider.next();
                         }
@@ -202,14 +200,14 @@ export default class SliderControls {
                         "onPrevious": () => {
                             one( slider, {
                                 "eventsName": "before",
-                                "callback": this.updateBulletsFocus
+                                "callback": this.#updateBulletsFocus
                             } );
                             slider.previous();
                         },
                         "onNext": () => {
                             one( slider, {
                                 "eventsName": "before",
-                                "callback": this.updateBulletsFocus
+                                "callback": this.#updateBulletsFocus
                             } );
                             slider.next();
                         },
@@ -223,7 +221,7 @@ export default class SliderControls {
                 this.#keyboardNextButton = new KeyboardHandler(
                     options.$btNext,
                     {
-                        "onSelect": this.onNext.bind( this ),
+                        "onSelect": this.#onNext.bind( this ),
                     }
                 );
             }
@@ -232,7 +230,7 @@ export default class SliderControls {
                 this.#keyboardPreviousButton = new KeyboardHandler(
                     options.$btPrev,
                     {
-                        "onSelect": this.onPrev.bind( this ),
+                        "onSelect": this.#onPrev.bind( this ),
                     }
                 );
             }
@@ -250,9 +248,9 @@ export default class SliderControls {
      * @param _$button - Internal use
      */
     next( _$button?: HTMLElement ): Promise<void> {
-        this._stopAutoslide();
+        this.#_stopAutoslide();
         return this.#slider.next( _$button );
-    };
+    }
 
 
     /**
@@ -261,21 +259,20 @@ export default class SliderControls {
      * @param _$button - Internal use
      */
     previous( _$button?: HTMLElement ): Promise<void> {
-        this._stopAutoslide();
+        this.#_stopAutoslide();
         return this.#slider.previous( _$button );
-    };
+    }
 
 
     /**
      * Go to the asked slide or page
      *
-     * @param index
      * @param $button - Internal use
      */
     goTo( index: number, _$button?: HTMLElement ): Promise<void> {
-        this._stopAutoslide();
+        this.#_stopAutoslide();
         return this.#slider.goTo( index, _$button );
-    };
+    }
 
 
     /**
@@ -283,13 +280,13 @@ export default class SliderControls {
      */
     isEnabled(): boolean {
         return this.#slider.isEnabled();
-    };
+    }
 
 
     /**
      * Destroy the slider and its controls
      */
-    destroy() {
+    destroy(): void {
         clearTimeout( this.#autoslideTimeoutId );
         this.#slider.destroy();
 
@@ -317,84 +314,88 @@ export default class SliderControls {
             this.#inSlideKeyboardControls.off();
         }
 
-        if ( this.#$bullets ) {
-            gestureOff( this.#options.$pagination!, '__sliderBtPagination' );
+        if ( this.#$bullets && this.#options.$pagination ) {
+            gestureOff( this.#options.$pagination, '__sliderBtPagination' );
         }
 
         if ( this.#options.swipe ) {
             gestureOff( this.#slider.$slider, '__sliderSwipe' );
         }
-    };
+    }
 
 
     /**
      * Start the autoslide
      */
-    startAutoslide() {
+    startAutoslide(): this {
         if ( this.#options.autoslide ) {
             this.#isAutoslideEnabled = true;
-            this.autoslideLoop();
+            this.#autoslideLoop();
         }
-    };
+
+        return this;
+    }
 
 
     /**
      * Stop the autoslide
      */
-    stopAutoslide() {
-        this._stopAutoslide();
-    };
+    stopAutoslide(): this {
+        this.#_stopAutoslide();
+
+        return this;
+    }
 
 
-    public onPrev( e, $target: HTMLElement ) {
+    #onPrev = ( e: Event, $target: HTMLElement ): void => {
         e.preventDefault();
 
         this.previous( $target );
     }
 
 
-    private onNext( e, $target: HTMLElement ) {
+    #onNext = ( e: Event, $target: HTMLElement ): void => {
         e.preventDefault();
 
         this.next( $target );
     }
 
 
-    private onPager( e, $target: HTMLElement ) {
+    #onPager = ( e: Event, $target: HTMLElement ): void => {
         e.preventDefault();
 
         this.goTo( index( $target ), $target );
     }
 
 
-    private _stopAutoslide() {
+    #_stopAutoslide = (): void => {
         clearTimeout( this.#autoslideTimeoutId );
         this.#isAutoslideEnabled = false;
     }
 
 
-    private makeAutoslide() {
+    #makeAutoslide = (): void => {
         this.#slider.next().then( () => {
             if ( this.#isAutoslideEnabled ) {
-                this.autoslideLoop();
+                this.#autoslideLoop();
             }
         } );
     }
 
 
-    private autoslideLoop() {
+    #autoslideLoop = (): void => {
         const currentSlide = this.#slider.getCurrentSlide();
 
         clearTimeout( this.#autoslideTimeoutId );
 
         this.#autoslideTimeoutId = setTimeout(
-            this.makeAutoslide,
-            ( currentSlide.delay as number || this.#options.autoslide! as number ) * 1000
+            this.#makeAutoslide,
+            ( currentSlide.delay as number || this.#options.autoslide as number ) * 1000
         );
     }
 
 
-    private updateBullets( targetSlide: Slide, currentSlide?: Slide ) {
+    #updateBullets = ( targetSlide: Slide, currentSlide?: Slide ): void => {
         if ( !this.#$bullets ) {
             return;
         }
@@ -413,7 +414,7 @@ export default class SliderControls {
     }
 
 
-    private updateBulletsFocus( data? ) {
+    #updateBulletsFocus = ( data?: { currentSlide: FLib.Slider.SlideProperties, targetSlide: FLib.Slider.SlideProperties } ): void => {
         const currentSlide = data ? data.targetSlide : this.#slider.getCurrentSlide();
 
         if ( this.#$bullets && this.#$bullets[ currentSlide.index ] ) {

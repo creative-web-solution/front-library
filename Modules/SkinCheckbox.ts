@@ -2,7 +2,7 @@ import { extend } from '../Helpers/Extend';
 import { wrap }   from '../DOM/Wrap';
 
 
-const defaultOptions: SkinCheckboxOptionsType = {
+const defaultOptions: FLib.SkinCheckbox.Options = {
     "wrap":          "<span class=\"cb-skin\"></span>",
     "invalidClass":  "invalid",
     "disabledClass": "disabled",
@@ -16,15 +16,15 @@ const defaultOptions: SkinCheckboxOptionsType = {
  */
  export default class SkinCheckbox {
 
-    #$checkbox!: CustomCheckboxType;
-    #options!:   SkinCheckboxOptionsType;
-    #$parent!:   CustomCheckboxParentType;
+    #$checkbox!: FLib.SkinCheckbox.CustomCheckbox;
+    #options!:   FLib.SkinCheckbox.Options;
+    #$parent!:   FLib.SkinCheckbox.CustomCheckboxParent;
 
 
-    constructor( $checkbox: HTMLInputElement, userOptions: SkinCheckboxOptionsType = {} ) {
+    constructor( $checkbox: HTMLInputElement, userOptions: Partial<FLib.SkinCheckbox.Options> = {} ) {
 
         // Already skinned
-        if ( ($checkbox as CustomCheckboxType).__skinAPI ) {
+        if ( ($checkbox as FLib.SkinCheckbox.CustomCheckbox).__skinAPI ) {
             return;
         }
 
@@ -33,9 +33,9 @@ const defaultOptions: SkinCheckboxOptionsType = {
         this.#options = extend( defaultOptions, userOptions );
 
         // Add the skin
-        wrap( this.#$checkbox, this.#options.wrap! );
+        wrap( this.#$checkbox, this.#options.wrap );
 
-        this.#$parent = this.#$checkbox.parentNode as CustomCheckboxParentType;
+        this.#$parent = this.#$checkbox.parentNode as FLib.SkinCheckbox.CustomCheckboxParent;
 
         this.#$parent.__skinAPI = this.#$checkbox.__skinAPI = this;
 
@@ -45,34 +45,34 @@ const defaultOptions: SkinCheckboxOptionsType = {
 
         this.#$checkbox.addEventListener( 'click', this.#changeHandler );
 
-        this.update();
+        this.#update();
     }
 
 
     // Change the display
-    private update() {
+    #update = (): void => {
         this.#$checkbox.__skinAPI?.[ this.#$checkbox.checked ? 'check' : 'uncheck' ]();
     }
 
 
-    #changeHandler = () => {
-        this.update();
+    #changeHandler = (): void => {
+        this.#update();
     }
 
 
-    private checkUncheck( fnName: string, checked: boolean ) {
+    #checkUncheck = ( fnName: string, checked: boolean ): void => {
         this.#$checkbox.checked = checked;
         this.#$parent.classList[ fnName ]( this.#options.checkedClass );
     }
 
 
-    private enableDisable( fnName: string, disabled: boolean ) {
+    #enableDisable = ( fnName: string, disabled: boolean ): void => {
         this.#$checkbox.disabled = disabled;
         this.#$parent.classList[ fnName ]( this.#options.disabledClass );
     }
 
 
-    private validInvalid( fnName: string ) {
+    #validInvalid = ( fnName: string ): void => {
         this.#$parent.classList[ fnName ]( this.#options.invalidClass );
     }
 
@@ -80,49 +80,61 @@ const defaultOptions: SkinCheckboxOptionsType = {
     /**
      * Force the checkbox to be check
      */
-    check() {
-        this.checkUncheck( 'add', true );
+    check(): this {
+        this.#checkUncheck( 'add', true );
+
+        return this;
     }
 
 
     /**
      * Force the checkbox to be uncheck
      */
-    uncheck() {
-        this.checkUncheck( 'remove', false );
+    uncheck(): this {
+        this.#checkUncheck( 'remove', false );
+
+        return this;
     }
 
 
     /**
      * Force the checkbox to be enable
      */
-    enable() {
-        this.enableDisable( 'remove', false );
-    };
+    enable(): this {
+        this.#enableDisable( 'remove', false );
+
+        return this;
+    }
 
 
     /**
      * Force the checkbox to be disable
      */
-    disable() {
-        this.enableDisable( 'add', true );
-    };
+    disable(): this {
+        this.#enableDisable( 'add', true );
+
+        return this;
+    }
 
 
     /**
      * Force the state of the checkbox to invalid
      */
-    setInvalid() {
-        this.validInvalid( 'add' );
-    };
+    setInvalid(): this {
+        this.#validInvalid( 'add' );
+
+        return this;
+    }
 
 
     /**
      * Force the state of the checkbox to valid
      */
-    setValid() {
-        this.validInvalid( 'remove' );
-    };
+    setValid(): this {
+        this.#validInvalid( 'remove' );
+
+        return this;
+    }
 }
 
 
@@ -130,17 +142,17 @@ const defaultOptions: SkinCheckboxOptionsType = {
  * Skin a checkbox DOM element
  *
  * @example
+ * ```ts
  * // Call with default options:
  * skinCheckbox( $input, {
- *   "wrap": "<span class=\"cb-skin\"></span>",
+ *   "wrap": "&lt;span class=\"cb-skin\"&gt;&lt;/span&gt;",
  *   "invalidClass": "invalid",
  *   "disabledClass": "disabled",
  *   "checkedClass": "checked"
  * });
- *
- * @returns {SkinCheckbox}
+ * ```
 */
-export function skinCheckbox( $checkbox: HTMLInputElement, options?: SkinCheckboxOptionsType ): SkinCheckbox {
+export function skinCheckbox( $checkbox: HTMLInputElement, options?: Partial<FLib.SkinCheckbox.Options> ): SkinCheckbox {
     return new SkinCheckbox( $checkbox, options );
 }
 
@@ -149,16 +161,18 @@ export function skinCheckbox( $checkbox: HTMLInputElement, options?: SkinCheckbo
  * Skin all checkbox DOM element in a wrapper
  *
  * @example
+ * ```ts
  * // Call with default options:
  * skinCheckboxAll( $wrapper,
  *   "selector": "input[type="checkbox"]",
- *   "wrap": "<span class=\"cb-skin\"></span>",
+ *   "wrap": "&lt;span class=\"cb-skin\"&gt;&lt;/span&gt;",
  *   "invalidClass": "invalid",
  *   "disabledClass": "disabled",
  *   "checkedClass": "checked"
  * });
+ * ```
 */
-export function skinCheckboxAll( $wrapper: HTMLElement, options: SkinCheckboxAllOptionsType = {} ): SkinCheckbox[] {
+export function skinCheckboxAll( $wrapper: HTMLElement, options: Partial<FLib.SkinCheckbox.AllOptions> = {} ): SkinCheckbox[] {
 
     const $checkboxes = $wrapper.querySelectorAll( options.selector || 'input[type="checkbox"]' );
 

@@ -33,6 +33,7 @@ const DEFAULT_OPTIONS = {
  * Tabs
  *
  * @example
+ * ```ts
  * new Tabs( document.querySelector( '.tabs' ), {
  *      "tabSelector":     ".tab",
  *      "animations": {
@@ -62,9 +63,11 @@ const DEFAULT_OPTIONS = {
  *          console.log( 'close: ', $tab, $panel );
  *      }
  *  } );
+ * ```
  *
  * HTML:
  *
+ * ```html
  * <div class="tabs">
  *   <ul role="tablist">
  *     <li role="tab" id="tab-1" tabindex="-1" aria-selected="false" aria-controls="panel-1">Tab 1</li>
@@ -85,42 +88,43 @@ const DEFAULT_OPTIONS = {
  *     [Content 4]
  *   </div>
  * </div>
+ * ```
  *
  * Set aria-selected to "true" and tabindex="0" on the tab you want open at start.
  * If the tabs are displayed vertically, add aria-orientation="vertical" on the role="tablist" element
  */
 export default class Tabs {
 
-    #options:        TabsOptionsType;
+    #options:        FLib.Tabs.Options;
     #$TABS_LIST:     HTMLElement;
     #$TABS:          NodeList;
     #tablist:        Tab[];
     #status:         string;
     #VERTICAL_MODE:  boolean;
-        #lastOpenedTab!: Tab;
-    #keyboard!:      KeyboardHandler;
+    #lastOpenedTab:  Tab | undefined;
+    #keyboard:       KeyboardHandler | undefined;
     #$tabsWrapper:   HTMLElement;
 
     #STATUS_ON  = 'STATUS_ON';
     #STATUS_OFF = 'STATUS_OFF';
 
-    constructor( $tabsWrapper, userOptions: TabsOptionsType ) {
+    constructor( $tabsWrapper: HTMLElement, userOptions: Partial<FLib.Tabs.Options> ) {
         this.#$tabsWrapper  = $tabsWrapper;
 
         this.#options       = extend( DEFAULT_OPTIONS, userOptions );
 
-        this.#$TABS_LIST    = $tabsWrapper.querySelector( '[role="tablist"]' );
+        this.#$TABS_LIST    = $tabsWrapper.querySelector( '[role="tablist"]' ) as HTMLElement;
         this.#$TABS         = this.#$TABS_LIST.querySelectorAll( this.#options.tabSelector );
         this.#tablist       = [];
         this.#status        = this.#STATUS_OFF;
 
         this.#VERTICAL_MODE = this.#$TABS_LIST.getAttribute( 'aria-orientation' ) === 'vertical';
 
-        this.on();
+        this.#on();
     }
 
 
-    #onOpenTab = ( tab: Tab ) => {
+    #onOpenTab = ( tab: Tab ): void => {
         if ( this.#lastOpenedTab ) {
             this.#lastOpenedTab.close( true );
         }
@@ -129,21 +133,23 @@ export default class Tabs {
     }
 
 
-    private onNext() {
-        const indexToOpen = this.#lastOpenedTab.index + 1 >= this.#tablist.length ? 0 : this.#lastOpenedTab.index + 1;
+    #onNext = (): void => {
+        const lastIndex   = this.#lastOpenedTab ? this.#lastOpenedTab.index : 0;
+        const indexToOpen = lastIndex + 1 >= this.#tablist.length ? 0 : lastIndex + 1;
 
         this.#tablist[ indexToOpen ].open();
     }
 
 
-    private onPrevious() {
-        const indexToOpen = this.#lastOpenedTab.index - 1 < 0 ? this.#tablist.length - 1 : this.#lastOpenedTab.index - 1;
+    #onPrevious = (): void => {
+        const lastIndex   = this.#lastOpenedTab ? this.#lastOpenedTab.index : 0;
+        const indexToOpen = lastIndex - 1 < 0 ? this.#tablist.length - 1 : lastIndex - 1;
 
         this.#tablist[ indexToOpen ].open();
     }
 
 
-    private on() {
+    #on = (): void => {
         let hasAnOpenedTab;
 
         if( this.#status === this.#STATUS_ON ) {
@@ -173,21 +179,21 @@ export default class Tabs {
         if ( this.#VERTICAL_MODE ) {
             this.#keyboard = new KeyboardHandler( this.#$tabsWrapper, {
                 "selector": this.#options.tabSelector,
-                "onUp":     this.onPrevious,
-                "onDown":   this.onNext
+                "onUp":     this.#onPrevious,
+                "onDown":   this.#onNext
             } );
         }
         else {
             this.#keyboard = new KeyboardHandler( this.#$tabsWrapper, {
                 "selector": this.#options.tabSelector,
-                "onRight":  this.onNext,
-                "onLeft":   this.onPrevious
+                "onRight":  this.#onNext,
+                "onLeft":   this.#onPrevious
             } );
         }
     }
 
 
-    private off() {
+    #off = (): void => {
         if( this.#status === this.#STATUS_OFF ){
             return;
         }
@@ -197,23 +203,27 @@ export default class Tabs {
             tab.destroy();
         } );
 
-        this.#keyboard.off();
+        this.#keyboard?.off();
     }
 
 
     /**
      * Remove all events, css class, ...
      */
-    destroy() {
-        this.off();
-    };
+    destroy(): this {
+        this.#off();
+
+        return this;
+    }
 
 
     /**
      * Restart the module
      */
-    update() {
-        this.off();
-        this.on();
-    };
+    update(): this {
+        this.#off();
+        this.#on();
+
+        return this;
+    }
 }

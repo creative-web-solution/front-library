@@ -3,14 +3,42 @@ import { extend } from '../Helpers/Extend';
 
 
 
-const DEFAULT_OPTIONS: GlobalStateOptionsType = {
+const DEFAULT_OPTIONS: FLib.GlobalState.Options = {
     "dispatchEvents": false,
     "alwaysDispatch": false
 }
 
 
-/*
- *  Global State Manager
+
+/**
+ * Manage a global object that allow storing and sharing values among modules.
+ *
+ * @example
+ * ```ts
+ * // Use the default storage
+ * const globalState = new GlobalState();
+ * globalState.set( 'PROP', 'VALUE' );
+ * globalState.get( 'PROP' );
+ * ```
+ *
+ * @example
+ * ```ts
+ * // Use a storage with a specific name
+ * const globalState = new GlobalState();
+ * globalState.set( 'MY_STORE', 'PROP', 'VALUE' );
+ * globalState.get( 'MY_STORE', 'PROP' );
+ * ```
+ *
+ * @example
+ * ```ts
+ * // To use events on properties change
+ * const globalState = new GlobalState({
+ *  "dispatchEvents": true
+ * });
+ * globalState.registerOnEveryChange( (value, propertyName, storeName) =&gt; {} )
+ * globalState.registerOnStoreChange( (value, propertyName, storeName) =&gt; {}, 'storeName' )
+ * globalState.registerOnPropertyChange( (value, propertyName, storeName) =&gt; {}, 'storeName', 'myProperty' )
+ * ```
  */
 class GlobalState {
 
@@ -18,24 +46,24 @@ class GlobalState {
 
     #EVENTS_STORE: {
         [ storeName: string ]: {
-            functions: GlobalStateCallbackType[],
+            functions: FLib.GlobalState.Callback[],
             props: {
-                [ propertyName: string ]: GlobalStateCallbackType[]
+                [ propertyName: string ]: FLib.GlobalState.Callback[]
             }
         }
     };
-    #GLOBAL_EVENTS_STORE: GlobalStateCallbackType[] = [];
+    #GLOBAL_EVENTS_STORE: FLib.GlobalState.Callback[] = [];
     #stores              = {};
     #alwaysDispatch: boolean;
     #dispatchEvents: boolean;
 
 
-    get DEFAULT_STORE_NAME() {
+    get DEFAULT_STORE_NAME(): string {
         return this.#DEFAULT_STORE_NAME;
     }
 
 
-    constructor( userOptions?: GlobalStateOptionsType ) {
+    constructor( userOptions?: Partial<FLib.GlobalState.Options> ) {
         const options = extend( {}, DEFAULT_OPTIONS, userOptions );
 
         this.#alwaysDispatch      = options.alwaysDispatch;
@@ -54,7 +82,7 @@ class GlobalState {
     }
 
 
-    private dispatch( value, property: string, store: string ) {
+    #dispatch = ( value: any, property: string, store: string ): void => {
 
         if ( !this.#EVENTS_STORE[ store ] ) {
             this.#EVENTS_STORE[ store ] = {
@@ -86,26 +114,26 @@ class GlobalState {
      *
      * @param alwaysDispatch - If true, it will dispatch events even if the value in the store is the same as the value you try to set
      */
-    activeEventsDispatch( alwaysDispatch: boolean = false ) {
+    activeEventsDispatch( alwaysDispatch = false ): this {
         this.#dispatchEvents = true;
         this.#alwaysDispatch = alwaysDispatch;
+
+        return this;
     }
 
 
     /**
      * Stop the dispatch of events
      */
-    stopEventsDispatch() {
+    stopEventsDispatch(): this {
         this.#dispatchEvents = false;
+
+        return this;
     }
 
 
     /**
      * Set a value in a property. If there are only 2 arguments, the default store will be used
-     *
-     * @param propertyName
-     * @param value
-     * @param storeName
      *
      * @returns Return the setted value
      */
@@ -123,7 +151,7 @@ class GlobalState {
         this.#stores[ storeName ][ propertyName]  = value;
 
         if ( this.#dispatchEvents && ( this.#alwaysDispatch || !this.#alwaysDispatch && previousValue !== value ) ) {
-            this.dispatch( value, propertyName, storeName );
+            this.#dispatch( value, propertyName, storeName );
         }
 
         return value;
@@ -132,9 +160,6 @@ class GlobalState {
 
     /**
      * Get the value of a property. If there are only 2 arguments, the default store will be used.
-     *
-     * @param propertyName
-     * @param storeName
      */
     get( propertyName: string, storeName = this.#DEFAULT_STORE_NAME ): any {
         if ( !propertyName ) {
@@ -148,21 +173,21 @@ class GlobalState {
     /**
      * Bind a function to be called on all properties change
      */
-    registerOnEveryChange( callback: GlobalStateCallbackType ) {
-        if ( !callback ) {
-            return;
+    registerOnEveryChange( callback: FLib.GlobalState.Callback ): this {
+        if ( callback ) {
+            this.#GLOBAL_EVENTS_STORE.push( callback );
         }
 
-        this.#GLOBAL_EVENTS_STORE.push( callback );
+        return this;
     }
 
 
     /**
      * Bind a function to be called on all properties change for a specific store
      */
-    registerOnStoreChange( callback: GlobalStateCallbackType, storeName: string ) {
+    registerOnStoreChange( callback: FLib.GlobalState.Callback, storeName: string ): this {
         if ( !callback || !storeName ) {
-            return;
+            return this;
         }
 
         if ( !this.#EVENTS_STORE[ storeName ] ) {
@@ -173,15 +198,17 @@ class GlobalState {
         }
 
         this.#EVENTS_STORE[ storeName ].functions.push( callback );
+
+        return this;
     }
 
 
     /**
      * Bind a function to be called on a specific property change in a specific store
      */
-    registerOnPropertyChange( callback: GlobalStateCallbackType, storeName: string, propertyName: string ) {
+    registerOnPropertyChange( callback: FLib.GlobalState.Callback, storeName: string, propertyName: string ): this {
         if ( !callback || !storeName || !propertyName ) {
-            return;
+            return this;
         }
         if ( !this.#EVENTS_STORE[ storeName ] ) {
             this.#EVENTS_STORE[ storeName ] = {
@@ -195,15 +222,17 @@ class GlobalState {
         }
 
         this.#EVENTS_STORE[ storeName ].props[ propertyName ].push( callback );
+
+        return this;
     }
 
 
     /**
      * Unbind the registered function from all change events
      */
-    remove( callback: GlobalStateCallbackType ) {
+    remove( callback: FLib.GlobalState.Callback ): this {
         if ( !callback ) {
-            return;
+            return this;
         }
 
         slice( this.#GLOBAL_EVENTS_STORE, callback );
@@ -214,31 +243,9 @@ class GlobalState {
                 slice( this.#EVENTS_STORE[ storeName ].props[ propertyName ], callback );
             } );
         } );
+
+        return this;
     }
 }
 
-/**
- * Manage a global object that allow storing and sharing values among modules.
- *
- * @example
- * // Use the default storage
- * const globalState = new GlobalState();
- * globalState.set( 'PROP', 'VALUE' );
- * globalState.get( 'PROP' );
- *
- * @example
- * // Use a storage with a specific name
- * const globalState = new GlobalState();
- * globalState.set( 'MY_STORE', 'PROP', 'VALUE' );
- * globalState.get( 'MY_STORE', 'PROP' );
- *
- * @example
- * // To use events on properties change
- * const globalState = new GlobalState({
- *  "dispatchEvents": true
- * });
- * globalState.registerOnEveryChange( (value, propertyName, storeName) => {} )
- * globalState.registerOnStoreChange( (value, propertyName, storeName) => {}, 'storeName' )
- * globalState.registerOnPropertyChange( (value, propertyName, storeName) => {}, 'storeName', 'myProperty' )
- */
 export default GlobalState;

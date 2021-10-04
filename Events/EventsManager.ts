@@ -3,8 +3,8 @@ import { slice } from '../Helpers/Slice';
 
 let passiveSupported = false,
     createEvt,
-    DOMRegistry:    DataRegistryType[] = [],
-    ObjectRegistry: DataRegistryType[] = [];
+    DOMRegistry:    FLib.Events.EventsManager.DataRegistry[] = [],
+    ObjectRegistry: FLib.Events.EventsManager.DataRegistry[] = [];
 
 
 (function () {
@@ -84,7 +84,7 @@ function getDelegation( $element: Node, selector: string, callback: ( e: Event, 
 }
 
 
-function exists( $element: Node, eventName: string, options: OnOptionsType) {
+function exists( $element: Node, eventName: string, options: FLib.Events.EventsManager.OnOptions) {
     return ( $element instanceof Element ? DOMRegistry : ObjectRegistry ).find( item => {
         return item.$element === $element &&
                 item.eventName === eventName &&
@@ -110,20 +110,14 @@ function _useNativeDOMEvents( $element ) {
 
 /**
  * Indicate if the browser natively support passive event
- *
- * @name handlePassiveEvents
- * @type {Boolean}
  */
 export const handlePassiveEvents: boolean = passiveSupported;
 
 
 /**
  * Add an event listener
- *
- * @param $elements
- * @param options
  */
-export const on = function( $elements: any, options: OnOptionsType ): void {
+export const on = function( $elements: any, options: FLib.Events.EventsManager.OnOptions ): void {
     let eventOptions;
 
     const $ELEM_ARRAY = normalizeElements( $elements );
@@ -152,7 +146,7 @@ export const on = function( $elements: any, options: OnOptionsType ): void {
             const useNativeDOMEvents = _useNativeDOMEvents( $element );
             const cbFunction = options._internalCallback || options.callback;
 
-            const data: DataRegistryType = {
+            const data: FLib.Events.EventsManager.DataRegistry = {
                 $element,
                 eventName,
                 options
@@ -179,11 +173,8 @@ export const on = function( $elements: any, options: OnOptionsType ): void {
 
 /**
  * Add an event listener fired only one time
- *
- * @param $elements
- * @param options
  */
-export const one = function( $elements: any, options: OnOptionsType ): void {
+export const one = function( $elements: any, options: FLib.Events.EventsManager.OnOptions ): void {
 
     function _internalCallback( this: any, e ) {
         off( $elements || this, options );
@@ -199,19 +190,16 @@ export const one = function( $elements: any, options: OnOptionsType ): void {
 
 /**
  * Remove an event
- *
- * @param $elements
- * @param options
  */
-export const off = function( $elements: any, options: OffOptionsType ): void {
+export const off = function( $elements: any, options: FLib.Events.EventsManager.OffOptions ): void {
 
     const $ELEM_ARRAY = normalizeElements( $elements );
 
     options.eventsName.split( ' ' ).forEach( eventName => {
         $ELEM_ARRAY.forEach( $element => {
             const useNativeDOMEvents              = _useNativeDOMEvents( $element );
-            const removedItem: DataRegistryType[] = [];
-            let registry: DataRegistryType[]      = useNativeDOMEvents ? DOMRegistry : ObjectRegistry;
+            const removedItem: FLib.Events.EventsManager.DataRegistry[] = [];
+            let registry: FLib.Events.EventsManager.DataRegistry[]      = useNativeDOMEvents ? DOMRegistry : ObjectRegistry;
 
             registry.forEach( item => {
                 const callback = item.delegate || item.options._internalCallback || item.options.callback;
@@ -241,11 +229,8 @@ export const off = function( $elements: any, options: OffOptionsType ): void {
 
 /**
  * Fire an event
- *
- * @param $elements
- * @param options
  */
-export const fire = function( $elements: any, options: FireOptionsType ): void {
+export const fire = function( $elements: any, options: FLib.Events.EventsManager.FireOptions ): void {
     const $ELEM_ARRAY = normalizeElements( $elements );
 
     options.eventsName.split(' ').forEach( eventName => {

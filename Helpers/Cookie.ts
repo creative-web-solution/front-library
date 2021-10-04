@@ -1,4 +1,4 @@
-const defaultOptions: CookieOptionsType = {
+const defaultOptions: FLib.Helpers.Cookie.Options = {
     "days": null,
     "secure": window.location.protocol.indexOf('https') > -1,
     "domain": window.location.hostname,
@@ -8,9 +8,9 @@ const defaultOptions: CookieOptionsType = {
 
 /**
  * Manage cookie
- * @class
  *
  * @example
+ * ```ts
  * cookie.create( 'cookieName', 'cookieValue' )
  * cookie.read( 'cookieName' )
  * cookie.delete( 'cookieName' )
@@ -22,20 +22,17 @@ const defaultOptions: CookieOptionsType = {
  *  "domain": "test.com",
  *  "path": "/myDir"
  *  } );
+ * ```
  */
 class Cookie {
 
     /**
      * Create a cookie
-     *
-     * @param name
-     * @param value
-     * @param userOptions
      */
-    create( name: string, value: string, userOptions?: CookieOptionsType ): this {
+    create( name: string, value: string, userOptions: Partial<FLib.Helpers.Cookie.Options> = {} ): this {
         let date;
 
-        const { days, secure, domain, path } = Object.assign( defaultOptions, userOptions || {} );
+        const { days, secure, domain, path } = Object.assign( defaultOptions, userOptions );
 
         const cookieText: string[] = [];
 
@@ -65,8 +62,6 @@ class Cookie {
 
     /**
      * Read a cookie
-     *
-     * @param name
      */
     read( name: string ): string {
         let c;
@@ -89,8 +84,6 @@ class Cookie {
 
     /**
      * Delete a cookie
-     *
-     * @param name
      */
     delete( name: string ): this {
         this.create( name, '' );

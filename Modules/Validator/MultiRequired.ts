@@ -12,9 +12,9 @@ import { isRadioListChecked } from './Tools/RadioButton';
  *
  */
 addValidator( 'multirequired', '[data-multirequired]', ( $input, value, isLiveValidation ) => {
-    let $group, arrayData, count, data, groupName, nbRequiredMax, nbRequiredMin;
+    let $group, count, nbRequiredMax;
 
-    data = $input.getAttribute( 'data-multirequired' );
+    const data = $input.getAttribute( 'data-multirequired' ) as string;
     count = 0;
 
     if ( data.indexOf( '|' ) === -1 ) {
@@ -27,8 +27,8 @@ addValidator( 'multirequired', '[data-multirequired]', ( $input, value, isLiveVa
         });
     }
 
-    arrayData = data.split( '|' );
-    groupName = arrayData[ 0 ];
+    const arrayData = data.split( '|' );
+    const groupName = arrayData[ 0 ];
 
     $group = document.querySelectorAll( `[data-multirequired-group^="${ groupName }"]` );
 
@@ -42,7 +42,7 @@ addValidator( 'multirequired', '[data-multirequired]', ( $input, value, isLiveVa
         });
     }
 
-    nbRequiredMin = parseInt( arrayData[ 1 ], 10 ) || 0
+    const nbRequiredMin = parseInt( arrayData[ 1 ], 10 ) || 0
 
     if ( arrayData.length > 2 ) {
         nbRequiredMax = parseInt( arrayData[ 2 ], 10 );

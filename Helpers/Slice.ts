@@ -1,9 +1,6 @@
 /**
  * Remove an object from a list. Doesn't change the original list.
  *
- * @param list
- * @param what
- *
  * @example
  * modifiedArray = slice( list, obj )
  *

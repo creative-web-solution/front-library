@@ -1,7 +1,6 @@
 /**
  * Insert a value or an object in a list. Doesn't change the original list.
  *
- * @param list
  * @param what - Something to insert
  * @param indexWhere - Index in the list
  *

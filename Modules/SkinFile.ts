@@ -4,7 +4,7 @@ import { insertAfter, append } from '../DOM/Manipulation';
 import { on }                  from '../Events/EventsManager';
 
 
-const defaultOptions: SkinFileOptionsType = {
+const defaultOptions: FLib.SkinFile.Options = {
     "selector": ".file-skin",
     "wrap": "<div class=\"file-skin\"></div>",
     "fileInfoSelector": ".file-info",
@@ -20,36 +20,35 @@ const defaultOptions: SkinFileOptionsType = {
 
 /**
  * Skin an HTML input file element.
- * @class
  */
  export default class SkinFile {
 
-    #options:             SkinFileOptionsType;
-    #$parent:             CustomInputFileParentType;
-    #$resetButton!:       HTMLElement | null;
-    #$fileInfo!:          HTMLElement | null;
-    #fileInfoId:          string = '';
-    #$input:              CustomInputFileType;
+    #options:             FLib.SkinFile.Options;
+    #$parent:             FLib.SkinFile.CustomInputFileParent;
+    #$resetButton:        HTMLElement | undefined;
+    #$fileInfo:           HTMLElement | undefined;
+    #fileInfoId           = '';
+    #$input:              FLib.SkinFile.CustomInputFile;
 
     #originalFileInfoText = '';
 
 
-    constructor( $input: HTMLInputElement, userOptions?: SkinFileOptionsType ) {
+    constructor( $input: HTMLInputElement, userOptions?: Partial<FLib.SkinFile.Options> ) {
 
         this.#$input  = $input;
         this.#options = extend( defaultOptions, userOptions );
 
-        const $PARENT = this.#$input.closest( this.#options.selector! );
+        const $PARENT = this.#$input.closest( this.#options.selector );
 
         // The html skin is already done. Just selecting elements for the initialistion
         if ( $PARENT ) {
-            this.#$parent              = $PARENT as CustomInputFileParentType;
-            this.#$resetButton         = this.#$parent.querySelector( this.#options.resetButtonSelector! );
+            this.#$parent              = $PARENT as FLib.SkinFile.CustomInputFileParent;
+            this.#$resetButton         = this.#$parent.querySelector( this.#options.resetButtonSelector ) as HTMLElement;
             if ( !this.#$resetButton ) {
                 throw `[SkinFile]: "${ this.#options.resetButtonSelector }" not found`;
             }
 
-            this.#$fileInfo            = this.#$parent.querySelector( this.#options.fileInfoSelector! );
+            this.#$fileInfo            = this.#$parent.querySelector( this.#options.fileInfoSelector ) as HTMLElement;
             if ( !this.#$fileInfo ) {
                 throw `[SkinFile]: "${ this.#options.fileInfoSelector }" not found`;
             }
@@ -59,7 +58,7 @@ const defaultOptions: SkinFileOptionsType = {
         }
         // No HTML skin, just input:file alone. Create the whole skin here:
         else {
-            this.#$parent = strToDOM( this.#options.wrap! ) as HTMLElement;
+            this.#$parent = strToDOM( this.#options.wrap ) as HTMLElement;
 
             insertAfter( this.#$parent, this.#$input );
 
@@ -67,15 +66,15 @@ const defaultOptions: SkinFileOptionsType = {
 
             if ( this.#$input.hasAttribute( 'data-file-info' ) ) {
                 this.#fileInfoId = this.#$input.getAttribute( 'data-file-info' ) || '';
-                this.#$fileInfo  = document.getElementById( this.#fileInfoId );
+                this.#$fileInfo  = document.getElementById( this.#fileInfoId ) as HTMLElement;
             }
 
-            if ( this.#$fileInfo !== null ) {
+            if ( this.#$fileInfo ) {
                 this.#originalFileInfoText = this.#$fileInfo.innerHTML;
                 this.#originalFileInfoText = this.#originalFileInfoText.trim();
             }
             else {
-                this.#$fileInfo = strToDOM( this.#options.fileInfo! ) as HTMLElement;
+                this.#$fileInfo = strToDOM( this.#options.fileInfo ) as HTMLElement;
                 append( this.#$fileInfo, this.#$parent );
             }
 
@@ -105,56 +104,55 @@ const defaultOptions: SkinFileOptionsType = {
             } );
         }
 
-        this.changeState();
+        this.#changeState();
 
         this.#$input.__skinAPI = this.#$parent.__skinAPI = this;
     }
 
 
-    private changeState() {
-        let aValue;
+    #changeState = (): void => {
 
         if ( !this.#$input.value ) {
-            this.#$fileInfo!.innerHTML = this.#originalFileInfoText;
+            ( this.#$fileInfo as HTMLElement ).innerHTML = this.#originalFileInfoText;
 
             if ( this.#options.autoHideFileInfo && !this.#originalFileInfoText ) {
-                this.#$fileInfo!.style.display = 'none';
+                ( this.#$fileInfo as HTMLElement ).style.display = 'none';
             }
 
-            this.#$parent.classList.remove( this.#options.selectedClass! );
+            this.#$parent.classList.remove( this.#options.selectedClass );
 
             return;
         }
 
-        aValue = this.#$input.value.split( /(\\|\/)/ );
+        const aValue = this.#$input.value.split( /(\\|\/)/ );
 
-        this.#$fileInfo!.innerHTML = aValue[ aValue.length - 1 ];
+        ( this.#$fileInfo as HTMLElement ).innerHTML = aValue[ aValue.length - 1 ];
 
-        this.#$parent.classList.add( this.#options.selectedClass! );
+        this.#$parent.classList.add( this.#options.selectedClass );
 
         if ( this.#options.autoHideFileInfo ) {
-            this.#$fileInfo!.style.display = '';
+            ( this.#$fileInfo as HTMLElement ).style.display = '';
         }
     }
 
 
-    #changeHandler = () => {
-        this.changeState();
+    #changeHandler = (): void => {
+        this.#changeState();
     }
 
 
-    #clickHandler = () => {
+    #clickHandler = (): void => {
         this.#$input.click();
     }
 
 
-    #resetHandler = () => {
+    #resetHandler = (): void => {
         this.#$input.value = '';
-        this.changeState();
+        this.#changeState();
     }
 
 
-    private enableDisable( fnName: string, disabled: boolean ) {
+    #enableDisable = ( fnName: string, disabled: boolean ): void => {
         this.#$input.disabled = disabled;
         this.#$parent.classList[ fnName ]( this.#options.disabledClass );
     }
@@ -163,20 +161,24 @@ const defaultOptions: SkinFileOptionsType = {
     /**
      * Force the select to be enable
      */
-    enable() {
-        this.enableDisable( 'remove', false );
+    enable(): this {
+        this.#enableDisable( 'remove', false );
+
+        return this;
     }
 
 
     /**
      * Force the select to be disable
      */
-    disable() {
-        this.enableDisable( 'add', true );
+    disable(): this {
+        this.#enableDisable( 'add', true );
+
+        return this;
     }
 
 
-    private validInvalid( fnName: string ) {
+    #validInvalid = ( fnName: string ): void => {
         this.#$parent.classList[ fnName ]( this.#options.invalidClass );
     }
 
@@ -184,17 +186,21 @@ const defaultOptions: SkinFileOptionsType = {
     /**
      * Force the state of the select to invalid
      */
-    setInvalid() {
-        this.validInvalid( 'add' );
-    };
+    setInvalid(): this {
+        this.#validInvalid( 'add' );
+
+        return this;
+    }
 
 
     /**
      * Force the state of the select to valid
      */
-    setValid() {
-        this.validInvalid( 'remove' );
-    };
+    setValid(): this {
+        this.#validInvalid( 'remove' );
+
+        return this;
+    }
 }
 
 
@@ -203,21 +209,23 @@ const defaultOptions: SkinFileOptionsType = {
  *
  *
  * @example
+ * ```ts
  * // Call with default options:
  * skinInputFile( $input, {
  *  "selector": ".file-skin",
- *  "wrap": "<div class=\"file-skin\"></div>",
+ *  "wrap": "&lt;div class=\"file-skin\"&gt;&lt;/div&gt;",
  *  "fileInfoSelector": ".file-info",
- *  "fileInfo": "<div class=\"file-info\"></div>",
+ *  "fileInfo": "&lt;div class=\"file-info\"&gt;&lt;/div&gt;",
  *  "autoHideFileInfo": true,
  *  "resetButtonSelector": ".file-reset",
- *  "resetButton": "<span class=\"file-reset\">&times;</span>",
+ *  "resetButton": "&lt;span class=\"file-reset\"&gt;&times;&lt;/span&gt;",
  *  "disabledClass": "disabled",
  *  "invalidClass": "invalid",
  *  "selectedClass": "selected"
  * } );
+ * ```
 */
-export function skinInputFile( $input: HTMLInputElement, options: SkinFileOptionsType ): SkinFile {
+export function skinInputFile( $input: HTMLInputElement, options: Partial<FLib.SkinFile.Options> ): SkinFile {
     return new SkinFile( $input, options );
 }
 
@@ -226,21 +234,23 @@ export function skinInputFile( $input: HTMLInputElement, options: SkinFileOption
  * Skin all input file DOM element in a wrapper
  *
  * @example
+ * ```ts
  * // Call with default options:
  * skinInputFileAll( $wrapper, {
  *  "selector": ".file-skin",
- *  "wrap": "<div class=\"file-skin\"></div>",
+ *  "wrap": "&lt;div class=\"file-skin\"&gt;&lt;/div&gt;",
  *  "fileInfoSelector": ".file-info",
- *  "fileInfo": "<div class=\"file-info\"></div>",
+ *  "fileInfo": "&lt;div class=\"file-info\"&gt;&lt;/div&gt;",
  *  "autoHideFileInfo": true,
  *  "resetButtonSelector": ".file-reset",
- *  "resetButton": "<span class=\"file-reset\">&times;</span>",
+ *  "resetButton": "&lt;span class=\"file-reset\"&gt;&times;&lt;/span&gt;",
  *  "disabledClass": "disabled",
  *  "invalidClass": "invalid",
  *  "selectedClass": "selected"
  * } );
+ * ```
 */
-export function skinInputFileAll( $wrapper: HTMLElement, options: SkinFileAllOptionsType = {} ): SkinFile[] {
+export function skinInputFileAll( $wrapper: HTMLElement, options: Partial<FLib.SkinFile.AllOptions> = {} ): SkinFile[] {
     const skinList: SkinFile[] = [];
 
     const $inputs = $wrapper.querySelectorAll( options.selector || 'input[type="file"]' );

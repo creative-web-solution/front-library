@@ -7,10 +7,11 @@ import { slice }     from '../Helpers/Slice';
  * Manage history pushState and popstate event
  *
  * @example
+ * ```ts
  * let h = new HistoryController( 'The default page title' )
  *
  * // Push a new state in the history
- * h.pushState( {data: 1}, 'The page title', '/path/page.html' )
+ * h.pushState({ data: 1 }, 'The page title', '/path/page.html' )
  *
  * // Return the current page state
  * h.getState()
@@ -19,10 +20,11 @@ import { slice }     from '../Helpers/Slice';
  * h.updateAnchor( anchor )
  *
  * // Register an handler for popState
- * h.register( handler ) => ( url, state )
+ * h.register( handler ) =&gt; ( url, state )
  *
  * // remove a registered handler for popState
  * h.remove( handler )
+ * ```
  *
  * @param defaultTitle - Default page title
  */
@@ -30,16 +32,16 @@ export default class HistoryController {
     #defaultTitle:           string;
     #hasPushstate:           boolean;
     #hasPopStateEvent:       boolean;
-    #currentState:           HistoryStateObjectType;
+    #currentState:           FLib.Events.History.StateObject;
     #registeredFunctionList: (( url: UrlParser, state: any ) => void)[];
 
 
-    get state(): HistoryStateObjectType {
+    get state(): FLib.Events.History.StateObject {
         return this.#currentState;
     }
 
 
-    constructor( defaultTitle: string = '' ) {
+    constructor( defaultTitle = '' ) {
 
         this.#hasPushstate     = !!window.history.pushState;
         this.#hasPopStateEvent = 'onpopstate' in window;
@@ -67,7 +69,7 @@ export default class HistoryController {
 
 
     // Call each registered function for popstate event
-    private callRegisteredFunction( url: UrlParser, state: any ): void {
+    #callRegisteredFunction = ( url: UrlParser, state: any ): void => {
         if ( !this.#registeredFunctionList.length ) {
             return;
         }
@@ -90,7 +92,7 @@ export default class HistoryController {
             "title": ""
         };
 
-        this.callRegisteredFunction( this.#currentState.url, state );
+        this.#callRegisteredFunction( this.#currentState.url, state );
     }
 
 
@@ -98,8 +100,6 @@ export default class HistoryController {
      * Push a new state in the history
      *
      * @param state - Native browser state object
-     * @param title
-     * @param url
      */
     pushState( state: any, title: string, url: string | UrlParser ): this {
         if ( !this.#hasPushstate ) {
@@ -131,8 +131,6 @@ export default class HistoryController {
 
     /**
      * Update the anchor of the current url
-     *
-     * @param anchor
      */
     updateAnchor( anchor: string ): this {
         if ( !this.#hasPushstate ) {
@@ -159,10 +157,8 @@ export default class HistoryController {
 
     /**
      * Register an handler for popState
-     *
-     * @param handler
      */
-    register( handler: HistoryCallbackType ): this {
+    register( handler: FLib.Events.History.Callback ): this {
         this.#registeredFunctionList.push( handler );
 
         return this;
@@ -171,10 +167,8 @@ export default class HistoryController {
 
     /**
      * Remove a registered handler for popState
-     *
-     * @param handler
      */
-    remove( handler: HistoryCallbackType ): this {
+    remove( handler: FLib.Events.History.Callback ): this {
         slice( this.#registeredFunctionList, handler );
 
         return this;

@@ -6,23 +6,23 @@ import { on, off }        from '../../Events/EventsManager';
  */
 export default class Tab {
 
-    #options:             TabOptionsType;
+    #options:             FLib.Tabs.TabOptions;
     #$TAB:                HTMLElement;
     #$TAB_PANNEL:         HTMLElement;
     #isOpen:              boolean;
     #originalOpenedState: boolean;
 
 
-    get isOpened() {
+    get isOpened(): boolean {
         return this.#isOpen;
     }
 
-    get index() {
+    get index(): number {
         return this.#options.index;
     }
 
 
-    constructor( $TAB: HTMLElement, options: TabOptionsType ) {
+    constructor( $TAB: HTMLElement, options: FLib.Tabs.TabOptions ) {
         this.#options = options;
         this.#$TAB    = $TAB;
 
@@ -46,12 +46,12 @@ export default class Tab {
         } );
 
         if ( this.#isOpen ) {
-            this.openTab( true );
+            this.#openTab( true );
         }
     }
 
 
-    private changeTabState( isOpenAtStart?: boolean ) {
+    #changeTabState = ( isOpenAtStart?: boolean ): void => {
         this.#$TAB.setAttribute( 'aria-selected', this.#isOpen ? 'true' : 'false' );
         this.#$TAB.setAttribute( 'tabindex', this.#isOpen ? '0' : '-1' );
 
@@ -62,7 +62,7 @@ export default class Tab {
     }
 
 
-    private openTab( isOpenAtStart?: boolean ) {
+    #openTab = ( isOpenAtStart?: boolean ): void => {
         this.#options.animations
                     .open( this.#$TAB, this.#$TAB_PANNEL )
                     .then( () => {
@@ -79,11 +79,11 @@ export default class Tab {
             this.#options.onOpenTab( this );
         }
         this.#isOpen = true;
-        this.changeTabState( isOpenAtStart );
+        this.#changeTabState( isOpenAtStart );
     }
 
 
-    private closeTab( autoClose?: boolean ) {
+    #closeTab = ( autoClose?: boolean ): void => {
         this.#options.animations
                     .close( this.#$TAB, this.#$TAB_PANNEL )
                     .then( () => {
@@ -92,39 +92,41 @@ export default class Tab {
                         }
                     } );
         this.#isOpen = false;
-        this.changeTabState();
+        this.#changeTabState();
     }
 
 
-    #toggleTab = ( e ) => {
+    #toggleTab = ( e: Event ): void => {
         e.preventDefault();
 
         if( this.#isOpen ) {
-            this.closeTab();
+            this.#closeTab();
         }
         else {
-            this.openTab();
+            this.#openTab();
         }
     }
 
 
-    close( autoClose?: boolean ) {
-        if( !this.#isOpen ) {
-            return;
-        }
-        this.closeTab( autoClose );
-    }
-
-
-    open( autoOpen?: boolean ) {
+    close( autoClose?: boolean ): this {
         if( this.#isOpen ) {
-            return;
+            this.#closeTab( autoClose );
         }
-        this.openTab( autoOpen );
+
+        return this;
     }
 
 
-    destroy() {
+    open( autoOpen?: boolean ): this {
+        if( !this.#isOpen ) {
+            this.#openTab( autoOpen );
+        }
+
+        return this;
+    }
+
+
+    destroy(): this {
         this.#options.animations.destroy( this.#$TAB, this.#$TAB_PANNEL );
 
         off( this.#$TAB, {
@@ -133,5 +135,7 @@ export default class Tab {
         } );
 
         this.#$TAB.setAttribute( 'aria-selected', this.#originalOpenedState ? 'true' : 'false' );
-    };
+
+        return this;
+    }
 }

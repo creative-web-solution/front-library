@@ -17,10 +17,10 @@ export default class KeyboardHandler {
 
     #$element;
     #options;
-    #eventsName = new Map();
+    #eventsName = new Map<string, ( e: KeyboardEvent ) => string[]>();
 
 
-    constructor( $element: Element, userOptions: KeyboardHandlerOptions = {} ) {
+    constructor( $element: Element, userOptions: FLib.Events.KeyboardHandler.Options = {} ) {
 
         this.#$element = $element;
 
@@ -44,7 +44,7 @@ export default class KeyboardHandler {
         this.#eventsName.set( 'ArrowDown',  () => [ 'onDown', 'onPrevious' ] );
         this.#eventsName.set( 'PageUp',     () => [ 'onPageUp' ] );
         this.#eventsName.set( 'PageDown',   () => [ 'onPageDown' ] );
-        this.#eventsName.set( 'Tab',       e => {
+        this.#eventsName.set( 'Tab',       ( e: KeyboardEvent ) => {
             if ( e.shiftKey && this.#options[ 'onTabReverse' ] ) {
                 return [ 'onTabReverse' ];
             }
@@ -55,7 +55,7 @@ export default class KeyboardHandler {
     }
 
 
-    private handleCallbacks( event, $context, callbacks ) {
+    #handleCallbacks = ( event: KeyboardEvent, $context: EventTarget | null, callbacks: string[] ): void => {
         callbacks.forEach( cb => {
             if ( this.#options[ cb ] ) {
                 this.#options[ cb ].call( $context, event, $context );
@@ -64,7 +64,7 @@ export default class KeyboardHandler {
     }
 
 
-    #onKeypress = ( e: KeyboardEvent ) => {
+    #onKeypress = ( e: KeyboardEvent ): void => {
         const key = e.key;
 
         // Block all key except tab, CTRL R, CMD R or F5
@@ -78,10 +78,12 @@ export default class KeyboardHandler {
             e.preventDefault();
         }
 
-        this.handleCallbacks( e, e.target, [ 'onKey' ] );
+        this.#handleCallbacks( e, e.target, [ 'onKey' ] );
 
-        if ( this.#eventsName.has( key ) ) {
-            this.handleCallbacks( e, e.target, this.#eventsName.get( key )( e ) );
+        const FNC = this.#eventsName.get( key );
+
+        if ( FNC ) {
+            this.#handleCallbacks( e, e.target, FNC( e ) );
         }
     }
 

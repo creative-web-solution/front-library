@@ -2,7 +2,7 @@
  * Reveal the next image by moving horizontally the columns of a "grid"
  * Insipred by @patriciogv's Ikeda Data Stream - 2015
  */
-export default class HorizontalMovingGrid implements GLImageTransitionPreset {
+export default class HorizontalMovingGrid implements FLib.GLImageTransition.Preset {
 
     #speed:    number;
     #grid:     number[];
@@ -10,7 +10,7 @@ export default class HorizontalMovingGrid implements GLImageTransitionPreset {
     #U_GRID!:  WebGLUniformLocation | null;
 
 
-    get fsSource() {
+    get fsSource(): string {
         return `
             #ifdef GL_ES
             precision mediump float;
@@ -73,21 +73,21 @@ export default class HorizontalMovingGrid implements GLImageTransitionPreset {
         `;
     }
 
-    get speed() {
+    get speed(): number {
         return this.#speed;
     }
-    get grid() {
+    get grid(): number[] {
         return this.#grid;
     }
-    get U_SPEED() {
+    get U_SPEED(): WebGLUniformLocation | null {
         return this.#U_SPEED;
     }
-    get U_GRID() {
+    get U_GRID(): WebGLUniformLocation | null {
         return this.#U_GRID;
     }
 
 
-    constructor( speed: number = 1, grid: number[] = [ 100, 50 ] ) {
+    constructor( speed = 1, grid: number[] = [ 100, 50 ] ) {
         this.#speed = speed;
         this.#grid  = grid;
     }
@@ -96,7 +96,7 @@ export default class HorizontalMovingGrid implements GLImageTransitionPreset {
     /**
      * Create specific uniform for this preset
      */
-    addUniform( GL: WebGLRenderingContext, SHADER_PROGRAM: WebGLProgram ) {
+    addUniform( GL: WebGLRenderingContext, SHADER_PROGRAM: WebGLProgram ): void {
         this.#U_SPEED = GL.getUniformLocation( SHADER_PROGRAM, 'uSpeed' );
         this.#U_GRID  = GL.getUniformLocation( SHADER_PROGRAM, 'uGrid' );
     }
@@ -105,7 +105,7 @@ export default class HorizontalMovingGrid implements GLImageTransitionPreset {
     /**
      * Update the uniform of this preset during render
      */
-    updateUniform( GL: WebGLRenderingContext ) {
+    updateUniform( GL: WebGLRenderingContext ): void {
         GL.uniform1f( this.#U_SPEED, this.#speed );
         GL.uniform2fv( this.#U_GRID, this.#grid );
     }

@@ -33,6 +33,7 @@ const defaultOptions = {
  * @see extra/modules/validator.md for details
  *
  * @example
+ * ```ts
  * let validator = new Validator( $form, options )
  *
  * on( $form, {
@@ -56,21 +57,22 @@ const defaultOptions = {
  *                 );
  *     }
  * });
+ * ```
  */
 export default class Validator {
-    #options:            ValidatorOptionsType & { hasLiveValidation: boolean };
+    #options:            FLib.Validator.Options & { hasLiveValidation: boolean };
     #inputsList:         Input[];
-    #radioDuplicateHash: { [ key: string ]: boolean };
+    #radioDuplicateHash: Record<string, boolean>;
     #state:              string;
     #$form:              HTMLElement;
-    #validationPromise!: Promise<ValidatorValidationReturnType> | null;
+    #validationPromise:  Promise<FLib.Validator.ValidationReturnType> | undefined | null;
 
 
     #STATE_IDLE       = 'idle';
     #STATE_VALIDATING = 'validating';
 
 
-    constructor( $form: HTMLElement, userOptions: ValidatorOptionsType = {} ) {
+    constructor( $form: HTMLElement, userOptions: Partial<FLib.Validator.Options> = {} ) {
         this.#$form   = $form;
         this.#options = extend( defaultOptions, userOptions );
         this.#options.hasLiveValidation = !!this.#options.liveValidation?.onValidate || !!this.#options.liveValidation?.onInvalidate;
@@ -81,13 +83,14 @@ export default class Validator {
 
         $form.setAttribute( 'novalidate', 'novalidate' );
 
-        this.refresh();
+        this.#refresh();
     }
+
 
     /*
      * Filter radio button to validate only one button
      */
-    private filterRadioButton( $input: HTMLInputElement ): boolean {
+    #filterRadioButton = ( $input: HTMLInputElement ): boolean => {
         if ( $input.type !== 'radio' ) {
             return true;
         }
@@ -105,7 +108,7 @@ export default class Validator {
     /*
      * Call the function cleanup of all inputs and empty the list
      */
-    private cleanup() {
+    #cleanup = (): void => {
         this.#inputsList.forEach( input => input.destroy() );
         this.#inputsList.length = 0;
         this.#radioDuplicateHash = {};
@@ -115,9 +118,9 @@ export default class Validator {
     /*
      * Create and add one input to the list
      */
-    private addInput( $input: Element ) {
+    #addInput = ( $input: HTMLElement ): void => {
         // Check if this input type
-        if ( !$input.matches( this.#options.filter! ) && this.filterRadioButton( $input as HTMLInputElement ) ) {
+        if ( !$input.matches( this.#options.filter ) && this.#filterRadioButton( $input as HTMLInputElement ) ) {
             this.#inputsList.push( new Input( $input, this.#options ) );
         }
     }
@@ -126,20 +129,20 @@ export default class Validator {
     /*
      * Empty and clean the input list and recreate it
      */
-    private refresh() {
-        this.cleanup();
+    #refresh = (): void => {
+        this.#cleanup();
 
-        const $fieldToAdd = this.#$form.querySelectorAll( this.#options.fields! );
+        const $fieldToAdd = this.#$form.querySelectorAll( this.#options.fields ) as NodeListOf<HTMLElement>;
 
-        $fieldToAdd.forEach( this.addInput.bind( this ) );
+        $fieldToAdd.forEach( this.#addInput.bind( this ) );
     }
 
 
     /*
      * Validate all fields and return a promise
      */
-    private _validate(): Promise<void[]> {
-        let inputsValid: Promise<void>[] = [];
+    #_validate = (): Promise<void[]> => {
+        const inputsValid: Promise<void>[] = [];
 
         this.#inputsList.forEach( input => {
             inputsValid.push( input.isValid() );
@@ -149,7 +152,7 @@ export default class Validator {
     }
 
 
-    private filterInputError( input: Input ): boolean {
+    #filterInputError = ( input: Input ): boolean => {
         return input.hasError;
     }
 
@@ -157,25 +160,25 @@ export default class Validator {
     /*
      * Call validation and call callback if needed
      */
-    private process(): Promise<ValidatorValidationReturnType> {
+    #process = (): Promise<FLib.Validator.ValidationReturnType> => {
         if ( this.#validationPromise ) {
             return this.#validationPromise;
         }
-        this.#validationPromise = new Promise<ValidatorValidationReturnType>( ( resolve, reject ) => {
+        this.#validationPromise = new Promise<FLib.Validator.ValidationReturnType>( ( resolve, reject ) => {
             this.#state = this.#STATE_VALIDATING;
 
-            const retObject: ValidatorValidationReturnType = {
+            const retObject: FLib.Validator.ValidationReturnType = {
                 "inputs": this.#inputsList,
                 "errors": [],
                 "$form":  this.#$form
             };
 
-            this._validate()
+            this.#_validate()
                 .then( () => {
                     this.#validationPromise = null;
                     this.#state             = this.#STATE_IDLE;
 
-                    const errors = this.#inputsList.filter( this.filterInputError );
+                    const errors = this.#inputsList.filter( this.#filterInputError );
 
 
                     if ( errors && errors.length ) {
@@ -212,27 +215,27 @@ export default class Validator {
     /**
      * Start the validation of all the form
      */
-    validate(): Promise<ValidatorValidationReturnType> {
+    validate(): Promise<FLib.Validator.ValidationReturnType> {
         if ( this.#state !== this.#STATE_IDLE ) {
-            return this.#validationPromise as Promise<ValidatorValidationReturnType>;
+            return this.#validationPromise as Promise<FLib.Validator.ValidationReturnType>;
         }
 
-        return this.process();
+        return this.#process();
     }
 
 
     /**
      * Bind or rebind all inputs
      */
-    update() {
-        this.refresh();
+    update(): this {
+        this.#refresh();
+
+        return this
     }
 
 
     /**
      * Return the validator object of an input
-     *
-     * @param $field
      */
     getFieldValidator( $field: HTMLElement ): Input | void {
 
@@ -241,17 +244,14 @@ export default class Validator {
                 return input;
             }
         }
-
     }
 
 
     /**
      * Validate one field
-     *
-     * @param $field
      */
-    validateField( $field: HTMLElement ): Promise<ValidatorFieldValidationReturnType | void> {
-        return new Promise<ValidatorFieldValidationReturnType | void>( ( resolve, reject ) => {
+    validateField( $field: HTMLElement ): Promise<FLib.Validator.FieldValidationReturnType | void> {
+        return new Promise<FLib.Validator.FieldValidationReturnType | void>( ( resolve, reject ) => {
             const input = this.getFieldValidator( $field );
 
             if ( !input ) {
@@ -260,7 +260,7 @@ export default class Validator {
 
             this.#state = this.#STATE_VALIDATING;
 
-            const retObject: ValidatorFieldValidationReturnType = {
+            const retObject: FLib.Validator.FieldValidationReturnType = {
                 "input": input,
                 "error": null,
                 "$form": this.#$form
@@ -293,7 +293,7 @@ export default class Validator {
      * @param onlyValidated - If true, remove all fields without validator
      */
     getAllFields( onlyValidated: boolean ): HTMLElement[] {
-        let $fields: HTMLElement[] = [];
+        const $fields: HTMLElement[] = [];
 
         this.#inputsList.forEach( input => {
             if ( !onlyValidated || input.hasValidator ) {
@@ -325,7 +325,7 @@ export default class Validator {
      * Get all inputs (input objects, not DOM elements) with at least one validator
      */
     getCheckedInputs(): Input[] {
-        let inputs: Input[] = [];
+        const inputs: Input[] = [];
 
         this.#inputsList.forEach( input => {
             if ( input.hasValidator ) {

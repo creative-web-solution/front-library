@@ -25,8 +25,6 @@ function toHexValue( c: number ): string {
 /**
  * Convert a rgba string to a hex string
  *
- * @param rgba
- *
  * @example
  * rgbaToHex( 'rgb(125 ,233, 105)' );
  *
@@ -40,8 +38,6 @@ export function rgbaToHex( rgba: string ): string {
 
 /**
  * Convert a hex string to a rgba string
- *
- * @param hex
  *
  * @example
  * hexToRgba( '#F5C' );
@@ -57,8 +53,6 @@ export function hexToRgba( hex: string ): string {
 /**
  * Return true if the string is an rgb or rgba color
  *
- * @param rgba
- *
  * @example
  * isRGBA( 'rgb(125 ,233, 105)' );
  *
@@ -73,8 +67,6 @@ export function isRGBA( rgba: string ): boolean {
 
 /**
  * Return true if the string is an hexadecimal color
- *
- * @param hexColor
  *
  * @example
  * isHexColor( '#FFF' );
@@ -93,15 +85,13 @@ export function isHexColor( hexColor: string ): boolean {
 /**
  * Split an rgb or rgba color
  *
- * @param rgba
- *
  * @example
  * splitRGBA( 'rgb(125 ,233, 105)' );
  *
  * @example
  * splitRGBA( 'rgba(125 ,233, 105, 0.75)' );
 */
-export function splitRGBA( rgba: string ): ColorType {
+export function splitRGBA( rgba: string ): FLib.Helpers.Color.Color {
 
     const parts: number[] = rgba
                     .replace( RGBA_CLEAN_1, '' )
@@ -133,8 +123,6 @@ export function splitRGBA( rgba: string ): ColorType {
 /**
  * Split an hexadecimal color
  *
- * @param hexColor
- *
  * @example
  * splitHexColor( '#F5A' );
  *
@@ -145,7 +133,7 @@ export function splitRGBA( rgba: string ): ColorType {
  * // With alpha
  * splitHexColor( '#FA58ACCC' );
 */
-export function splitHexColor( hexColor: string ): ColorType {
+export function splitHexColor( hexColor: string ): FLib.Helpers.Color.Color {
     let alpha;
 
     hexColor = hexColor.slice( 1 );
@@ -185,12 +173,10 @@ export function splitHexColor( hexColor: string ): ColorType {
 /**
  * Format an object color to an hex color
  *
- * @param color
- *
  * @example
  * formatHexColor( color );
 */
-export function formatHexColor( color: ColorType ): string {
+export function formatHexColor( color: FLib.Helpers.Color.Color ): string {
     return `#${ color.hr }${ color.hg }${ color.hb }${ color.a !== 1 ? color.ha : '' }`;
 }
 
@@ -198,13 +184,11 @@ export function formatHexColor( color: ColorType ): string {
 /**
  * Format an object color to an rgba color
  *
- * @param color
- *
  * @example
  * formatRGBAColor( color );
  *
 */
-export function formatRGBAColor( color: ColorType ): string {
+export function formatRGBAColor( color: FLib.Helpers.Color.Color ): string {
     if ( color.a !== 1 ) {
         return `rgba(${ color.r },${ color.g },${ color.b },${ color.a })`;
     }
@@ -239,7 +223,7 @@ export function formatRGBAColor( color: ColorType ): string {
  * let blendedcolor1 = shadeBlend( color1, color2, 0.333 );
  * let blendedcolor34 = shadeBlend( color3, color4, -0.8 );
  */
-export function shadeBlend( color1: string, color2: string | null, percent: number, render: ColorRenderType = 'obj' ): ColorType | string {
+export function shadeBlend( color1: string, color2: string | null, percent: number, render: FLib.Helpers.Color.RenderType = 'obj' ): FLib.Helpers.Color.Color | string {
     let color;
 
     const coef = Math.abs( percent );
@@ -282,7 +266,7 @@ export function shadeBlend( color1: string, color2: string | null, percent: numb
  * @param percent - Percent (between 0 and 1)
  * @param render - render type: obj, hex or rgba
 */
-export function lighten( color: string, percent: number, render: ColorRenderType = 'obj' ): ColorType | string {
+export function lighten( color: string, percent: number, render: FLib.Helpers.Color.RenderType = 'obj' ): FLib.Helpers.Color.Color | string {
     return shadeBlend( color, null, Math.abs( percent ), render );
 }
 
@@ -294,6 +278,6 @@ export function lighten( color: string, percent: number, render: ColorRenderType
  * @param percent - Percent (between 0 and 1)
  * @param render - render type: obj, hex or rgba
 */
-export function darken( color: string, percent: number, render: ColorRenderType = 'obj' ): ColorType | string {
+export function darken( color: string, percent: number, render: FLib.Helpers.Color.RenderType = 'obj' ): FLib.Helpers.Color.Color | string {
     return shadeBlend( color, null, percent > 0 ? percent * -1 : percent, render );
 }

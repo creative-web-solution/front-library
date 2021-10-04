@@ -1,9 +1,7 @@
-const urlRe = /^(https?:\/\/)?[\da-z\.\-]+\.[a-z\.]{2,6}[#&+_\?\/\w \.\-=]*$/i;
+const urlRe = /^(https?:\/\/)?[\da-z.-]+\.[a-z.]{2,6}[#&+_?/\w .\-=]*$/i;
 
 /**
  * Test if the value is an url
- *
- * @param value
  *
  * @see extra/modules/validator.md for details
  */

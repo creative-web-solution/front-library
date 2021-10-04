@@ -4,18 +4,17 @@ let gMapLoadingPromise;
 /**
  * Google Map loader
  *
- * @param apiUrl
- * @param callbackFunctionName
- *
  * @example
+ * ```ts
  * loadGMap( urlAPI ).then(
  *      googleAPI =>
  *      {
  *          new googleAPI.maps.Map( $container, googleMapOptions );
  *      }
  *  );
+ * ```
  *
- * @returns {Promise} - a promise resolved when the API is loaded
+ * @returns - a promise resolved when the API is loaded
  */
 export default function loadGMap( apiUrl: string, callbackFunctionName = 'initworldMap' ): Promise<typeof window.google> {
     if ( gMapLoadingPromise ) {
@@ -36,13 +35,11 @@ export default function loadGMap( apiUrl: string, callbackFunctionName = 'initwo
 
 
     gMapLoadingPromise = new Promise( function( resolve ) {
-        let script;
-
         window[ callbackFunctionName ] = function() {
             resolve( window.google );
         };
 
-        script      = document.createElement( 'script' );
+        const script      = document.createElement( 'script' );
         script.type = 'text/javascript';
         script.src  = apiUrl;
 

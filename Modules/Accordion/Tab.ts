@@ -13,7 +13,7 @@ export default class Tab {
     #$TAB;
 
 
-    constructor( $TAB: HTMLElement, options: AccordionTabOptionsType ) {
+    constructor( $TAB: HTMLElement, options: FLib.Accordion.TabOptions ) {
         this.#options     = options;
         this.#$TAB        = $TAB ;
 
@@ -28,17 +28,17 @@ export default class Tab {
         } );
 
         if ( this.#isOpen ) {
-            this.openTab( true );
+            this.#openTab( true );
         }
     }
 
 
-    private changeTabState() {
+    #changeTabState = (): void => {
         this.#$TAB.setAttribute( 'aria-expanded', this.#isOpen ? 'true' : 'false' );
     }
 
 
-    private openTab( isOpenAtStart?: boolean ) {
+    #openTab = ( isOpenAtStart?: boolean ): void => {
         this.#options.animations
                     .open( this.#$TAB, this.#$TAB_PANNEL )
                     .then( () => {
@@ -55,11 +55,11 @@ export default class Tab {
             this.#options.onOpenTab( this );
         }
         this.#isOpen = true;
-        this.changeTabState();
+        this.#changeTabState();
     }
 
 
-    private closeTab( autoClose?: boolean ) {
+    #closeTab = ( autoClose?: boolean ): void => {
         this.#options.animations
                     .close( this.#$TAB, this.#$TAB_PANNEL )
                     .then( () => {
@@ -69,32 +69,32 @@ export default class Tab {
                     } );
 
         this.#isOpen = false;
-        this.changeTabState();
+        this.#changeTabState();
     }
 
 
-    #toggleTab = ( e: Event ) => {
+    #toggleTab = ( e: Event ): void => {
         e.preventDefault();
 
         if( this.#isOpen && ( !this.#options.atLeastOneOpen || this.#options.allowMultipleTab ) ) {
-            this.closeTab();
+            this.#closeTab();
         }
         else if( !this.#isOpen ) {
-            this.openTab();
+            this.#openTab();
         }
     }
 
 
-    close( autoClose?: boolean ) {
-        if( !this.#isOpen ) {
-            return;
+    close( autoClose?: boolean ): this {
+        if( this.#isOpen ) {
+            this.#closeTab( autoClose );
         }
 
-        this.closeTab( autoClose );
+        return this;
     }
 
 
-    destroy() {
+    destroy(): this {
         this.#options.animations.destroy( this.#$TAB, this.#$TAB_PANNEL );
 
         off( this.#$TAB, {
@@ -103,5 +103,7 @@ export default class Tab {
         } );
 
         this.#$TAB.setAttribute( 'aria-expanded', this.#originalOpenedState ? 'true' : 'false' );
-    };
+
+        return this;
+    }
 }

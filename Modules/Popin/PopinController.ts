@@ -7,7 +7,6 @@ import { CLICK_EVENT_NAME, defaultOptions, toggleTabIndex } from './Tools';
 
 /**
  * Create a controller tha manage all popin in the page
- * @class PopinController
  *
  * @see extra/modules/popin.md for details.
  *
@@ -16,13 +15,13 @@ import { CLICK_EVENT_NAME, defaultOptions, toggleTabIndex } from './Tools';
  * popin.loadForm( $form );
  */
 export default class PopinController {
-    #options:    PopinOptionsType;
-    #selectors:  PopinSelectorsOptionsType;
+    #options:    FLib.Popin.Options;
+    #selectors:  FLib.Popin.SelectorsOptions;
     #background: PopinBackground;
     #popin:      Popin;
 
 
-    constructor( userOptions: PopinOptionsType = {}, $popin?: HTMLElement ) {
+    constructor( userOptions: FLib.Popin.OptionsInit = {}, $popin?: HTMLElement ) {
 
         if ( !( "AbortController" in window ) ) {
             throw 'This plugin uses fecth and AbortController. You may need to add a polyfill for this browser.';
@@ -30,7 +29,7 @@ export default class PopinController {
 
         this.#options = extend( defaultOptions, userOptions );
 
-        this.#selectors = this.#options.selectors!;
+        this.#selectors = this.#options.selectors;
 
         // global var, only one background for all popin
         this.#background = new PopinBackground( this, this.#options );
@@ -74,18 +73,18 @@ export default class PopinController {
 
             } );
 
-        let $triggerOnLoadPopin = document.querySelector( `[${ this.#selectors.openOnLoadAttribute }]` );
+        const $triggerOnLoadPopin = document.querySelector( `[${ this.#selectors.openOnLoadAttribute }]` );
 
         if ( $triggerOnLoadPopin ) {
-            this.parseElement(
+            this.#parseElement(
                 $triggerOnLoadPopin as HTMLElement,
-                $triggerOnLoadPopin.getAttribute( this.#selectors.openOnLoadAttribute! )
+                $triggerOnLoadPopin.getAttribute( this.#selectors.openOnLoadAttribute )
             );
         }
     }
 
 
-    private parseElement( $dom: HTMLElement, customUrl?: string | null ): Promise<void> {
+    #parseElement = ( $dom: HTMLElement, customUrl?: string | null ): Promise<void> => {
         if ( customUrl ) {
             return this.#popin.load( customUrl );
         }
@@ -105,62 +104,55 @@ export default class PopinController {
 
 
 
-    #openPopinHandler = ( e ) => {
+    #openPopinHandler = ( e: Event): void => {
         e.preventDefault();
 
-        this.parseElement( e.target );
+        this.#parseElement( e.target as HTMLElement );
     }
 
 
     /**
      * Load a file and display it in the popin
      *
-     * @param url
      * @param data - All parameters available for window.fetch
-     * @param [type=text]
      */
-    load( url: string, data: RequestInit, type?: PopinResponseType ): Promise<void> {
+    load( url: string, data: RequestInit, type?: FLib.Popin.ResponseType ): Promise<void> {
         return this.#popin.load( url, data, type );
-    };
+    }
 
 
     /**
      * Send a form and display the result it in the popin
-     *
-     * @param $form
      */
     loadForm( $form: HTMLFormElement ): Promise<void> {
         return this.#popin.loadForm( $form );
-    };
+    }
 
 
     /**
      * Load a page from a link and display the result it in the popin
-     *
-     * @param $link
      */
     loadLink( $link: HTMLAnchorElement ): Promise<void> {
         return this.#popin.loadLink( $link );
-    };
+    }
 
 
     /**
      * Insert some html in the popin and open it
      *
-     * @param html
      * @param openFirst - Open the popin THEN insert the html
      */
     set( html: string, openFirst?: boolean ): Promise<void> {
         return this.#popin.set( html, openFirst );
-    };
+    }
 
 
     /**
      * Remove the content of the popin
      */
-    clear() {
+    clear(): void {
         return this.#popin.clear();
-    };
+    }
 
 
     /**
@@ -168,7 +160,7 @@ export default class PopinController {
      */
     close(): Promise<void> {
         return this.#popin.close();
-    };
+    }
 
 
     /**
@@ -176,13 +168,13 @@ export default class PopinController {
      */
     open(): Promise<void> {
         return this.#popin.open();
-    };
+    }
 
 
     /**
      * Remove all events, css class or inline styles
      */
-    destroy() {
+    destroy(): this {
         this.#background.destroy();
         this.#popin.destroy();
 
@@ -193,6 +185,8 @@ export default class PopinController {
                 "callback":   this.#openPopinHandler
             }
         );
-    };
+
+        return this;
+    }
 
 }

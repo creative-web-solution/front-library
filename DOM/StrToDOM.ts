@@ -1,7 +1,6 @@
 /**
  * Convert an html string into a DOM object
  *
- * @param html
  * @param tag - Used to create an element to convert html inside. 'DIV' by default
  *
  * @example

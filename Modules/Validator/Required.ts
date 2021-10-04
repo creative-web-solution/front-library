@@ -2,6 +2,7 @@ import isEmpty                from './Tools/IsEmpty';
 import { addValidator }       from './index';
 import { isRadioListChecked } from './Tools/RadioButton';
 
+
 /**
  * Required validation
  */
@@ -12,8 +13,8 @@ addValidator( 'required', '[required]', ( $input, value, isLiveValidation ) => {
         isValid = ($input as HTMLInputElement).checked;
     }
     else if ( ($input as HTMLInputElement).type === 'radio' ) {
-        /** @ts-expect-error */
-        isValid = isRadioListChecked( $input.__$radioGroup );
+
+        isValid = isRadioListChecked( ($input as FLib.Validator.CustomValidatorRadioInput).__$radioGroup );
     }
     else {
         isValid = !isEmpty( value );

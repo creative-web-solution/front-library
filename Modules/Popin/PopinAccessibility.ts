@@ -3,9 +3,9 @@ import { toggleTabIndex, FOCUSABLE_ELEMENTS_SELECTOR } from './Tools';
 
 export default class PopinAccessibility {
 
-    #$elements:      NodeList | undefined;
-    #$firstElement:  HTMLElement | undefined;
-    #$lastElement:   HTMLElement | undefined;
+    #$elements:      NodeListOf<HTMLElement> | undefined;
+    #$firstElement:  HTMLElement | undefined;
+    #$lastElement:   HTMLElement | undefined;
     #$popin:         HTMLElement;
 
 
@@ -18,7 +18,7 @@ export default class PopinAccessibility {
 
 
 
-    focusFirstElement() {
+    focusFirstElement(): void {
         if ( !this.#$firstElement ) {
             return;
         }
@@ -26,7 +26,7 @@ export default class PopinAccessibility {
     }
 
 
-    handleBackwardTab( e ) {
+    handleBackwardTab( e: Event ): void {
         if ( !this.#$elements?.length || !this.#$firstElement ) {
             e.preventDefault();
             return;
@@ -38,7 +38,7 @@ export default class PopinAccessibility {
     }
 
 
-    handleForwardTab( e ) {
+    handleForwardTab( e: Event ): void {
         if ( this.#$elements?.length || !this.#$lastElement ) {
             e.preventDefault();
             return;
@@ -50,7 +50,7 @@ export default class PopinAccessibility {
     }
 
 
-    toggleTabIndexNavigation( activate ) {
+    toggleTabIndexNavigation( activate: boolean ): void {
         toggleTabIndex( this.#$elements, this.#$popin, activate );
 
         if ( activate ) {
@@ -59,7 +59,7 @@ export default class PopinAccessibility {
     }
 
 
-    refresh() {
+    refresh(): void {
         this.#$elements     = this.#$popin.querySelectorAll( FOCUSABLE_ELEMENTS_SELECTOR );
         this.#$firstElement = this.#$elements[ 0 ] as HTMLElement;
         this.#$lastElement  = this.#$elements[ this.#$elements.length - 1 ] as HTMLElement;

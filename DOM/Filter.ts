@@ -6,8 +6,6 @@
  *
  * @example
  * filteredArray = filter( $elements, 'div.some-class' );
- *
- * @return Filtered list
  */
 export function filter( $elements: NodeList | Element[], selector: string ): Element[] {
     const $filteredElements: Element[] = [];

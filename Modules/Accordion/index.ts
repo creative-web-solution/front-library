@@ -3,7 +3,7 @@ import { extend }               from '../../Helpers/Extend';
 import Tab                      from './Tab';
 
 
-const DEFAULT_OPTIONS: AccordionOptionsType = {
+const DEFAULT_OPTIONS = {
     "tabSelector":      "button[aria-expanded]",
     "allowMultipleTab": false,
     "atLeastOneOpen":   false,
@@ -31,6 +31,7 @@ const DEFAULT_OPTIONS: AccordionOptionsType = {
  * Accordion
  *
  * @example
+ * ```ts
  * new Accordion( document.querySelector( '.accordion' ), {
  *      "tabSelector":     ".tab",
  *      "allowMultipleTab": false,
@@ -62,9 +63,11 @@ const DEFAULT_OPTIONS: AccordionOptionsType = {
  *          console.log( 'close: ', $tab, $panel );
  *      }
  *  } );
+ * ```
  *
  * HTML:
  *
+ * ```html
  * <div class="accordion">
  *     <button aria-expanded="true" class="tab" aria-controls="panel-1">Button name</button>
  *     <div id="panel-1" class="panel">
@@ -76,12 +79,13 @@ const DEFAULT_OPTIONS: AccordionOptionsType = {
  *        <p>Content</p>
  *     </div>
  * </div>
+ * ```
  *
  * Set aria-expanded to "true" on the tab you want open at start
  */
 export default class Accordion {
-    #options:       AccordionOptionsType;
-    #$tabs:         NodeList;
+    #options:       FLib.Accordion.Options;
+    #$tabs:         NodeListOf<HTMLElement>;
     #tablist:       Tab[];
     #status:        string;
     #lastOpenedTab: Tab | null = null;
@@ -91,7 +95,7 @@ export default class Accordion {
     #STATUS_OFF = 'STATUS_OFF';
 
 
-    constructor( $accordionWrapper: HTMLElement, userOptions: AccordionOptionsType ) {
+    constructor( $accordionWrapper: HTMLElement, userOptions: FLib.Accordion.OptionsInit ) {
 
         this.#options       = extend( DEFAULT_OPTIONS, userOptions );
 
@@ -99,11 +103,11 @@ export default class Accordion {
         this.#tablist       = [];
         this.#status        = this.#STATUS_OFF;
 
-        this.on();
+        this.#on();
     }
 
 
-    #onOpenTab = ( tab: Tab ) => {
+    #onOpenTab = ( tab: Tab ): void => {
         if ( this.#lastOpenedTab ) {
             this.#lastOpenedTab.close( true );
         }
@@ -112,7 +116,7 @@ export default class Accordion {
     }
 
 
-    private on(){
+    #on = (): void => {
         if( this.#status === this.#STATUS_ON ){
             return;
         }
@@ -120,7 +124,7 @@ export default class Accordion {
         this.#status = this.#STATUS_ON;
 
         this.#$tabs.forEach( ( $tab, index ) => {
-            this.#tablist.push( new Tab( $tab as HTMLElement, {
+            this.#tablist.push( new Tab( $tab, {
                 ...this.#options,
                 index,
                 "onOpenTab": this.#options.allowMultipleTab ? null : this.#onOpenTab
@@ -129,7 +133,7 @@ export default class Accordion {
     }
 
 
-    private off() {
+    #off = (): void => {
         if( this.#status === this.#STATUS_OFF ){
             return;
         }
@@ -147,16 +151,20 @@ export default class Accordion {
     /**
      * Remove all events, css class, ...
      */
-    destroy() {
-        this.off();
-    };
+    destroy(): this {
+        this.#off();
+
+        return this;
+    }
 
 
     /**
      * Restart the module
      */
-    update() {
-        this.off();
-        this.on();
-    };
+    update(): this {
+        this.#off();
+        this.#on();
+
+        return this;
+    }
 }

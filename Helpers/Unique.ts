@@ -1,16 +1,16 @@
 /**
  * Remove all duplicate from a list. Doesn't change the original list.
  *
- * @param list
- * @param filter - Optionnal, (currentItem, returnArray) => { should return true or false }
+ * @param filter - Optionnal, (currentItem, returnArray) =&gt; `{` should return true or false `}`
  *
  * @example
+ * ```ts
  * // Using the native includes function
  * modifiedArray = unique( array )
  *
- * @example
  * // With custom function (here, same as default behaviour)
  * modifiedArray = unique( array, (currentValue, returnArray) => { return !returnArray.includes(currentValue) } )
+ * ```
  *
  * @returns Filtered list
  */

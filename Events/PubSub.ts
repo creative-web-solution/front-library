@@ -11,6 +11,7 @@ interface PubSub {
  * Publish / Suscribe event system
  *
  * @example
+ * ```ts
  * pubSub.add([ "MY_EVENT_1", "MY_EVENT_2" ]);
  * pubSub.add( "MY_EVENT_3" );
  *
@@ -25,6 +26,7 @@ interface PubSub {
  * } );
  *
  * pubSub.fire( pubSub.MY_EVENT_2, { "myProp": "test" } );
+ * ```
 */
 class PubSub {
     #EVENTS_STORE = {};
@@ -54,7 +56,6 @@ class PubSub {
     /**
      * Fire an event
      *
-     * @param eventName
      * @param data - Data to be send to the callback functions
      */
     fire( eventName: string, data? ): this {
@@ -70,10 +71,9 @@ class PubSub {
     /**
      * Bind an event
      *
-     * @param eventName
-     * @param callback - (data) => {}
+     * @param callback - (data) =&gt; `{}`
      */
-    on( eventName: string, callback: PubSubCallbackType ): this {
+    on( eventName: string, callback: FLib.Events.PubSub.Callback ): this {
         on( this.#EVENTS_STORE, {
             "eventsName": eventName,
             "callback":   callback
@@ -85,11 +85,8 @@ class PubSub {
 
     /**
      * Unbind an event
-     *
-     * @param eventName
-     * @param callback
      */
-    off( eventName: string, callback: PubSubCallbackType  ): this {
+    off( eventName: string, callback: FLib.Events.PubSub.Callback  ): this {
         off( this.#EVENTS_STORE, {
             "eventsName": eventName,
             "callback":   callback

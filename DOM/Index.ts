@@ -1,15 +1,13 @@
 /**
  * Return the index of a DOM element
  *
- * @param $element
- *
  * @example
  * elementIndex = index( $element );
  *
  * @returns - Position (starting at 0) of the element in the DOM list is belong to. -1 if there is no parentNode.
  */
 export function index( $element: Element ): number {
-    let $child: ChildNode | null, idx: number;
+    let $child: ChildNode | null, idx: number;
 
     if ( !$element.parentNode ) {
         return -1;

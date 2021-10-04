@@ -1,14 +1,14 @@
 /**
  * All colors go to white on the current image et go to the color of the next one
  */
-export default class Solarisation implements GLImageTransitionPreset {
+export default class Solarisation implements FLib.GLImageTransition.Preset {
 
     #fadeToBlack:      boolean;
     #fadeToBlackValue: number;
     #U_FADE_TO_BLACK!: WebGLUniformLocation | null;
 
 
-    get fsSource() {
+    get fsSource(): string {
         return `
             #ifdef GL_ES
             precision mediump float;
@@ -39,11 +39,11 @@ export default class Solarisation implements GLImageTransitionPreset {
         `;
     }
 
-    get fadeToBlack() {
+    get fadeToBlack(): boolean {
         return this.#fadeToBlack;
     }
 
-    get U_FADE_TO_BLACK() {
+    get U_FADE_TO_BLACK(): WebGLUniformLocation | null {
         return this.#U_FADE_TO_BLACK;
     }
 
@@ -52,7 +52,7 @@ export default class Solarisation implements GLImageTransitionPreset {
     /**
      * Solarisation constructor
      *
-     * @param {Boolean} fadeToBlack - Fade to black instead of white
+     * @param fadeToBlack - Fade to black instead of white
      */
     constructor( fadeToBlack = false ) {
         this.#fadeToBlack      = fadeToBlack;
@@ -62,21 +62,16 @@ export default class Solarisation implements GLImageTransitionPreset {
 
     /**
      * Create specific uniforms for this preset
-     *
-     * @param {WebGLRenderingContext} GL
-     * @param {WebGLProgram} SHADER_PROGRAM
      */
-    addUniform( GL, SHADER_PROGRAM ) {
+    addUniform( GL: WebGLRenderingContext, SHADER_PROGRAM: WebGLProgram ): void {
         this.#U_FADE_TO_BLACK = GL.getUniformLocation( SHADER_PROGRAM, 'uFadeToBlack' );
     }
 
 
     /**
      * Update the uniforms of this preset during render
-     *
-     * @param {WebGLRenderingContext} GL
      */
-    updateUniform( GL ) {
+    updateUniform( GL: WebGLRenderingContext ): void {
         GL.uniform1f( this.#U_FADE_TO_BLACK, this.#fadeToBlackValue );
     }
 }

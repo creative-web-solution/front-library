@@ -1,8 +1,6 @@
 /**
  * Return the style of a DOM element
  *
- * @param $element
- *
  * @example
  * styles = getStyle($element)
  */
@@ -14,32 +12,28 @@ export function getStyle( $element: Element ): CSSStyleDeclaration {
 /**
  * Return the value of a style property of a DOM element
  *
- * @param $element
  * @param property - Camel case property name
  *
  * @example
  * styles = prop($element, 'marginTop')
  */
 export function prop( $element: Element, property: string ): string {
-    return getStyle( $element )[ <any>property ];
+    return getStyle( $element )[ property ];
 }
 
 
 /**
  * Set a CSS property on an element
  *
- * @param $element
- * @param property
- * @param value
- *
  * @example
+ * ```ts
  * $element = setCssVar($element, '--my-var', '12px')
  *
- * @example
  * $element = setCssVar($element, {
  *  "--my-var":   "12px",
  *  "--my-var-2": "100%"
  * })
+ * ```
  *
  * @returns $element
  */
@@ -61,9 +55,6 @@ export function setCssProperty(
 
 /**
  * Get a CSS property of an element
- *
- * @param $element
- * @param property
  *
  * @example
  * value = getCssProperty($element, '--my-var')

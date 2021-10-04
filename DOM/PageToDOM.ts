@@ -232,10 +232,10 @@ function string2dom( html: string, callback: ( document: Document, destroy: () =
 /**
  * Convert a whole HTML page string in a document
  *
- * @param html
- *
  * @example
+ * ```ts
  * pageToDOM( html ).then( $document => {} )
+ * ```
  *
  * @returns a Promise with the converted document in parameter
  */

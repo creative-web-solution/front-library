@@ -69,8 +69,8 @@ const PREVENT_DEFAULT_KEY_LIST = [ "Up", "ArrowUp", "Down", "ArrowDown", "Enter"
  * @see extra/modules/autocomplete.md for details.
  */
 export default class Autocomplete {
-    #options:           AutocompleteOptionsType;
-    #cacheQuery:        { [ key: string ]: AutocompleteItemType[] };
+    #options:           FLib.Autocomplete.Options;
+    #cacheQuery:        Record<string, FLib.Autocomplete.Item[]>;
     #timeoutId;
     #$layer:            HTMLElement;
     #$list;
@@ -83,20 +83,20 @@ export default class Autocomplete {
     #url;
     #hideTimeoutId;
     #$field;
-    #className:         AutocompleteClassnameType;
+    #className:         FLib.Autocomplete.Classname;
     #$panelWrapper;
-    #l10n:              AutocompleteL10NType;
+    #l10n:              FLib.Autocomplete.L10N;
     #currentQuery;
     #requestAbortController;
     #isDisabled;
 
 
-    get isDisable() {
+    get isDisable(): boolean {
         return this.#isDisabled || this.#$field.disabled
     }
 
 
-    constructor( userOptions: AutocompleteOptionsType ) {
+    constructor( userOptions: FLib.Autocomplete.OptionsInit ) {
         if ( !( "AbortController" in window ) ) {
             throw 'This plugin uses fecth and AbortController. You may need to add a polyfill for this browser.';
         }
@@ -111,13 +111,13 @@ export default class Autocomplete {
         this.#url             = this.#options.url;
         this.#$field          = this.#options.$searchField;
         this.#$panelWrapper   = this.#options.$panelWrapper;
-        this.#className       = this.#options.className!;
-        this.#l10n            = this.#options.l10n!;
+        this.#className       = this.#options.className;
+        this.#l10n            = this.#options.l10n;
 
         this.#tplSuggestion   = `<ul role="listbox" class="${ this.#className.list }">{LIST}</ul>`;
 
         this.#$layer = document.createElement( 'DIV' );
-        this.#$layer.classList.add( this.#className.layer! );
+        this.#$layer.classList.add( this.#className.layer as string );
 
         append( this.#$layer, this.#$panelWrapper );
 
@@ -148,7 +148,7 @@ export default class Autocomplete {
      *
      * @param newOption - Same options as constructor
      */
-    setOptions( _newOption: AutocompleteOptionsType ): this {
+    setOptions( _newOption: FLib.Autocomplete.Options ): this {
         this.#options = extend( this.#options, _newOption );
 
         return this;
@@ -158,10 +158,10 @@ export default class Autocomplete {
     /**
      * Display the result list
      */
-    private show() {
-        let topVal, parentFieldOffset, fieldHeight, wrapperHeight, wrapperStyle;
+    #show = (): void => {
+        let topVal, parentFieldOffset, fieldHeight, wrapperHeight;
 
-        wrapperStyle = this.#$layer.style;
+        const wrapperStyle = this.#$layer.style;
 
         if ( !this.#options.cssPositionning ) {
             parentFieldOffset = offset( this.#$field.parentNode );
@@ -194,7 +194,7 @@ export default class Autocomplete {
     /**
      * Hide the result list
      */
-    private hide() {
+    #hide = (): void => {
         clearTimeout( this.#hideTimeoutId );
         gestureOff( document.body, '__AutocompleteTapOutside' );
 
@@ -205,12 +205,12 @@ export default class Autocomplete {
     }
 
 
-    #clickOutsideHandler = ( e, $target: HTMLElement ) => {
-        let $parent = $target.closest( this.#className.layer! );
+    #clickOutsideHandler = ( e: Event, $target: HTMLElement ): void => {
+        const $parent = $target.closest( this.#className.layer as string );
 
         if ( !$parent && $target !== this.#$field ) {
             this.#hideTimeoutId = setTimeout( () => {
-                this.hide();
+                this.#hide();
             }, 500 );
         }
     }
@@ -220,10 +220,9 @@ export default class Autocomplete {
      * Create the results list
      *
      * @param _list - Array of result
-     * @param _query
      */
-    private set( _list: AutocompleteItemType[], _query: string ): this {
-        let html, reQuery;
+    #set = ( _list: FLib.Autocomplete.Item[], _query: string ): this => {
+        let html;
 
         this.#currentResults = _list;
         this.#currentQuery = _query;
@@ -231,7 +230,7 @@ export default class Autocomplete {
         html = [];
         this.#hasResults = true;
 
-        reQuery = new RegExp(`(${ _query
+        const reQuery = new RegExp(`(${ _query
             .replace( /a/gi, '[aàâä]' )
             .replace( /c/gi, '[cç]' )
             .replace( /e/gi, '[eéèêë]' )
@@ -241,7 +240,7 @@ export default class Autocomplete {
             .replace( /y/gi, '[y]')})`, 'gi' );
 
         html = _list.map( ( item, i ) => {
-            this.#options.renderMark!(
+            this.#options.renderMark?.(
                 {
                     "resultItem": item,
                     reQuery,
@@ -251,7 +250,7 @@ export default class Autocomplete {
                     "cssClass": this.#className
                 }
             );
-            return this.#options.render!( {
+            return this.#options.render( {
                 "resultItem": item,
                 "index": i,
                 "query": _query,
@@ -260,13 +259,13 @@ export default class Autocomplete {
             } );
         } );
 
-        this.#$layer.innerHTML = this.#options.renderList!( {
+        this.#$layer.innerHTML = this.#options.renderList( {
             "resultList": html,
             "query": _query,
             "cssClass": this.#className
         } );
 
-        this.#$list = this.#$layer.querySelector( this.#className.list! );
+        this.#$list = this.#$layer.querySelector( this.#className.list );
 
         this.#selectionLocked = false;
         this.#nbResults       = _list.length;
@@ -281,7 +280,7 @@ export default class Autocomplete {
      *
      * @param _list - Array of result
      */
-    private setAll( _list: AutocompleteItemType[] ): this {
+    #setAll = ( _list: FLib.Autocomplete.Item[] ): this => {
         let html;
 
         this.#currentResults = _list;
@@ -291,7 +290,7 @@ export default class Autocomplete {
         this.#hasResults = true;
 
         html = _list.map( ( item, i ) => {
-            this.#options.renderMark!(
+            this.#options.renderMark(
                 {
                     "resultItem": item,
                     "index": i,
@@ -300,7 +299,7 @@ export default class Autocomplete {
                     "cssClass": this.#className
                 }
             );
-            return this.#options.render!( {
+            return this.#options.render( {
                 "resultItem": item,
                 "index": i,
                 "query": "",
@@ -309,13 +308,13 @@ export default class Autocomplete {
             } );
         } );
 
-        this.#$layer.innerHTML = this.#options.renderList!( {
+        this.#$layer.innerHTML = this.#options.renderList( {
             "resultList": html,
             "cssClass": this.#className,
             "query": ""
         } );
 
-        this.#$list = this.#$layer.querySelector( this.#className.list! );
+        this.#$list = this.#$layer.querySelector( this.#className.list );
 
         this.#selectionLocked = false;
         this.#nbResults       = _list.length;
@@ -327,14 +326,12 @@ export default class Autocomplete {
 
     /**
      * Display error message (like "No results")
-     *
-     * @param errorMsg
      */
-    private setError( errorMsg?: string ) {
-        let html: string[] = [];
+    #setError = ( errorMsg?: string ): void => {
+        const html: string[] = [];
 
-        html.push( this.#options.renderError!( {
-            "errorMsg": errorMsg || this.#l10n.noResult!,
+        html.push( this.#options.renderError( {
+            "errorMsg": errorMsg || this.#l10n.noResult,
             "query":    this.#currentQuery,
             "cssClass": this.#className
         } ) );
@@ -352,7 +349,7 @@ export default class Autocomplete {
      *
      * @param selectedIndex - Index of the selected item
      */
-    private select( _selectedIndex?: number ) {
+    #select = ( _selectedIndex?: number ): void => {
         if ( this.#selectionLocked ) {
             return;
         }
@@ -370,7 +367,7 @@ export default class Autocomplete {
             );
         }
 
-        this.hide();
+        this.#hide();
 
         if ( this.#options.onSelect ) {
             this.#options.onSelect.call(
@@ -387,11 +384,10 @@ export default class Autocomplete {
 
     /**
      * Highlight the choosen item
-     * @ignore
      *
      * @param _index - Index of the item to hover
      */
-    private hover( _index: number ) {
+    #hover = ( _index: number ): void => {
         let $item, itemPos, top, itemHeight;
 
         if ( this.#selectionLocked ) {
@@ -419,7 +415,7 @@ export default class Autocomplete {
             top = this.#$list.scrollTop;
 
             if ( itemPos.top + itemHeight > this.#options.maxHeight + top)  {
-                this.#$list.scrollTop = itemPos.top - this.#options.maxHeight! + itemHeight;
+                this.#$list.scrollTop = itemPos.top - this.#options.maxHeight + itemHeight;
             }
             else if ( top > 0 && itemPos.top < top ) {
                 this.#$list.scrollTop = itemPos.top;
@@ -431,51 +427,49 @@ export default class Autocomplete {
     /**
      * Highlight the next item
      */
-    private hoverNext() {
-        this.hover( this.#selectedIndex + 1 < this.#nbResults ? this.#selectedIndex + 1 : 0 );
+    #hoverNext = (): void => {
+        this.#hover( this.#selectedIndex + 1 < this.#nbResults ? this.#selectedIndex + 1 : 0 );
     }
 
 
     /**
      * Highlight the previous item
      */
-    private hoverPrevious() {
-        this.hover( this.#selectedIndex - 1 >= 0 ? this.#selectedIndex - 1 : this.#nbResults - 1 );
+    #hoverPrevious = (): void => {
+        this.#hover( this.#selectedIndex - 1 >= 0 ? this.#selectedIndex - 1 : this.#nbResults - 1 );
     }
 
 
     /**
      * Load the results list
-     *
-     * @param _query
      */
-    private load( _query: string ) {
+    #load = ( _query: string ): void => {
         this.#currentResults = [];
 
         this.#hasResults = false;
 
         if (!!this.#cacheQuery[ _query ] && this.#options.useCache ) {
-            this.set( this.#cacheQuery[ _query ], _query );
-            this.show();
+            this.#set( this.#cacheQuery[ _query ], _query );
+            this.#show();
         }
         else if ( this.#options.source ) {
             this.#options.source( _query, results => {
                 this.#cacheQuery[ _query ] = results;
 
                 if ( results.length ) {
-                    this.set( results, _query );
+                    this.#set( results, _query );
                 }
                 else {
-                    this.setError( this.#l10n.noResult );
+                    this.#setError( this.#l10n.noResult );
                 }
 
-                this.show();
+                this.#show();
             } );
 
             return;
         }
         else {
-            let params, myHeaders, newUrl;
+            let params;
 
             if ( this.#requestAbortController ) {
                 this.#requestAbortController.abort();
@@ -483,15 +477,15 @@ export default class Autocomplete {
 
             this.#requestAbortController = new AbortController();
 
-            params = this.#options.queryParams!( _query );
+            params = this.#options.queryParams( _query );
 
             params = Object.keys( params ).reduce( ( result, key, index ) => {
                 return (index > 0 ? result + '&' : '') + key + '=' + params[ key ];
             }, '' );
 
-            newUrl = [ this.#url, this.#url.indexOf( '?' ) > -1 ? '&' : '?', params ].join('');
+            const newUrl = [ this.#url, this.#url.indexOf( '?' ) > -1 ? '&' : '?', params ].join('');
 
-            myHeaders = new Headers();
+            const myHeaders = new Headers();
             myHeaders.append( 'X-Requested-With', 'XMLHttpRequest' );
 
             fetch( newUrl, {
@@ -503,75 +497,73 @@ export default class Autocomplete {
                         return response;
                     }
                     else {
-                        let error = new Error( response.statusText );
-                        throw error;
+                        throw new Error( response.statusText );
                     }
                 })
                 .then( function( response ) {
                     return response.json();
                 } )
                 .then( _data => {
-                    let normalizedData = this.#options.normalize!( _data );
+                    const normalizedData = this.#options.normalize( _data );
 
                     if (
                         normalizedData.success &&
                         normalizedData.results.length > 0
                     ) {
-                        this.set( normalizedData.results, _query);
+                        this.#set( normalizedData.results, _query);
                         this.#cacheQuery[ _query ] = normalizedData.results;
                     }
                     else if ( !normalizedData.results.length ) {
-                        this.setError( this.#l10n.noResult );
+                        this.#setError( this.#l10n.noResult );
                     }
                     else {
-                        this.setError( this.#l10n.error ) ;
+                        this.#setError( this.#l10n.error ) ;
                     }
                 } )
                 .catch( () => {
-                    this.setError();
+                    this.#setError();
                 } )
                 .finally(() => {
-                    this.show();
+                    this.#show();
                     this.#requestAbortController = null;
                 } );
         }
     }
 
 
-    #onKeydown = ( e: KeyboardEvent ) => {
+    #onKeydown = ( e: KeyboardEvent ): void => {
         if ( PREVENT_DEFAULT_KEY_LIST.includes( e.key ) ) {
             e.preventDefault();
         }
     }
 
 
-    #onKeyup = ( e: KeyboardEvent ) => {
-        let query;
+    #onKeyup = ( e: KeyboardEvent ): void => {
 
         if ( this.isDisable ) {
             return;
         }
 
-        query = ( e.target as HTMLInputElement ).value;
+        const query = ( e.target as HTMLInputElement ).value;
 
         switch ( e.key ) {
             case "Up":
             case "ArrowUp":
-                this.hoverPrevious();
+                this.#hoverPrevious();
                 break;
 
             case "Down":
             case "ArrowDown":
-                this.hoverNext();
+                this.#hoverNext();
                 break;
 
             case "Enter":
-                this.select();
+                this.#select();
                 break;
 
             case "Esc":
             case "Escape":
-                this.hide();
+                this.#hide();
                 // if ( this.#options.results ) {
                 //     this.#options.results.hide();
                 // }
@@ -596,13 +588,13 @@ export default class Autocomplete {
             default:
                 clearTimeout( this.#timeoutId );
 
-                if ( query.trim().length >= this.#options.minchar! ) {
+                if ( query.trim().length >= this.#options.minchar ) {
                     this.#timeoutId = setTimeout( () => {
-                        this.load( query );
+                        this.#load( query );
                     }, 800 );
                 }
                 else {
-                    this.hide();
+                    this.#hide();
                     if ( this.#requestAbortController ) {
                         this.#requestAbortController.abort();
                     }
@@ -612,30 +604,30 @@ export default class Autocomplete {
     }
 
 
-    #onFocus = () => {
+    #onFocus = (): void => {
         clearTimeout( this.#hideTimeoutId );
     }
 
 
-    #onTapField = () => {
+    #onTapField = (): void => {
         if ( this.isDisable ) {
             return;
         }
 
         if ( this.#hasResults ) {
             this.#selectionLocked = false;
-            this.show();
+            this.#show();
         }
     }
 
 
-    #onTapLinks = ( e, $target: HTMLElement ) => {
+    #onTapLinks = ( e: Event, $target: HTMLElement ): void => {
         if ( this.isDisable ) {
             return;
         }
 
         const idx = $target.getAttribute( 'data-idx' );
-        this.select( Number( idx ) );
+        this.#select( Number( idx ) );
     }
 
 
@@ -648,19 +640,19 @@ export default class Autocomplete {
             return this;
         }
 
-        this.#options.source( null, ( results: AutocompleteItemType[] ) => {
+        this.#options.source( null, ( results: FLib.Autocomplete.Item[] ) => {
             if ( results.length ) {
-                this.setAll( results );
+                this.#setAll( results );
             }
             else {
-                this.setError( this.#l10n.noResult );
+                this.#setError( this.#l10n.noResult );
             }
 
-            this.show();
+            this.#show();
         } );
 
         return this;
-    };
+    }
 
 
     /**
@@ -672,29 +664,25 @@ export default class Autocomplete {
         this.#$field.classList.add( this.#className.disable );
 
         return this;
-    };
+    }
 
 
     /**
      * Enable the autocomplete
-     *
-     * @returns {Autocomplete}
      */
-    enable() {
+    enable(): this {
         this.#isDisabled = false;
         this.#$field.disabled = false;
         this.#$field.classList.remove( this.#className.disable );
 
         return this;
-    };
+    }
 
 
     /**
      * Destroy the Autocomplete
-     *
-     * @returns {Autocomplete}
      */
-    clean() {
+    clean(): this {
         this.#$field.removeEventListener( 'keyup',   this.#onKeyup );
         this.#$field.removeEventListener( 'keydown', this.#onKeydown );
         this.#$field.removeEventListener( 'focus',   this.#onFocus );
@@ -715,34 +703,40 @@ export default class Autocomplete {
         remove( this.#$layer );
 
         return this;
-    };
+    }
 
 
     /**
      * Reset the input field
      */
-    resetField() {
+    resetField(): this {
         this.#$field.value = '';
-    };
+
+        return this;
+    }
 
 
     /**
      * Reset the results
      */
-    resetResults() {
+    resetResults(): this {
         this.#currentQuery   = '';
         this.#currentResults = [];
         this.#selectedIndex  = -1;
         this.#nbResults      = 0;
         this.#hasResults     = false;
-    };
+
+        return this;
+    }
 
 
     /**
      * Reset the input field and the results
      */
-    reset() {
+    reset(): this {
         this.resetField();
         this.resetResults();
-    };
+
+        return this;
+    }
 }

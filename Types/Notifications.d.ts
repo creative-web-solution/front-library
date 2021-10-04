@@ -1,47 +1,51 @@
-type NotificationType =  'info' | 'success' | 'warning' | 'danger';
+namespace FLib {
+    namespace Notifications {
+        type Type =  'info' | 'success' | 'warning' | 'danger';
 
-type NotificationsOptionsType = {
-    /** @default document.body */
-    $wrapper?: HTMLElement;
-    onClick?:  ( notification: Notification ) => void;
-    /**
-     * In second
-     * @default 5
-    */
-    autoCloseDelay?: number;
-    templates?: {
-        /** @default <div class="notifications"><div class="list"></div></div> */
-        notifications: string;
-        /** @default <div class="notification"></div> */
-        notification : string;
-    };
-    selectors?: {
-        /** @default .notifications */
-        notifications?: string;
-        /** @default .notification */
-        notification?:  string;
-        /** @default .list */
-        list?:          string;
-    };
-    cssClass?: {
-        /** @default open */
-        open?:    string;
-        /** @default success */
-        success?: string;
-        /** @default danger */
-        danger?:  string;
-        /** @default warning */
-        warning?: string;
-        /** @default info */
-        info?:    string;
-    };
-    animations?: {
-        show?: ( $notification, options ) => Promise
-        hide?: ( $notification, options ) => Promise
-    };
-}
+        type Options = {
+            /** @defaultValue document.body */
+            $wrapper: HTMLElement;
+            onClick:  ( notification ) => void;
+            /**
+             * In second
+             * @defaultValue 5
+            */
+            autoCloseDelay: number;
+            templates: {
+                /** @defaultValue <div class="notifications"><div class="list"></div></div> */
+                notifications: string;
+                /** @defaultValue <div class="notification"></div> */
+                notification : string;
+            };
+            selectors: {
+                /** @defaultValue .notifications */
+                notifications: string;
+                /** @defaultValue .notification */
+                notification:  string;
+                /** @defaultValue .list */
+                list:          string;
+            };
+            cssClass: {
+                /** @defaultValue open */
+                open:    string;
+                /** @defaultValue success */
+                success: string;
+                /** @defaultValue danger */
+                danger:  string;
+                /** @defaultValue warning */
+                warning: string;
+                /** @defaultValue info */
+                info:    string;
+            };
+            animations: {
+                show: ( $notification, options ) => Promise
+                hide: ( $notification, options ) => Promise
+            };
+        }
 
-type NotificationOptionsType = {
-    closeDelay?: number | false;
-    onClick?:    ( e: Event ) => void;
+        type NotificationOptions = {
+            closeDelay?: number | false;
+            onClick?:    ( e: Event ) => void;
+        }
+    }
 }

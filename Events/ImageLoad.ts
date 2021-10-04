@@ -44,25 +44,27 @@ function isDataURI( src ) {
  * Preload an image
  *
  * @param $element - DOM image to preload
- * @param manageError - If true reject the promise on error (false)
- * @param callback - Function called on image load
+ * @param callback - Function called on image load (`{` $element, type: string `}`) =&gt; `{}`
+ * @param handleError - If true reject the promise on error
  *
  * @example
- * onImageLoad( $image, manageError, callback ).then( () => {} )
+ * ```ts
+ * onImageLoad( $image, callback, handleError ).then( () => {} )
  *
  * // To allow event cancelation, don't chain .then() directly after onImageLoad
- * let preload = onImageLoad( $image, callback, manageError );
+ * let preload = onImageLoad( $image, callback, handleError );
  * preload.then( () => {} );
  * ...
  *
  * preload.off();
+ * ```
  *
  * @returns Return a standard Promise + an .off() function to cancel event
  */
-export function onImageLoad( $element: Element, manageError?: boolean, callback?: ( $element: Element, type: ImageLoadEventType ) => void ): ImagePromiseType {
+export function onImageLoad( $element: Element, callback?: ( data: FLib.Events.ImagesLoad.CallbackParam ) => void, handleError = false ): FLib.Events.ImagesLoad.PromiseLoad {
     let _remove;
 
-    const PROM: ImagePromiseType = new Promise( function( this: ImagePromiseType, resolve, reject ) {
+    const PROM: FLib.Events.ImagesLoad.PromiseLoad = new Promise( function( resolve, reject ) {
         let $img;
 
         function onImageLoaded( e ) {
@@ -71,14 +73,20 @@ export function onImageLoad( $element: Element, manageError?: boolean, callback?
             $img = null;
 
             if ( callback ) {
-                callback( $element, e.type );
+                callback( {
+                    $element,
+                    "type": e.type
+                } );
             }
 
-            if ( manageError && e.type === 'error' ) {
+            if ( handleError && e.type === 'error' ) {
                 reject();
             }
             else {
-                resolve( [ $element, e.type ] );
+                resolve( {
+                    $element,
+                    "type": e.type
+                } );
             }
         }
 
@@ -103,10 +111,16 @@ export function onImageLoad( $element: Element, manageError?: boolean, callback?
                 ( !hasNativePicture && ($element as HTMLImageElement).complete && !isDataURI( src ) )
             ) {
                 if ( callback ) {
-                    callback( $element, 'complete' );
+                    callback({
+                        $element,
+                        "type": 'complete'
+                    });
                 }
 
-                resolve( [ $element, 'complete' ] );
+                resolve({
+                    $element,
+                    "type": 'complete'
+                });
                 return;
             }
 
@@ -121,7 +135,7 @@ export function onImageLoad( $element: Element, manageError?: boolean, callback?
             $img.addEventListener( 'error', onImageLoaded );
             $img.addEventListener( 'load', onImageLoaded );
         } );
-    } ) as ImagePromiseType;
+    } ) as FLib.Events.ImagesLoad.PromiseLoad;
 
     PROM.off = _remove;
 
@@ -133,29 +147,31 @@ export function onImageLoad( $element: Element, manageError?: boolean, callback?
  * Preload a list of images
  *
  * @param $elements - Array of images to preload
- * @param manageError - If true reject the promise on error (false)
- * @param callback - Function called on each image load ($element, eventType:string) => {}
+ * @param callback - Function called on each image load (`{` $element, type:string `}`) =&gt; `{}`
+ * @param handleError - If true reject the promise on error
  *
  * @example
- * onAllImagesLoad( $images, manageError, partialCallback ).then( () => {} )
+ * ```ts
+ * onAllImagesLoad( $images, partialCallback, handleError ).then( () => {} )
  *
  * // To allow event cancelation, don't chain .then() directly after onAllImagesLoad
- * let preload = onAllImagesLoad( $images, manageError, callback );
+ * let preload = onAllImagesLoad( $images, callback, handleError );
  * preload.then( () => {} );
  * ...
  *
  * preload.off();
+ * ```
  *
  * @returns Return a standard Promise + an .off() function to cancel event
  */
-export function onAllImagesLoad( $images: NodeList | Element[], ...args ): ImagesPromiseType {
-    const promArray: ImagePromiseType[] = [];
+export function onAllImagesLoad( $images: NodeList | Element[], ...args: any[] ): FLib.Events.ImagesLoad.PromisesLoad {
+    const promArray: FLib.Events.ImagesLoad.PromiseLoad[] = [];
 
     $images.forEach( $img => {
         promArray.push( onImageLoad( $img, ...args ) );
     } );
 
-    const promResult: ImagesPromiseType = Promise.all( promArray ) as ImagesPromiseType;
+    const promResult: FLib.Events.ImagesLoad.PromisesLoad = Promise.all( promArray ) as FLib.Events.ImagesLoad.PromisesLoad;
 
     promResult.off = function() {
         promArray.forEach( imageLoad => {

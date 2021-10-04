@@ -4,12 +4,11 @@ import { transitionendEventName }   from '../Tools/PrefixedProperties';
 /**
  * Bind a one time transitionend event on a DOM object
  *
- * @param $element
+ * @example
+ * onTransitionEnd( $elem ).then( () =&gt; `{}` );
  *
  * @example
- * onTransitionEnd( $elem ).then( () => {} );
- *
- * @example
+ * ```ts
  * // To remove the event binding, don't chain .then() directly after onTransitionEnd:
  * let transitionEnd = onTransitionEnd( $element );
  * transitionEnd.then( () => {} );
@@ -25,6 +24,7 @@ import { transitionendEventName }   from '../Tools/PrefixedProperties';
  * onTransitionEnd( $elem, {
  * "pseudoElement": "after"
  * } )
+ * ```
  *
  * @returns Return a standard Promise + an .off() function to cancel event
  */

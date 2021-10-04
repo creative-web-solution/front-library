@@ -4,44 +4,45 @@ import { extend }                           from '../../Helpers/Extend';
 import { strToDOM }                         from '../../DOM/StrToDOM';
 import { append }                           from '../../DOM/Manipulation';
 import { windowSize }                       from '../../DOM/WindowSize';
-import template                             from '../Template';
 import PopinBackground                      from './PopinBackground';
 import PopinAccessibility                   from './PopinAccessibility';
 import { defaultOptions, CLICK_EVENT_NAME } from './Tools';
+import quickTemplate                        from '../QuickTemplate';
 
 
 /**
  * Create a simple popin
- * @class Popin
  *
  * @see extra/modules/popin.md for details.
  *
- * @example let popin = new Popin( popinOptions );
+ * @example
+ * ```ts
+ * let popin = new Popin( popinOptions );
  * popin.load( 'my-url.html', {method: 'post'} );
+ * ```
  */
 export default class Popin {
 
     #loadingPromise:    Promise<void> | null = null;
-    #loaderOpened:      boolean = false;
-    #popinOpened:       boolean = false;
+    #loaderOpened       = false;
+    #popinOpened        = false;
     #$loader:           HTMLElement;
-    #templates:         PopinTemplatesOptionsType;
-    #selectors:         PopinSelectorsOptionsType;
-    #animations:        PopinAnimationsOptionsType;
-    #errorTpl;
+    #templates:         FLib.Popin.TemplatesOptions;
+    #selectors:         FLib.Popin.SelectorsOptions;
+    #animations:        FLib.Popin.AnimationsOptions;
     #$popinContent:     HTMLElement;
     #$initialFocus;
     #isInlinePopin:     boolean;
     #focusControl:      PopinAccessibility;
     #keyboardControls;
-    #options:           PopinOptionsType;
-    #controllerOptions: PopinControllerOptionsType | undefined;
+    #options:           FLib.Popin.Options;
+    #controllerOptions: FLib.Popin.ControllerOptions | undefined;
     #backgroundLayer:   PopinBackground;
     #tick;
     #$popin:            HTMLElement;
 
 
-    constructor ( userOptions: PopinOptionsType = {}, $popin?: HTMLElement, _controllerOptions?: PopinControllerOptionsType ) {
+    constructor ( userOptions: FLib.Popin.OptionsInit = {}, $popin?: HTMLElement, _controllerOptions?: FLib.Popin.ControllerOptions ) {
 
         if ( !( "AbortController" in window ) ) {
             throw 'This plugin uses fecth and AbortController. You may need to add a polyfill for this browser.';
@@ -51,8 +52,8 @@ export default class Popin {
         this.#controllerOptions = _controllerOptions;
 
         if ( _controllerOptions ) {
-            this.#options         = userOptions;
-            this.#backgroundLayer = _controllerOptions.background!;
+            this.#options         = userOptions as FLib.Popin.Options;
+            this.#backgroundLayer = _controllerOptions.background;
         }
         else {
             this.#options         = extend( defaultOptions, userOptions );
@@ -60,18 +61,17 @@ export default class Popin {
         }
 
 
-        this.#templates =  this.#options.templates!;
-        this.#selectors =  this.#options.selectors!;
-        this.#animations = this.#options.animations!;
+        this.#templates =  this.#options.templates;
+        this.#selectors =  this.#options.selectors;
+        this.#animations = this.#options.animations;
         // Add loader in the popin
-        this.#$loader = strToDOM( this.#templates.popinLoader! ) as HTMLElement;
+        this.#$loader = strToDOM( this.#templates.popinLoader ) as HTMLElement;
 
         if ( $popin ) {
             this.#$popin = $popin;
         }
         else {
-            const popinHtml = this.#templates.popin!;
-            this.#errorTpl  = template( this.#templates.errorMessage! );
+            const popinHtml = this.#templates.popin;
 
             // Add popin template
             this.#$popin = strToDOM( popinHtml ) as HTMLElement;
@@ -81,7 +81,7 @@ export default class Popin {
         }
 
         // Init the element that will receive the content
-        this.#$popinContent = this.#$popin.querySelector( this.#selectors.popinContent! ) || this.#$popin;
+        this.#$popinContent = this.#$popin.querySelector( this.#selectors.popinContent ) || this.#$popin;
 
         // Keyboard TAB focus control
         this.#focusControl = new PopinAccessibility( this.#$popin );
@@ -133,7 +133,7 @@ export default class Popin {
     }
 
 
-    private addAccessibility() {
+    #addAccessibility = (): void => {
         this.#focusControl.refresh();
         this.#focusControl.toggleTabIndexNavigation( true );
         this.#focusControl.focusFirstElement();
@@ -143,23 +143,23 @@ export default class Popin {
     // ------------------------------ LOADER
 
 
-    private openLoader() {
+    #openLoader = (): Promise<any> => {
         if ( this.#loaderOpened ) {
             return Promise.resolve();
         }
 
-        return this.#animations.openLoader!( this.#$loader ).then( () => {
+        return this.#animations.openLoader( this.#$loader ).then( () => {
             this.#loaderOpened = true;
         } );
     }
 
 
-    private closeLoader() {
+    #closeLoader = (): Promise<void> => {
         if ( !this.#loaderOpened ) {
             return Promise.resolve();
         }
 
-        return this.#animations.closeLoader!( this.#$loader ).then( () => {
+        return this.#animations.closeLoader( this.#$loader ).then( () => {
             this.#loaderOpened = false;
         } );
     }
@@ -168,23 +168,23 @@ export default class Popin {
     // ------------------------------ POPIN SHOW/HIDE
 
 
-    private showBackgroundLayer() {
+    #showBackgroundLayer = (): Promise<void> => {
         return this.#backgroundLayer ? this.#backgroundLayer.open() : Promise.resolve();
     }
 
 
-    private hideBackgroundLayer() {
+    #hideBackgroundLayer = (): Promise<void> => {
         return this.#backgroundLayer ? this.#backgroundLayer.close() : Promise.resolve();
     }
 
 
-    private openPopin() {
+    #openPopin = (): Promise<void> => {
         if ( this.#popinOpened ) {
             return Promise.resolve();
         }
 
         this.#$initialFocus = document.activeElement;
-        this.resize();
+        this.#resize();
 
         if ( this.#options.autoResize ) {
             on( window, {
@@ -193,12 +193,12 @@ export default class Popin {
             } );
         }
 
-        return this.showBackgroundLayer()
+        return this.#showBackgroundLayer()
             .then( () => {
                 if ( this.#isInlinePopin ) {
-                    this.addAccessibility();
+                    this.#addAccessibility();
                 }
-                return this.#animations.initOpenPopin!( this.#$popin );
+                return this.#animations.initOpenPopin( this.#$popin );
             } )
             .then( () => {
                 if ( this.#options.onOpen ) {
@@ -206,7 +206,7 @@ export default class Popin {
                 }
             } )
             .then( () => {
-                return this.#animations.openPopin!( this.#$popin );
+                return this.#animations.openPopin( this.#$popin );
             } )
             .then( () => {
                 this.#popinOpened = true;
@@ -214,7 +214,7 @@ export default class Popin {
     }
 
 
-    private closePopin() {
+    #closePopin = (): Promise<void> => {
         if ( !this.#popinOpened ) {
             return Promise.resolve();
         }
@@ -225,8 +225,8 @@ export default class Popin {
         } );
 
         return this.#animations
-            .closePopin!( this.#$popin )
-            .then( this.hideBackgroundLayer.bind( this ) )
+            .closePopin( this.#$popin )
+            .then( this.#hideBackgroundLayer.bind( this ) )
             .then( () => {
                 if ( this.#options.onClose ) {
                     return this.#options.onClose.call( this, this.#$popin );
@@ -236,7 +236,7 @@ export default class Popin {
                 this.#popinOpened = false;
 
                 if ( !this.#isInlinePopin ) {
-                    this.clearPopin();
+                    this.#clearPopin();
                 }
                 this.#$initialFocus.focus();
             });
@@ -246,35 +246,35 @@ export default class Popin {
     // ------------------------------ POPIN CONTENT
 
 
-    private resizeRAF() {
-        window.requestAnimationFrame( this.resize.bind( this ) );
+    #resizeRAF = (): void => {
+        window.requestAnimationFrame( this.#resize.bind( this ) );
     }
 
 
-    private setPopin( resp: string ) {
+    #setPopin = ( resp: string ): Promise<void> => {
         this.#$popinContent.innerHTML = resp;
 
-        return this.#options.onLoad!( this.#$popin ).then( this.resizeRAF.bind( this ) );
+        return this.#options.onLoad( this.#$popin ).then( this.#resizeRAF.bind( this ) );
     }
 
 
-    private clearPopin() {
+    #clearPopin = (): void => {
         this.#$popinContent.innerHTML = '';
-        this.resizeRAF();
+        this.#resizeRAF();
         this.#focusControl.toggleTabIndexNavigation( false );
     }
 
 
-    private setPopinError( message: string ) {
-        this.#$popinContent.innerHTML = this.#errorTpl({ "message": message });
-        this.resizeRAF();
+    #setPopinError = ( message: string ): void => {
+        this.#$popinContent.innerHTML = quickTemplate( this.#templates.errorMessage, { "message": message } );
+        this.#resizeRAF();
     }
 
 
     // ------------------------------ POPIN LOADING
 
 
-    private _load( url: string, type: PopinResponseType, userRequestOptions?: RequestInit ): Promise<void> {
+    #_load = ( url: string, type: FLib.Popin.ResponseType, userRequestOptions?: RequestInit ): Promise<void> => {
         let requestOptions: RequestInit ;
 
         this.#loadingPromise = new Promise( ( resolve, reject ) => {
@@ -288,8 +288,8 @@ export default class Popin {
                 requestOptions = extend( {}, requestOptions, userRequestOptions );
             }
 
-            this.openPopin()
-                .then( () => this.openLoader() )
+            this.#openPopin()
+                .then( () => this.#openLoader() )
                 .then( () => {
                     fetch(
                         url,
@@ -300,8 +300,7 @@ export default class Popin {
                                 return response;
                             }
                             else {
-                                let error = new Error( response.statusText );
-                                /** @ts-expect-error */
+                                const error: Error & { response? } = new Error( response.statusText );
                                 error.response = response;
                                 throw error;
                             }
@@ -331,31 +330,31 @@ export default class Popin {
                         } )
                         .then(
                             data => {
-                                let [ body, response ] = data;
-                                let isHttpError = response.status < 200 || response.status >= 300;
-                                let normResponse = this.#options.normalize!( body, response, isHttpError );
+                                const [ body, response ] = data;
+                                const isHttpError = response.status < 200 || response.status >= 300;
+                                const normResponse = this.#options.normalize( body, response, isHttpError );
 
                                 if ( normResponse.success ) {
-                                    this.setPopin( normResponse.data ).then( () => {
-                                        this.addAccessibility();
+                                    this.#setPopin( normResponse.data ).then( () => {
+                                        this.#addAccessibility();
                                         resolve();
                                     } );
                                 }
                                 else {
-                                    this.setPopinError( this.#options.errorMessage! );
-                                    this.addAccessibility();
+                                    this.#setPopinError( this.#options.errorMessage );
+                                    this.#addAccessibility();
                                     reject();
                                 }
                             },
                             err => {
-                                this.setPopinError( this.#options.errorMessage! );
-                                this.addAccessibility();
+                                this.#setPopinError( this.#options.errorMessage );
+                                this.#addAccessibility();
                                 reject( err );
                             }
                         )
                         .finally( () => {
                             this.#loadingPromise = null;
-                            this.closeLoader();
+                            this.#closeLoader();
                         } );
                 })
                 .catch( err => reject( err ) );
@@ -366,15 +365,15 @@ export default class Popin {
     }
 
 
-    private _loadLink( $link: HTMLAnchorElement ) {
-        return this._load(
+    #_loadLink = ( $link: HTMLAnchorElement ): Promise<void> => {
+        return this.#_load(
             $link.href,
-            this.#options.setLinkResponseType!( $link.href, $link ),
+            this.#options.setLinkResponseType( $link.href, $link ),
         );
     }
 
 
-    private _loadForm( $form: HTMLFormElement ) {
+    #_loadForm = ( $form: HTMLFormElement ): Promise<void> => {
         let validationResult;
 
         if ( this.#options.checkValidity ) {
@@ -389,9 +388,9 @@ export default class Popin {
 
         return validationProm
                     .then( () => {
-                        return this._load(
+                        return this.#_load(
                             $form.action,
-                            this.#options.setFormResponseType!( $form ),
+                            this.#options.setFormResponseType( $form ),
                             {
                                 "body": new FormData( $form ),
                                 "method": $form.method || 'POST'
@@ -400,17 +399,17 @@ export default class Popin {
     }
 
 
-    #openPopinHandler = ( e ) => {
+    #openPopinHandler = ( e: Event ): void => {
         e.preventDefault();
 
         if ( this.#loadingPromise ) {
             return;
         }
 
-        const $target = e.target;
+        const $target = e.target as HTMLElement;
 
         if ( $target.nodeName === 'FORM' ) {
-            this._loadForm( $target );
+            this.#_loadForm( $target as HTMLFormElement );
             return;
         }
 
@@ -420,29 +419,29 @@ export default class Popin {
             return;
         }
 
-        this._loadLink( $target );
+        this.#_loadLink( $target as HTMLAnchorElement );
     }
 
 
-    #closePopinHandler = ( e ) => {
+    #closePopinHandler = ( e: Event ): void => {
         e.preventDefault();
 
         if ( this.#controllerOptions ) {
             return this.#controllerOptions.controller.close();
         }
 
-        this.closePopin();
+        this.#closePopin();
     }
 
 
-    private resize() {
+    #resize = (): void => {
         if ( !this.#options.autoResize ) {
             return;
         }
 
         const viewportSize = windowSize();
 
-        const maxHeight = viewportSize.height - this.#options.marginHeight! * 2;
+        const maxHeight = viewportSize.height - this.#options.marginHeight * 2;
 
         this.#$popinContent.style.maxHeight = `${ maxHeight }px`;
 
@@ -450,123 +449,114 @@ export default class Popin {
     }
 
 
-    #resizeHandler = () => {
+    #resizeHandler = (): void => {
         if ( this.#tick ) {
             return;
         }
 
         this.#tick = true;
 
-        window.requestAnimationFrame( this.resize.bind( this ) );
+        window.requestAnimationFrame( this.#resize.bind( this ) );
     }
 
 
     /**
      * Load a page from a link and display the result it in the popin
-     *
-     * @param $link
      */
     loadLink( $link: HTMLAnchorElement ): Promise<void> {
         if ( this.#loadingPromise ) {
             return this.#loadingPromise;
         }
 
-        return this._loadLink( $link );
-    };
+        return this.#_loadLink( $link );
+    }
 
 
     /**
      * Send a form and display the result it in the popin
-     *
-     * @param $form
      */
     loadForm( $form: HTMLFormElement ): Promise<void>  {
         if ( this.#loadingPromise ) {
             return this.#loadingPromise;
         }
 
-        return this._loadForm( $form );
-    };
+        return this.#_loadForm( $form );
+    }
 
 
     /**
      * Load a file and display it in the popin
      *
-     * @param url
      * @param data - All parameters available for window.fetch
-     * @param [type=text]
      */
-    load( url: string, data?: RequestInit, type: PopinResponseType = 'text' ): Promise<void> {
+    load( url: string, data?: RequestInit, type: FLib.Popin.ResponseType = 'text' ): Promise<void> {
         if ( this.#loadingPromise ) {
             return this.#loadingPromise;
         }
 
-        return this._load(
+        return this.#_load(
             url,
             type,
             data
         );
-    };
-
+    }
 
     /**
      * Insert some html in the popin and open it
      *
-     * @param html
      * @param openFirst - Open the popin THEN insert the html
      */
     set( html: string, openFirst?: boolean ): Promise<void> {
         if ( openFirst ) {
-            return this.openPopin().then( () => this.setPopin( html ) );
+            return this.#openPopin().then( () => this.#setPopin( html ) );
         }
-        return this.setPopin( html ).then( () => this.openPopin() );
-    };
+        return this.#setPopin( html ).then( () => this.#openPopin() );
+    }
 
 
     /**
      * Remove the content of the popin
      */
-    clear() {
-        return this.clearPopin();
-    };
+    clear(): void {
+        return this.#clearPopin();
+    }
 
 
     /**
      * Close the popin
      */
     close(): Promise<void> {
-        return this.closePopin();
-    };
+        return this.#closePopin();
+    }
 
 
     /**
      * Open the popin
      */
     open(): Promise<void> {
-        return this.openPopin();
-    };
+        return this.#openPopin();
+    }
 
 
     /**
      * Open the popin loading
      */
     openLoading(): Promise<void> {
-        return this.openLoader()
-    };
-
+        return this.#openLoader()
+    }
 
     /**
      * Close the popin loading
      */
     closeLoading(): Promise<void> {
-        return this.closeLoader()
-    };
+        return this.#closeLoader()
+    }
 
 
     /**
      * Remove all events, css class or inline styles
      */
-    destroy() {
+    destroy(): void {
         off(
             this.#$popin,
             {
@@ -594,5 +584,5 @@ export default class Popin {
         if ( this.#keyboardControls ) {
             this.#keyboardControls.off();
         }
-    };
+    }
 }

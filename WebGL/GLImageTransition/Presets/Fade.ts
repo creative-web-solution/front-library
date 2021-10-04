@@ -1,9 +1,9 @@
 /**
  * Simple fade between 2 images
  */
-export default class Fade implements GLImageTransitionPreset {
+export default class Fade implements FLib.GLImageTransition.Preset {
 
-    get fsSource() {
+    get fsSource(): string {
         return `
             #ifdef GL_ES
             precision mediump float;
@@ -27,5 +27,4 @@ export default class Fade implements GLImageTransitionPreset {
             }
         `;
     }
-
 }

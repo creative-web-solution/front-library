@@ -2,7 +2,7 @@ import { on, off } from './EventsManager';
 import { extend }  from '../Helpers/Extend';
 
 
-const defaultOptions: GestureOptionsType = {
+const defaultOptions: FLib.Events.Gesture.Options = {
     "threshold":            20,
     "useTouch":             true,
     "velocityMax":          -1,
@@ -34,7 +34,7 @@ const MIN_DELTA_FOR_DIRECTION_CHANGE = 5; // px
 
 
 const EVENTS_NAME = ( function() {
-    let start, move, end, mode: GestureModeType;
+    let start, move, end, mode: FLib.Events.Gesture.Mode;
 
     const click = 'click';
     mode        = 'click';
@@ -114,7 +114,7 @@ function getPos( e ) {
 }
 
 
-function bindEvent( $elem: Node, eventsName: string, callback, options: GestureOptionsType, selector?: string ) {
+function bindEvent( $elem: Node, eventsName: string, callback, options: FLib.Events.Gesture.Options, selector?: string ) {
     let eventOptions;
 
     // Fix passive event on chrome 54+
@@ -145,7 +145,7 @@ function unbindEvent( $elem: Node, eventsName: string, callback ) {
 }
 
 
-function eventsHelper( e, eventName: string, options: GestureOptionsType, $currentTargetElement: Node ) {
+function eventsHelper( e, eventName: string, options: FLib.Events.Gesture.Options, $currentTargetElement: Node ) {
     const preventDefault = options[ `prevent${eventName}` ];
     const stopPropagation = options[ `stopPropagation${eventName}` ];
 
@@ -191,15 +191,15 @@ class GestureManager {
     #lastDirections;
     #$currentTargetElement;
     #$element;
-    #velocityArray: VelocityType[] = [];
-    #options: GestureOptionsType;
+    #velocityArray: FLib.Events.Gesture.Velocity[] = [];
+    #options: FLib.Events.Gesture.Options;
 
     get $element() {
         return this.#$element;
     }
 
 
-    constructor( $element: Node, options: GestureOptionsType ) {
+    constructor( $element: Node, options: FLib.Events.Gesture.Options ) {
         this.#$element = $element;
         this.#options  = options;
 
@@ -224,7 +224,7 @@ class GestureManager {
         );
     }
 
-    private cancelAll() {
+    #cancelAll = () => {
         this.#isAllCancelled = true;
         this.#isTapCancelled = true;
         unbindEvent( document.body, EVENTS_NAME.move, this.#onMove );
@@ -232,7 +232,7 @@ class GestureManager {
     }
 
 
-    private init() {
+    #init = () => {
         this.#isAllCancelled    = false;
         this.#isTapCancelled    = false;
         this.#isTapEventFired   = false;
@@ -262,7 +262,7 @@ class GestureManager {
 
 
     // Swipe are called only one time
-    private handleSwipe = ( e ): void => {
+    #handleSwipe = ( e ): void => {
         if ( Math.abs( this.#deltaX ) >= (this.#options.threshold as number) ) {
             this.#isTapCancelled = true;
 
@@ -299,7 +299,7 @@ class GestureManager {
 
 
     // Called along with touchmove
-    private handleMove = ( e ): void => {
+    #handleMove = ( e ): void => {
         const moveOnX =
             Math.abs( this.#currentX - this.#lastX ) > Math.abs( this.#currentY - this.#lastY );
 
@@ -327,7 +327,7 @@ class GestureManager {
     }
 
 
-    private handleVelocity( mustReset: boolean ) {
+    #handleVelocity = ( mustReset: boolean ) => {
         this.#velocityVars.startPosX = this.#velocityVars.endPosX;
         this.#velocityVars.startPosY = this.#velocityVars.endPosY;
         this.#velocityVars.endPosX   = this.#currentX;
@@ -359,7 +359,7 @@ class GestureManager {
     }
 
 
-    private fuzzyEquals( angle: number, targetAngle: number ) {
+    #fuzzyEquals = ( angle: number, targetAngle: number ) => {
         return (
             angle >= targetAngle - (this.#options.angleThreshold as number) &&
             angle <= targetAngle + (this.#options.angleThreshold as number)
@@ -367,9 +367,9 @@ class GestureManager {
     }
 
 
-    private getVelocityData(): GestureVelocityType {
+    #getVelocityData = (): FLib.Events.Gesture.VelocityReturnType => {
         let angle,
-            direction: GestureDirectionType = 'none';
+            direction: FLib.Events.Gesture.Direction = 'none';
 
         const currentTime = new Date().valueOf();
 
@@ -405,11 +405,11 @@ class GestureManager {
             direction = 'down-right';
             angle = 360 - angle;
 
-            if ( this.fuzzyEquals( angle, 360 ) ) {
+            if ( this.#fuzzyEquals( angle, 360 ) ) {
                 direction = 'right';
                 angle = 0;
             }
-            else if ( this.fuzzyEquals( angle, 270 ) ) {
+            else if ( this.#fuzzyEquals( angle, 270 ) ) {
                 direction = 'down';
                 angle = 270;
             }
@@ -417,11 +417,11 @@ class GestureManager {
         else if ( deltaPosX > 0 && deltaPosY < 0 ) {
             direction = 'up-right';
 
-            if ( this.fuzzyEquals( angle, 360 ) ) {
+            if ( this.#fuzzyEquals( angle, 360 ) ) {
                 direction = 'right';
                 angle = 0;
             }
-            else if ( this.fuzzyEquals( angle, 90 ) ) {
+            else if ( this.#fuzzyEquals( angle, 90 ) ) {
                 direction = 'up';
                 angle = 90;
             }
@@ -430,11 +430,11 @@ class GestureManager {
             direction = 'down-left';
             angle = angle + 180;
 
-            if ( this.fuzzyEquals( angle, 180 ) ) {
+            if ( this.#fuzzyEquals( angle, 180 ) ) {
                 direction = 'left';
                 angle = 180;
             }
-            else if ( this.fuzzyEquals( angle, 270 ) ) {
+            else if ( this.#fuzzyEquals( angle, 270 ) ) {
                 direction = 'down';
                 angle = 270;
             }
@@ -443,11 +443,11 @@ class GestureManager {
             direction = 'up-left';
             angle = 180 - angle;
 
-            if ( this.fuzzyEquals( angle, 180 ) ) {
+            if ( this.#fuzzyEquals( angle, 180 ) ) {
                 direction = 'left';
                 angle = 180;
             }
-            else if ( this.fuzzyEquals( angle, 90 ) ) {
+            else if ( this.#fuzzyEquals( angle, 90 ) ) {
                 direction = 'up';
                 angle = 90;
             }
@@ -477,7 +477,7 @@ class GestureManager {
         // Multitouch not handle for now
         if ( e.touches && e.touches.length > 1 ) {
             this.#$currentTargetElement = null;
-            this.cancelAll();
+            this.#cancelAll();
             return;
         }
 
@@ -489,7 +489,7 @@ class GestureManager {
             this.#options.start.call( this.#$currentTargetElement, e, this.#$currentTargetElement, touchCoords, 'start' );
         }
 
-        this.init();
+        this.#init();
 
         if ( touchCoords.pageX > -1 ) {
             this.#currentX = this.#startX = this.#lastX = touchCoords.pageX;
@@ -522,7 +522,7 @@ class GestureManager {
         }
 
         if ( e.touches && e.touches.length > 1 ) {
-            return this.cancelAll();
+            return this.#cancelAll();
         }
 
         const touchCoords = getPos(e);
@@ -579,13 +579,13 @@ class GestureManager {
         this.#lastTouchMoveTime = new Date().valueOf();
 
         if ( this.#options.swipe ) {
-            this.handleVelocity( hasDirectionChanged );
+            this.#handleVelocity( hasDirectionChanged );
         }
 
         this.#lastDirections = currentDirections;
 
-        this.handleSwipe( e );
-        this.handleMove( e );
+        this.#handleSwipe( e );
+        this.#handleMove( e );
     }
 
 
@@ -604,7 +604,7 @@ class GestureManager {
         }
 
         if ( this.#options.swipe ) {
-            const velocityData = this.getVelocityData();
+            const velocityData = this.#getVelocityData();
 
             if ( velocityData.averageVelocity >= 0 ) {
                 this.#options.swipe.call( this.#$currentTargetElement, e, this.#$currentTargetElement, velocityData, 'swipe' );
@@ -637,13 +637,13 @@ class GestureManager {
         }
 
         unbindEvent( this.#$element, EVENTS_NAME.click, this.#onClick );
-    };
+    }
 }
 
 
 /* -------------------- API */
 
-function addManager( $element: Node, handlerName: string | Symbol, options: GestureOptionsType ): GestureManagerType {
+function addManager( $element: Node, handlerName: string | symbol, options: FLib.Events.Gesture.Options ): FLib.Events.Gesture.Manager {
     let handler = gestureList.get( handlerName );
 
     if ( !handler ) {
@@ -662,7 +662,7 @@ function addManager( $element: Node, handlerName: string | Symbol, options: Gest
 }
 
 
-function removeManager( $element: Node, handlerName: string | Symbol ): void {
+function removeManager( $element: Node, handlerName: string | symbol ): void {
     let idx = 0;
     const handler = gestureList.get( handlerName );
 
@@ -690,7 +690,6 @@ function removeManager( $element: Node, handlerName: string | Symbol ): void {
  *
  * @param $elements - DOM element or DOMList element
  * @param handlerName - Name of the handler used to retrieve it and unbind events with gestureOff
- * @param userOptions
  *
  * @see
  * For more details, see extra/events.md
@@ -706,14 +705,14 @@ function removeManager( $element: Node, handlerName: string | Symbol ): void {
  *
  * @returns The handler (or array of handlers) to unbind events
  */
-export function gesture( $elements: GestureElementsType, handlerName: string | Symbol, userOptions: GestureOptionsType ): GestureManagerType | GestureManagerType[] {
+export function gesture( $elements: FLib.Events.Gesture.Elements, handlerName: string | symbol, userOptions: FLib.Events.Gesture.Options ): FLib.Events.Gesture.Manager | FLib.Events.Gesture.Manager[] {
     const options = extend( defaultOptions, userOptions );
 
     if (
         typeof ($elements as NodeList).length === 'number' &&
         ($elements as HTMLElement).tagName !== 'FORM'
     ) {
-        const managers: GestureManagerType[] = [];
+        const managers: FLib.Events.Gesture.Manager[] = [];
 
         ($elements as NodeList).forEach($element => {
             managers.push( addManager( $element, handlerName, options ) );
@@ -736,7 +735,7 @@ export function gesture( $elements: GestureElementsType, handlerName: string | S
  * @example
  * gestureOff( $element, 'handlerName' );
  */
-export function gestureOff( $elements: GestureElementsType, handlerName: string | Symbol ): void {
+export function gestureOff( $elements: FLib.Events.Gesture.Elements, handlerName: string | symbol ): void {
     if (
         typeof ($elements as NodeList).length === 'number' &&
         ($elements as HTMLElement).tagName !== 'FORM'

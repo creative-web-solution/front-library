@@ -1,6 +1,7 @@
 import isUrl            from './Tools/IsUrl';
 import { addValidator } from './index';
 
+
 /**
  * URL validation
  */

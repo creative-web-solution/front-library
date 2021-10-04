@@ -4,7 +4,6 @@ import { isString } from '../Helpers/Type';
 /**
  * Wrap a DOM element in another
  *
- * @param $element
  * @param tag - String example: <span></span>
  *
  * @example

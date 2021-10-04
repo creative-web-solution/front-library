@@ -8,26 +8,26 @@ export default class PopinBackground {
 
     #$bgLayer: HTMLElement;
     #isOpened: boolean;
-    #options:  PopinOptionsType;
+    #options:  FLib.Popin.Options;
     #popin:    Popin | PopinController;
 
 
-    get isOpened() {
+    get isOpened(): boolean {
         return this.#isOpened;
     }
 
 
-    constructor( popin: Popin | PopinController, options: PopinOptionsType ) {
+    constructor( popin: Popin | PopinController, options: FLib.Popin.Options ) {
         this.#isOpened = false;
         this.#popin    = popin;
         this.#options  = options;
-        this.#$bgLayer = strToDOM( options.templates!.bgLayer! ) as HTMLElement;
+        this.#$bgLayer = strToDOM( options.templates.bgLayer ) as HTMLElement;
 
         document.body.appendChild( this.#$bgLayer );
     }
 
 
-    open() {
+    open(): Promise<any> {
         if ( this.#isOpened ) {
             return Promise.resolve();
         }
@@ -36,13 +36,13 @@ export default class PopinBackground {
             this.#$bgLayer.addEventListener( CLICK_EVENT_NAME, this.#onBgClick );
         }
 
-        return this.#options.animations!.openBg!( this.#$bgLayer ).then( () => {
+        return this.#options.animations.openBg( this.#$bgLayer ).then( () => {
             this.#isOpened = true;
         } );
     }
 
 
-    close() {
+    close(): Promise<any> {
         if ( !this.#isOpened ) {
             return Promise.resolve();
         }
@@ -51,18 +51,18 @@ export default class PopinBackground {
             this.#$bgLayer.removeEventListener( CLICK_EVENT_NAME, this.#onBgClick );
         }
 
-        return this.#options.animations!.closeBg!( this.#$bgLayer ).then( () => {
+        return this.#options.animations.closeBg( this.#$bgLayer ).then( () => {
             this.#isOpened = false;
         } );
     }
 
 
-    #onBgClick = () => {
+    #onBgClick = (): void => {
         this.#popin.close();
     }
 
 
-    destroy() {
+    destroy(): void {
         this.#$bgLayer.removeEventListener( CLICK_EVENT_NAME, this.#onBgClick );
-    };
+    }
 }

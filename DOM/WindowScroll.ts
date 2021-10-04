@@ -2,11 +2,13 @@
  * Get the scroll position of the window
  *
  * @example
+ * ```ts
  * {top, left} = scroll()
+ * ```
  *
  * @returns The position of the scroll
  */
-export function windowScroll(): DOMPositionType {
+export function windowScroll(): FLib.DOM.Position {
     let sx, sy, d, r, b;
 
     if ( window.pageYOffset !== undefined ) {

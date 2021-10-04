@@ -2,7 +2,7 @@
  * Reveal the next image using cells shape
  * Insipred by @patriciogv - Simple Voronoi
  */
-export default class Cellular implements GLImageTransitionPreset {
+export default class Cellular implements FLib.GLImageTransition.Preset {
 
     #scale:    number;
     #seed:     number;
@@ -10,7 +10,7 @@ export default class Cellular implements GLImageTransitionPreset {
     #U_SEED!:  WebGLUniformLocation | null;
 
 
-    get fsSource() {
+    get fsSource(): string {
         return `
             #ifdef GL_ES
             precision mediump float;
@@ -83,23 +83,23 @@ export default class Cellular implements GLImageTransitionPreset {
                 gl_FragColor = vec4( color, 1.0 );
             }
         `;
-    };
+    }
 
-    get scale() {
+    get scale(): number {
         return this.#scale;
     }
-    get seed() {
+    get seed(): number {
         return this.#seed;
     }
-    get U_SCALE() {
+    get U_SCALE(): WebGLUniformLocation | null {
         return this.#U_SCALE;
     }
-    get U_SEED() {
+    get U_SEED(): WebGLUniformLocation | null {
         return this.#U_SEED;
     }
 
 
-    constructor( scale: number = 10 ) {
+    constructor( scale = 10 ) {
         this.#scale = scale;
         this.#seed  = Math.random() * 45000;
     }
@@ -108,7 +108,7 @@ export default class Cellular implements GLImageTransitionPreset {
     /**
      * Create specific uniforms for this preset
      */
-    addUniform( GL: WebGLRenderingContext, SHADER_PROGRAM: WebGLProgram ) {
+    addUniform( GL: WebGLRenderingContext, SHADER_PROGRAM: WebGLProgram ): void {
         this.#U_SCALE = GL.getUniformLocation( SHADER_PROGRAM, 'uScale' );
         this.#U_SEED  = GL.getUniformLocation( SHADER_PROGRAM, 'uSeed' );
     }
@@ -117,7 +117,7 @@ export default class Cellular implements GLImageTransitionPreset {
     /**
      * Update the uniforms of this preset during render
      */
-    updateUniform( GL: WebGLRenderingContext ) {
+    updateUniform( GL: WebGLRenderingContext ): void {
         GL.uniform1f( this.#U_SCALE, this.#scale );
         GL.uniform1f( this.#U_SEED,  this.#seed );
     }
@@ -126,7 +126,7 @@ export default class Cellular implements GLImageTransitionPreset {
     /**
      * Called each time before a transition
      */
-    onTransitionStart() {
+    onTransitionStart(): void {
         this.#seed = Math.random() * 45000;
     }
 }

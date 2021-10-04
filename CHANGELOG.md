@@ -1,6 +1,20 @@
 # CHANGELOG
 
 
+## 7.1.0
+
+* Typescript cleanup
+* Remove micro templating modules
+
+**Compatibility warning:**
+
+* SkinSelect: Change templating system
+* Popin: Change templating system
+* onImageLoad and onAllImagesLoad:
+    * Update function signature
+    * Update callback param from array to hash
+
+
 ## 7.0.7
 
 * Add transition helpers function : `transitionWatcher`, `animationWatcher` and `killWatcher`

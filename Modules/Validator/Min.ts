@@ -9,7 +9,7 @@ addValidator( 'min', '[min]', ( $input, value, isLiveValidation ) => {
         $input,
         value,
         "isValid": value === '' ||
-                parseFloat( value as string ) >= parseFloat( $input.getAttribute( 'min' )! ),
+                parseFloat( value as string ) >= parseFloat( $input.getAttribute( 'min' ) as string ),
         "label": "min",
         isLiveValidation
     });

@@ -7,27 +7,19 @@ import { wait }           from '../../Helpers/Wait';
 
 /**
  * This is one notification
- * @class
- * @ignore
- *
- * @param {String|Element} html
- * @param {String} type
- * @param {Object} options
- * @param {Function} close
- * @param {Object} notificationOptions
  */
 export default class Notification {
-    #$notification!:      HTMLElement;
-    #html!:               string;
+    #$notification:       HTMLElement | undefined;
+    #html:                string | undefined;
     #type:                string;
-    #autoCloseTimeout!:   number;
+    #autoCloseTimeout:    number | undefined;
     #closeDelay:          boolean | number;
-    #options:             NotificationsOptionsType;
-    #notificationOptions: NotificationOptionsType;
+    #options:             FLib.Notifications.Options;
+    #notificationOptions: FLib.Notifications.NotificationOptions;
     #close:               ( notification: Notification ) => void;
 
 
-    constructor( htmlOrHTMLElement: string | HTMLElement, type: string, userOptions, close: ( notification: Notification ) => void, notificationOptions?: NotificationOptionsType ) {
+    constructor( htmlOrHTMLElement: string | HTMLElement, type: string, userOptions: FLib.Notifications.Options, close: ( notification: Notification ) => void, notificationOptions?: FLib.Notifications.NotificationOptions ) {
 
         this.#options             = userOptions;
         this.#closeDelay          = false;
@@ -36,10 +28,10 @@ export default class Notification {
         this.#close               = close;
 
         if ( !notificationOptions ) {
-            this.#closeDelay = this.#options.autoCloseDelay!;
+            this.#closeDelay = this.#options.autoCloseDelay;
         }
         else if ( notificationOptions && notificationOptions.closeDelay !== false ) {
-            this.#closeDelay = notificationOptions.closeDelay || this.#options.autoCloseDelay!;
+            this.#closeDelay = notificationOptions.closeDelay || this.#options.autoCloseDelay;
         }
 
         if ( typeof htmlOrHTMLElement === 'string' ) {
@@ -51,23 +43,23 @@ export default class Notification {
     }
 
 
-    private onClick = ( e ) => {
+    #onClick = ( e: Event ): void => {
         clearTimeout( this.#autoCloseTimeout );
 
-        this.#options.onClick && this.#options.onClick.call( this, e );
-        this.#notificationOptions && this.#notificationOptions.onClick && this.#notificationOptions.onClick.call( this, e );
+        this.#options.onClick?.( this );
+        this.#notificationOptions?.onClick?.call( this, e );
 
         this.#close( this );
     }
 
 
-    show( $list ) {
+    show( $list: HTMLElement ): Promise<any> {
         if ( !this.#$notification ) {
-            this.#$notification = strToDOM( this.#options.templates!.notification ) as HTMLElement;
-            this.#$notification.innerHTML = this.#html;
+            this.#$notification = strToDOM( this.#options.templates.notification ) as HTMLElement;
+            ( this.#$notification as HTMLElement ).innerHTML = this.#html || '';
 
-            if ( this.#options.cssClass![ this.#type ] ) {
-                aClass( this.#$notification, this.#options.cssClass![ this.#type ] );
+            if ( this.#options.cssClass[ this.#type ] ) {
+                aClass( this.#$notification, this.#options.cssClass[ this.#type ] );
             }
 
             append( this.#$notification, $list );
@@ -75,7 +67,7 @@ export default class Notification {
 
         one( this.#$notification, {
             "eventsName":   "click",
-            "callback":     this.onClick
+            "callback":     this.#onClick
         } );
 
         if ( this.#closeDelay ) {
@@ -84,18 +76,22 @@ export default class Notification {
             }, this.#closeDelay as number * 1000 );
         }
 
-        return wait( 100 ).then( () => this.#options.animations!.show!( this.#$notification, this.#options ) );
-    };
+        return wait( 100 ).then( () => this.#options.animations.show( this.#$notification, this.#options ) );
+    }
 
 
-    hide() {
+    hide(): Promise<any> {
+        if ( !this.#$notification ) {
+            return Promise.resolve()
+        }
+
         off( this.#$notification, {
             "eventsName":   "click",
-            "callback":     this.onClick
+            "callback":     this.#onClick
         } );
 
-        return this.#options.animations!.hide!( this.#$notification, this.#options ).then( () => {
-            remove( this.#$notification );
+        return this.#options.animations.hide( this.#$notification, this.#options ).then( () => {
+            remove( ( this.#$notification as HTMLElement ) );
         } );
-    };
+    }
 }

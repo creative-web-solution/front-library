@@ -54,7 +54,7 @@ const defaultOptions = {
 export default class Slider {
 
     #$slider:       HTMLElement;
-    #$slides:       NodeList;
+    #$slides:       NodeListOf<HTMLElement>;
     #$list:         HTMLElement;
     #slidesList:    Slide[];
     #nbSlides:      number;
@@ -64,60 +64,60 @@ export default class Slider {
     #STATE_MOVING   = 'moving';
     #state          = this.#STATE_IDLE;
     #EASE_NONE      = Linear.easeNone;
-    #options:       SliderOptionsType;
+    #options:       FLib.Slider.Options;
 
 
     /**
      * The DOM element of the slider
      */
-    get $slider() {
+    get $slider(): HTMLElement {
         return this.#$slider;
     }
 
     /**
      * Wrapper of the slides
      */
-    get $list() {
+    get $list(): HTMLElement {
         return this.#$list;
     }
 
     /**
      * All slides (DOM elements)
      */
-    get $slides() {
+    get $slides(): NodeListOf<HTMLElement> {
         return this.#$slides;
     }
 
     /**
      * All slides (DOM elements)
      */
-    get slides() {
+    get slides(): any[] {
         return this.#slidesList.map( slide => slide.getSlideProperties() );
     }
 
     /**
      * Number of slides
      */
-    get slideCount() {
+    get slideCount(): number {
         return this.#nbSlides;
     }
 
     /**
      * Number of pages (can have several slides by page)
      */
-    get pageCount() {
+    get pageCount(): number {
         return this.#nbPages;
     }
 
     /**
      * Number of bullet needed in a pager
      */
-    get bulletCount() {
+    get bulletCount(): number {
         return this.#options.moveByPage ? this.#nbPages : this.#nbSlides;
     }
 
 
-    constructor( $slider, userOptions: SliderOptionsType = {} ) {
+    constructor( $slider: HTMLElement, userOptions: Partial<FLib.Slider.Options> = {} ) {
 
         this.#options = extend( defaultOptions, userOptions );
 
@@ -126,8 +126,8 @@ export default class Slider {
         }
 
         this.#$slider   = $slider;
-        this.#$list     = $slider.querySelector( this.#options.listSelector );
-        this.#$slides   = this.#$list.querySelectorAll( this.#options.itemsSelector! );
+        this.#$list     = $slider.querySelector( this.#options.listSelector ) as HTMLElement;
+        this.#$slides   = this.#$list.querySelectorAll( this.#options.itemsSelector );
         this.#nbSlides  = this.#$slides.length;
 
         this.#slidesList = [];
@@ -141,14 +141,14 @@ export default class Slider {
 
         for ( let index = 0, len = this.#$slides.length; index < len; ++index ) {
             const $slide = this.#$slides[ index ];
-            let slide = new Slide( {
-                "nbSlideVisibleBefore": this.#options.nbSlideVisibleBefore!,
-                "nbSlideVisibleAfter":  this.#options.nbSlideVisibleAfter!,
-                "slidePerPage":         this.#options.slidePerPage!,
-                "moveByPage":           this.#options.moveByPage!,
+            const slide = new Slide( {
+                "nbSlideVisibleBefore": this.#options.nbSlideVisibleBefore,
+                "nbSlideVisibleAfter":  this.#options.nbSlideVisibleAfter,
+                "slidePerPage":         this.#options.slidePerPage,
+                "moveByPage":           this.#options.moveByPage,
                 "nbSlides":             this.#nbSlides,
                 "nbPages":              this.#nbPages,
-                "speed":                this.#options.speed!,
+                "speed":                this.#options.speed,
                 "$slide":               $slide as HTMLElement,
                 index,
                 "_setStyle":            this.#options._setStyle,
@@ -164,12 +164,12 @@ export default class Slider {
             this.#slidesList.push( slide );
         }
 
-        aClass( $slider, this.#options.activeClass! );
+        aClass( $slider, this.#options.activeClass );
 
-        this.init();
+        this.#init();
 
         wait().then( () => {
-            let data = {
+            const data = {
                 "currentSlide": this.#currentSlide.getSlideProperties()
             };
 
@@ -177,13 +177,6 @@ export default class Slider {
                 this.#options.onStart( data );
             }
 
-            /**
-             * On the initialization of the slider
-             *
-             * @event Slider#start
-             * @type {Object}
-             * @property {SlideEventData_Params} data - Only currentSlide property
-             */
             fire( this, {
                 "eventsName": SLIDER_EVENT_START,
                 "detail": data
@@ -193,14 +186,14 @@ export default class Slider {
     }
 
 
-    private getNextSlideIndex( index: number, step = 1 ): number {
+    #getNextSlideIndex = ( index: number, step = 1 ): number => {
         index = index + step;
 
         if ( this.#options.loop && index >= this.#nbSlides ) {
             index = 0;
         }
         else if (
-            !this.#options.loop && !this.#options.moveByPage && index > this.#nbSlides - this.#options.slidePerPage! ||
+            !this.#options.loop && !this.#options.moveByPage && index > this.#nbSlides - this.#options.slidePerPage ||
             index >= this.#nbSlides
         ) {
             return -1;
@@ -210,7 +203,7 @@ export default class Slider {
     }
 
 
-    private getPreviousSlideIndex( index: number, step = 1 ): number {
+    #getPreviousSlideIndex = ( index: number, step = 1 ): number => {
         index = index - step;
 
         if ( index < 0 && this.#options.loop ) {
@@ -218,7 +211,7 @@ export default class Slider {
                 index = this.#nbSlides - 1;
             }
             else {
-                index = ( this.#nbPages - 1 ) * this.#options.slidePerPage!;
+                index = ( this.#nbPages - 1 ) * this.#options.slidePerPage;
             }
         }
         else if ( index < 0 ) {
@@ -229,8 +222,8 @@ export default class Slider {
     }
 
 
-    private getNextSlide( index: number, step = 1 ): Slide | undefined {
-        index = this.getNextSlideIndex( index, step );
+    #getNextSlide = ( index: number, step = 1 ): Slide | undefined => {
+        index = this.#getNextSlideIndex( index, step );
 
         if ( index < 0 ) {
             return;
@@ -240,8 +233,8 @@ export default class Slider {
     }
 
 
-    private getPreviousSlide( index: number, step = 1 ): Slide | undefined {
-        index = this.getPreviousSlideIndex( index, step );
+    #getPreviousSlide = ( index: number, step = 1 ): Slide | undefined => {
+        index = this.#getPreviousSlideIndex( index, step );
 
         if ( index < 0 ) {
             return;
@@ -251,22 +244,22 @@ export default class Slider {
     }
 
 
-    private reorderSlidesWithLoop( activeSlide: Slide, direction: SlideDirectionType ) {
+    #reorderSlidesWithLoop = ( activeSlide: Slide, direction: FLib.Slider.SlideDirection ): void => {
         let slide, nbSlideAfter, nbSlideBefore;
 
         slide = activeSlide;
 
         if ( direction === DIRECTION_NEXT ) {
-            nbSlideAfter = Math.floor( ( this.#nbSlides - this.#options.slidePerPage! ) / 2 );
-            nbSlideBefore = this.#nbSlides - this.#options.slidePerPage! - nbSlideAfter;
+            nbSlideAfter = Math.floor( ( this.#nbSlides - this.#options.slidePerPage ) / 2 );
+            nbSlideBefore = this.#nbSlides - this.#options.slidePerPage - nbSlideAfter;
         }
         else {
-            nbSlideBefore = Math.floor( ( this.#nbSlides - this.#options.slidePerPage! ) / 2 );
-            nbSlideAfter = this.#nbSlides - this.#options.slidePerPage! - nbSlideBefore;
+            nbSlideBefore = Math.floor( ( this.#nbSlides - this.#options.slidePerPage ) / 2 );
+            nbSlideAfter = this.#nbSlides - this.#options.slidePerPage - nbSlideBefore;
         }
 
         for ( let indexBefore = 0; indexBefore < nbSlideBefore; ++indexBefore ) {
-            slide = this.getPreviousSlide( slide.index );
+            slide = this.#getPreviousSlide( slide.index );
             slide.setOffsetToGo( -indexBefore - 1 );
         }
 
@@ -275,29 +268,29 @@ export default class Slider {
 
         for (
             let indexVisible = 1;
-            indexVisible < this.#options.slidePerPage!;
+            indexVisible < this.#options.slidePerPage;
             ++indexVisible
         ) {
-            slide = this.getNextSlide( slide.index );
+            slide = this.#getNextSlide( slide.index );
             slide.setOffsetToGo( indexVisible );
         }
 
         for ( let indexAfter = 0; indexAfter < nbSlideAfter; ++indexAfter ) {
-            slide = this.getNextSlide( slide.index );
-            slide.setOffsetToGo( this.#options.slidePerPage! + indexAfter );
+            slide = this.#getNextSlide( slide.index );
+            slide.setOffsetToGo( this.#options.slidePerPage + indexAfter );
         }
     }
 
 
-    private reorderSlidesWithoutLoop( activeSlide: Slide ) {
+    #reorderSlidesWithoutLoop = ( activeSlide: Slide ): void => {
         for ( let i = 0; i < this.#nbSlides; ++i ) {
-            let slide = this.#slidesList[ i ];
+            const slide = this.#slidesList[ i ];
 
             if ( i === activeSlide.index ) {
                 slide.setOffsetToGo( 0 );
             }
-            else if ( i < activeSlide.index - this.#options.nbSlideVisibleBefore! ) {
-                slide.setOffsetToGo (-this.#options.nbSlideVisibleBefore! - 1 );
+            else if ( i < activeSlide.index - this.#options.nbSlideVisibleBefore ) {
+                slide.setOffsetToGo (-this.#options.nbSlideVisibleBefore - 1 );
             }
             else if (
                 i >
@@ -306,7 +299,7 @@ export default class Slider {
                     this.#options.slidePerPage
             ) {
                 slide.setOffsetToGo(
-                    this.#options.nbSlideVisibleAfter! + this.#options.slidePerPage!
+                    this.#options.nbSlideVisibleAfter + this.#options.slidePerPage
                 );
             } else {
                 slide.setOffsetToGo( i - activeSlide.index );
@@ -315,23 +308,21 @@ export default class Slider {
     }
 
 
-    private reorderSlides( activeSlide: Slide, direction: SlideDirectionType ) {
+    #reorderSlides = ( activeSlide: Slide, direction: FLib.Slider.SlideDirection ): void => {
         if ( this.#options.loop ) {
-            this.reorderSlidesWithLoop( activeSlide, direction );
+            this.#reorderSlidesWithLoop( activeSlide, direction );
         }
         else {
-            this.reorderSlidesWithoutLoop( activeSlide );
+            this.#reorderSlidesWithoutLoop( activeSlide );
         }
     }
 
 
-    private moveSlides( nextActiveSlide: Slide, direction: SlideDirectionType, easing, $button: HTMLElement ): Promise<void> {
-        let promArray, callbackData;
-
+    #moveSlides = ( nextActiveSlide: Slide, direction: FLib.Slider.SlideDirection, easing, $button?: HTMLElement ): Promise<void> => {
         this.#state = this.#STATE_MOVING;
-        promArray = [];
+        const promArray: Promise<any>[] = [];
 
-        callbackData = {
+        const callbackData: FLib.Slider.CallbackParam = {
             "targetSlide":  nextActiveSlide.getSlideProperties(),
             "currentSlide": this.#currentSlide.getSlideProperties(),
             "direction":    direction
@@ -348,10 +339,6 @@ export default class Slider {
 
         /**
          * Before each slide move. If moving for 3 slides, it will be called 3 times.
-         *
-         * @event Slider#beforeEach
-         * @type {Object}
-         * @property {SlideEventData_Params} data
          */
         fire( this, {
             "eventsName": SLIDER_EVENT_BEFORE_EACH,
@@ -359,7 +346,7 @@ export default class Slider {
         } );
 
 
-        this.reorderSlides( nextActiveSlide, direction );
+        this.#reorderSlides( nextActiveSlide, direction );
 
         // All init first
         this.#slidesList.forEach( slide => {
@@ -378,10 +365,6 @@ export default class Slider {
 
             /**
              * After each slide move. If moving for 3 slides, it will be called 3 times.
-             *
-             * @event Slider#afterEach
-             * @type {Object}
-             * @property {SlideEventData_Params} data
              */
             fire( this, {
                 "eventsName": SLIDER_EVENT_AFTER_EACH,
@@ -393,8 +376,8 @@ export default class Slider {
     }
 
 
-    private init() {
-        this.reorderSlides( this.#currentSlide, DIRECTION_NEXT );
+    #init = (): void => {
+        this.#reorderSlides( this.#currentSlide, DIRECTION_NEXT );
 
         this.#slidesList.forEach( ( slide ) => {
             slide.init();
@@ -402,39 +385,33 @@ export default class Slider {
     }
 
 
-    private goPrevious( easing, $button: HTMLElement ): Promise<void> {
-        let previousSlide;
-
-        previousSlide = this.getPreviousSlide( this.#currentSlide.index );
+    #goPrevious = ( easing, $button?: HTMLElement ): Promise<void> => {
+        const previousSlide = this.#getPreviousSlide( this.#currentSlide.index );
 
         if ( !previousSlide ) {
             return Promise.resolve();
         }
 
-        return this.moveSlides( previousSlide, DIRECTION_PREVIOUS, easing, $button );
+        return this.#moveSlides( previousSlide, DIRECTION_PREVIOUS, easing, $button );
     }
 
 
-    private goNext( easing, $button: HTMLElement ): Promise<void> {
-        let nextSlide;
-
-        nextSlide = this.getNextSlide( this.#currentSlide.index );
+    #goNext = ( easing, $button?: HTMLElement ): Promise<void> => {
+        const nextSlide = this.#getNextSlide( this.#currentSlide.index );
 
         if ( !nextSlide ) {
             return Promise.resolve();
         }
 
-        return this.moveSlides( nextSlide, DIRECTION_NEXT, easing, $button );
+        return this.#moveSlides( nextSlide, DIRECTION_NEXT, easing, $button );
     }
 
 
-    private getShortestWayAndDirection( index: number, askedDirection?: SlideDirectionType ) {
-        let setupOpt, indexOfFirstPage, indexOfLastPage, currentPageIndex;
-
-        setupOpt         = {};
-        indexOfFirstPage = 0;
-        indexOfLastPage  = this.#nbSlides - 1;
-        currentPageIndex = this.#currentSlide.index;
+    #getShortestWayAndDirection = ( index: number, askedDirection?: FLib.Slider.SlideDirection ): Record<string, any> => {
+        const setupOpt:        Record<string, any> = {};
+        const indexOfFirstPage = 0;
+        const indexOfLastPage  = this.#nbSlides - 1;
+        const currentPageIndex = this.#currentSlide.index;
 
         // Store the natural direction
         setupOpt.direction =
@@ -505,9 +482,9 @@ export default class Slider {
     }
 
 
-    private updateHeight( currentSlide: Slide, nextSlide: Slide, duration: number ): Promise<void> {
+    #updateHeight = ( currentSlide: Slide, nextSlide: Slide, duration: number ): Promise<void> => {
         return new Promise( resolve => {
-            this.#options._tweenFromTo!(
+            this.#options._tweenFromTo(
                 this.#$list,
                 {
                     "height": currentSlide.getHeight()
@@ -522,22 +499,15 @@ export default class Slider {
     }
 
 
-    private cleanListHeight() {
-        this.#options._setStyle!( this.#$list, {
+    #cleanListHeight = (): void => {
+        this.#options._setStyle( this.#$list, {
             "clearProps": "height"
         } );
     }
 
 
-    private moveTo( index: number, askedDirection?: SlideDirectionType, $button?: HTMLElement ): Promise<void> {
-        let wayAndDirection,
-            prom,
-            fun,
-            easing,
-            lastCurrentSlide,
-            nextSlide,
-            promArray,
-            callbackData;
+    #moveTo = ( index: number, askedDirection?: FLib.Slider.SlideDirection, $button?: HTMLElement ): Promise<void> => {
+        let prom;
 
         if (
             this.#state !== this.#STATE_IDLE ||
@@ -548,19 +518,19 @@ export default class Slider {
             return Promise.resolve();
         }
 
-        nextSlide = this.#slidesList[ index ];
-        promArray = [];
+        const nextSlide = this.#slidesList[ index ];
+        const promArray: Promise<any>[] = [];
 
-        wayAndDirection = this.getShortestWayAndDirection( index, askedDirection );
-        fun =
+        const wayAndDirection = this.#getShortestWayAndDirection( index, askedDirection );
+        const fun =
             wayAndDirection.direction === DIRECTION_PREVIOUS
-                ? this.goPrevious.bind( this )
-                : this.goNext.bind( this );
+                ? this.#goPrevious.bind( this )
+                : this.#goNext.bind( this );
 
-        easing = this.#EASE_NONE;
-        lastCurrentSlide = this.#currentSlide;
+        const easing = this.#EASE_NONE;
+        const lastCurrentSlide = this.#currentSlide;
 
-        callbackData = {
+        const callbackData: FLib.Slider.CallbackParam = {
             "targetSlide": nextSlide.getSlideProperties(),
             "currentSlide": lastCurrentSlide.getSlideProperties(),
             "direction": wayAndDirection.direction
@@ -596,10 +566,10 @@ export default class Slider {
 
         if ( this.#options.smoothHeight ) {
             promArray.push(
-                this.updateHeight(
+                this.#updateHeight(
                     this.#currentSlide,
                     nextSlide,
-                    this.#options.speed! * wayAndDirection.nbStepsMin
+                    this.#options.speed * wayAndDirection.nbStepsMin
                 )
             );
         }
@@ -608,7 +578,7 @@ export default class Slider {
 
         return Promise.all( promArray ).then(() => {
             if ( this.#options.smoothHeight ) {
-                this.cleanListHeight();
+                this.#cleanListHeight();
             }
 
             if ( this.#options.onAfter ) {
@@ -631,13 +601,11 @@ export default class Slider {
      * @param $button - Internal use only
      */
     next( $button?: HTMLElement ) : Promise<void>{
-        let nextSlideIndex;
-
         if ( this.#state !== this.#STATE_IDLE || ( !this.#options.loop && this.#currentSlide.isLast ) ) {
             return Promise.resolve();
         }
 
-        nextSlideIndex = this.getNextSlideIndex(
+        const nextSlideIndex = this.#getNextSlideIndex(
             this.#currentSlide.index,
             this.#options.moveByPage ? this.#options.slidePerPage : 1
         );
@@ -646,22 +614,21 @@ export default class Slider {
             return Promise.resolve();
         }
 
-        return this.moveTo( nextSlideIndex, DIRECTION_NEXT, $button );
+        return this.#moveTo( nextSlideIndex, DIRECTION_NEXT, $button );
     }
 
 
     /**
      * Go to the previous slide or page
-     * @param $button Internal use only
+     *
+     * @param $button - Internal use only
      */
     previous( $button?: HTMLElement ): Promise<void> {
-        let previousSlideIndex;
-
         if ( this.#state !== this.#STATE_IDLE || ( !this.#options.loop && this.#currentSlide.isFirst ) ) {
             return Promise.resolve();
         }
 
-        previousSlideIndex = this.getPreviousSlideIndex(
+        const previousSlideIndex = this.#getPreviousSlideIndex(
             this.#currentSlide.index,
             this.#options.moveByPage ? this.#options.slidePerPage : 1
         );
@@ -670,20 +637,19 @@ export default class Slider {
             return Promise.resolve();
         }
 
-        return this.moveTo( previousSlideIndex, DIRECTION_PREVIOUS, $button );
+        return this.#moveTo( previousSlideIndex, DIRECTION_PREVIOUS, $button );
     }
 
 
     /**
      * Go to the asked slide or page
      *
-     * @param page
-     * @param $button Internal use only
+     * @param $button - Internal use only
      */
     goTo( page: number, $button?: HTMLElement ): Promise<void> {
-        let index = this.#options.moveByPage ? page * this.#options.slidePerPage! : page;
+        const index = this.#options.moveByPage ? page * this.#options.slidePerPage : page;
 
-        return this.moveTo( index, undefined, $button );
+        return this.#moveTo( index, undefined, $button );
     }
 
 
@@ -691,10 +657,10 @@ export default class Slider {
      * Check if the slider is enable or not
      */
     isEnabled(): boolean {
-        let nbSlidesVisible =
-            this.#options.nbSlideVisibleBefore! +
-            this.#options.nbSlideVisibleAfter! +
-            this.#options.slidePerPage!;
+        const nbSlidesVisible =
+            this.#options.nbSlideVisibleBefore +
+            this.#options.nbSlideVisibleAfter +
+            this.#options.slidePerPage;
         return (
             this.#nbSlides > nbSlidesVisible ||
             ( !this.#options.loop && this.#nbSlides === nbSlidesVisible )
@@ -705,12 +671,12 @@ export default class Slider {
     /**
      * Remove all events, css class or inline styles
      */
-    destroy() {
+    destroy(): void {
         if ( this.isEnabled() ) {
             this.#slidesList.forEach( slide => {
                 slide.destroy();
             } );
-            rClass( this.#$slider, this.#options.activeClass! );
+            rClass( this.#$slider, this.#options.activeClass );
         }
     }
 
@@ -725,10 +691,8 @@ export default class Slider {
 
     /**
      * Get a slide in function of an index
-     *
-     * @param index
      */
-    getSlide( index ): Slide {
+    getSlide( index: number ): Slide {
         return this.#slidesList[ index ];
     }
 
@@ -740,7 +704,7 @@ export default class Slider {
      * @param nb - Number of slide after the target
      */
     getTheNthChildAfter( index: number, nb: number ): Slide | undefined {
-        return this.getNextSlide( index, nb );
+        return this.#getNextSlide( index, nb );
     }
 
 
@@ -751,6 +715,6 @@ export default class Slider {
      * @param nb - Number of slide before the target
      */
     getTheNthChildBefore( index: number, nb: number ): Slide | undefined {
-        return this.getPreviousSlide( index, nb );
+        return this.#getPreviousSlide( index, nb );
     }
 }

@@ -10,7 +10,7 @@
  * // To reject:
  * dfd.reject()
  *
- * @returns {Promise} - a promise with a resolve and reject function
+ * @returns - a promise with a resolve and reject function
  */
 export function defer(): Promise<any> & { resolve: ( a?: any ) => void; reject:  ( a?: any ) => void; } {
     let res: (a: any ) => void,

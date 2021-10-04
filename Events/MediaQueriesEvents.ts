@@ -6,37 +6,41 @@ import { slice }  from '../Helpers/Slice';
  * Manage media queries events
  *
  * @example
+ * ```ts
  * let mquery = new MediaQueriesEvents( [
+ *    {
  *        "name" :        "mob",
  *        "query":        window.matchMedia( '(max-width:767px)' )
- *    },
+ *    \},
  *    {
  *        "name" :        "tab",
  *        "query":        window.matchMedia( '(min-width:768px) and (max-width:959px)' )
- *    },
+ *    \},
  *    {
  *        "name" :        "desk",
  *        "query":        window.matchMedia( '(min-width:960px)' )
- *    } ] );
+ *    \}
+ * ] );
  *
  * or
  *
  *  let mquery = new MediaQueriesEvents( [
+ *    {
  *        "name" :        "mob",
  *        "max":          767
- *    },
+ *    \},
  *    {
  *        "name" :        "tab",
  *        "min":          768,
  *        "max":          956
- *    },
+ *    \},
  *    {
  *        "name" :        "desk",
  *        "max":          960
- *    } ],
+ *    \} ],
  *    {
  *       "unit": "px" // Default value
- *    }
+ *    \}
  * );
  *
  * // Register a function to be call when leaving any breakpoint
@@ -63,9 +67,9 @@ import { slice }  from '../Helpers/Slice';
  * boolean = mquery.is( 'desk' );
  *
  * // Current active breakpoint
- * myBreakpoint = mquery.currentBreakpoint; // => {name, query, ...} or false
- * myBreakpoint.is( 'mob' ); // => true|false
- * myBreakpoint.in( ['mob', 'tab'] ); // => true|false
+ * myBreakpoint = mquery.currentBreakpoint; // =&gt; { name, query, ... } or false
+ * myBreakpoint.is( 'mob' ); // =&gt; true|false
+ * myBreakpoint.in( ['mob', 'tab'] ); // =&gt; true|false
  *
  * // List of all breakpoints
  * array = mquery.list;
@@ -78,30 +82,30 @@ import { slice }  from '../Helpers/Slice';
  *
  * // Resume media queries watch
  * mquery.resume();
- *
+ * ```
  */
 export default class MediaQueriesEvents {
 
-    #breakpointsList:   Breakpoint[];
-    #currentBreakpoint: Breakpoint | undefined;
-    #functionHash:      { [ key: string ]: MediaQueriesEventsInternalCallbackType[] };
-    #isSuspended:       boolean = false;
-    #options:           MediaQueriesEventsOptions;
+    #breakpointsList:   FLib.Events.MediaqueriesEvents.Breakpoint[];
+    #currentBreakpoint: FLib.Events.MediaqueriesEvents.Breakpoint | undefined;
+    #functionHash:      Record<string, FLib.Events.MediaqueriesEvents.InternalCallbackType[]>;
+    #isSuspended        = false;
+    #options:           FLib.Events.MediaqueriesEvents.Options;
 
     #globalHashName     = '__globalHashName';
 
     /** Current active breakpoint */
-    get currentBreakpoint() {
+    get currentBreakpoint(): FLib.Events.MediaqueriesEvents.Breakpoint | undefined {
         return this.#currentBreakpoint;
     }
 
     /** List of all breakpoints */
-    get list() {
+    get list(): FLib.Events.MediaqueriesEvents.Breakpoint[] {
         return this.#breakpointsList;
     }
 
 
-    constructor( breakpointsList: MediaQueriesEventsListOptions[], userOptions: MediaQueriesEventsOptions ) {
+    constructor( breakpointsList: FLib.Events.MediaqueriesEvents.ListOptions[], userOptions: FLib.Events.MediaqueriesEvents.Options ) {
         const DEFAULT_OPTIONS = {
             "unit": "px"
         };
@@ -118,16 +122,16 @@ export default class MediaQueriesEvents {
 
         // Handlers
         this.#breakpointsList = breakpointsList.map( breakpointItem => {
-            const breakpoint: Breakpoint = {
+            const breakpoint: FLib.Events.MediaqueriesEvents.Breakpoint = {
                 ...breakpointItem,
-                "query": breakpointItem.query || this.createQuery( breakpointItem ),
+                "query": breakpointItem.query || this.#createQuery( breakpointItem ),
                 "handler": mql => {
                     if ( mql.matches ) {
                         this.#currentBreakpoint = breakpoint;
                     }
 
                     if ( !this.#isSuspended ) {
-                        this.update( breakpoint, mql.matches );
+                        this.#update( breakpoint, mql.matches );
                     }
                 },
                 "in": breakpointNameList => {
@@ -150,14 +154,14 @@ export default class MediaQueriesEvents {
             return breakpoint;
         });
 
-        this.#currentBreakpoint = this.getCurrentBreakpoint();
+        this.#currentBreakpoint = this.#getCurrentBreakpoint();
     }
 
 
     // TOOLS
 
 
-    private processList( list, breakpoint, isMatching ) {
+    #processList = ( list: FLib.Events.MediaqueriesEvents.InternalCallbackType[], breakpoint: FLib.Events.MediaqueriesEvents.Breakpoint, isMatching: boolean ): void => {
         list.forEach( obj => {
             if (
                 obj.type === 'both' ||
@@ -171,28 +175,28 @@ export default class MediaQueriesEvents {
 
 
     // Call each registered function
-    private update( breakpoint: Breakpoint, isMatching: boolean ): void {
+    #update = ( breakpoint: FLib.Events.MediaqueriesEvents.Breakpoint, isMatching: boolean ): void => {
         if ( this.#functionHash[ breakpoint.name ] && this.#functionHash[ breakpoint.name ].length ) {
-            this.processList( this.#functionHash[ breakpoint.name ], breakpoint, isMatching );
+            this.#processList( this.#functionHash[ breakpoint.name ], breakpoint, isMatching );
         }
 
         if ( this.#functionHash[ this.#globalHashName ].length ) {
-            this.processList( this.#functionHash[ this.#globalHashName ], breakpoint, isMatching );
+            this.#processList( this.#functionHash[ this.#globalHashName ], breakpoint, isMatching );
         }
     }
 
 
-    private getBreakpoint( breakpointName: string ): Breakpoint | undefined {
+    #getBreakpoint = ( breakpointName: string ): FLib.Events.MediaqueriesEvents.Breakpoint | undefined => {
         return this.#breakpointsList.find( bp => bp.name === breakpointName );
     }
 
 
-    private getCurrentBreakpoint(): Breakpoint | undefined {
+    #getCurrentBreakpoint = (): FLib.Events.MediaqueriesEvents.Breakpoint | undefined => {
         return this.#breakpointsList.find( bp => bp.query.matches );
     }
 
 
-    private createQuery( breakpoint: MediaQueriesEventsListOptions ): MediaQueryList {
+    #createQuery = ( breakpoint: FLib.Events.MediaqueriesEvents.ListOptions ): MediaQueryList => {
         let minQuery, maxQuery, query;
 
         if ( typeof breakpoint.min === 'number' ) {
@@ -226,18 +230,18 @@ export default class MediaQueriesEvents {
     /**
      * Return the value of the property with the name of the current breakpoint of an object
      *
-     * @param obj
-     *
      * @example
+     * ```ts
+     * // If the current breakpoint name is "small", it will return "val1"
      * mediaQueryEvent.getValue( { "small": "val1", "medium": "val2", ... } );
-     * Ih the current breakpoint name is "small", it will return "val1"
+     * ```
      */
-    getValue<Value>( obj: { [ key: string ]: Value } ): Value | undefined {
+    getValue<Value>( obj: Record<string, Value> ): Value | undefined {
         if ( !this.#currentBreakpoint ) {
             return;
         }
         return obj[ this.#currentBreakpoint.name ];
-    };
+    }
 
 
     /**
@@ -245,9 +249,9 @@ export default class MediaQueriesEvents {
      *
      * @param callback - Callback
      * @param breakpointName - Name of the breakpoint
-     * @param [type=MediaQueriesEvents.TYPE_ON_ENTER] - Select when the function will be called: when entering the query, when leaving it, or on both
+     * @param type - Select when the function will be called: when entering the query, when leaving it, or on both
     */
-    on( callback: MediaQueriesEventsCallback, breakpointName: string, type: MediaQueriesEventsCallbackType = 'enter' ): this {
+    on( callback: FLib.Events.MediaqueriesEvents.Callback, breakpointName: string, type: FLib.Events.MediaqueriesEvents.CallbackType = 'enter' ): this {
         if ( !this.#functionHash[ breakpointName ] ) {
             return this;
         }
@@ -264,15 +268,15 @@ export default class MediaQueriesEvents {
     /**
      * Unbind a function to be called on a specific breakpoint
      *
-     * @param {Function} callback - Function to remove from the registered function list
-     * @param {String} breakpointName - Name of the breakpoint
+     * @param callback - Function to remove from the registered function list
+     * @param breakpointName - Name of the breakpoint
     */
-    off( callback: MediaQueriesEventsCallback, breakpointName: string ): this {
+    off( callback: FLib.Events.MediaqueriesEvents.Callback, breakpointName: string ): this {
         if ( !this.#functionHash[ breakpointName ] ) {
             return this;
         }
 
-        let obj = this.#functionHash[ breakpointName ].find( o => o.callback === callback );
+        const obj = this.#functionHash[ breakpointName ].find( o => o.callback === callback );
 
         slice( this.#functionHash[ breakpointName ], obj );
 
@@ -283,10 +287,10 @@ export default class MediaQueriesEvents {
     /**
      * Register a function to be called on all media queries change
      *
-     * @param {MediaQueriesEvents_Handler} callback - Function to call on mediaquery change
-     * @param {String} [type=MediaQueriesEvents.TYPE_ON_ENTER] - Select when the function will be called: when entering the query, when leaving it, or on both
+     * @param callback - Function to call on mediaquery change
+     * @param type - Select when the function will be called: when entering the query, when leaving it, or on both
     */
-    register( callback: MediaQueriesEventsCallback, type: MediaQueriesEventsCallbackType = 'enter' ): this {
+    register( callback: FLib.Events.MediaqueriesEvents.Callback, type: FLib.Events.MediaqueriesEvents.CallbackType = 'enter' ): this {
         this.#functionHash[ this.#globalHashName ].push({
             callback,
             type
@@ -301,8 +305,8 @@ export default class MediaQueriesEvents {
      *
      * @param callback - Function to remove from the registered function list
     */
-    remove( callback: MediaQueriesEventsCallback ): this {
-        let obj = this.#functionHash[ this.#globalHashName ].find( o => o.callback === callback );
+    remove( callback: FLib.Events.MediaqueriesEvents.Callback ): this {
+        const obj = this.#functionHash[ this.#globalHashName ].find( o => o.callback === callback );
 
         slice( this.#functionHash[ this.#globalHashName ], obj );
 
@@ -318,7 +322,7 @@ export default class MediaQueriesEvents {
             return this;
         }
 
-        this.update( this.#currentBreakpoint, this.#currentBreakpoint.query.matches );
+        this.#update( this.#currentBreakpoint, this.#currentBreakpoint.query.matches );
 
         return this;
     }
@@ -329,7 +333,7 @@ export default class MediaQueriesEvents {
      *
      * @param callback - Function to call
      */
-    get( callback: MediaQueriesEventsCallback ): this {
+    get( callback: FLib.Events.MediaqueriesEvents.Callback ): this {
         if ( !this.#currentBreakpoint || !callback ) {
             return this;
         }
@@ -346,9 +350,7 @@ export default class MediaQueriesEvents {
      * @param breakpointName - Name of a breakpoint
      */
     is( breakpointName: string ): boolean {
-        let breakpoint;
-
-        breakpoint = this.getBreakpoint( breakpointName );
+        const breakpoint = this.#getBreakpoint( breakpointName );
 
         return breakpoint ? breakpoint.query.matches : false;
     }
