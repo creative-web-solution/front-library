@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 6.2.7
+
+* Custom Events: Add target element as param of the callback function on delegated event
+
 
 ## 6.2.6
 

@@ -1607,14 +1607,14 @@ export function SliderControls( slider, options ) {
                     "selector": options.paginationItems,
                     "onPrevious": () => {
                         one( slider, {
-                            "eventsNAme": "before",
+                            "eventsName": "before",
                             "callback": updateBulletsFocus
                         } );
                         slider.previous();
                     },
                     "onNext": () => {
                         one( slider, {
-                            "eventsNAme": "before",
+                            "eventsName": "before",
                             "callback": updateBulletsFocus
                         } );
                         slider.next();

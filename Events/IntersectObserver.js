@@ -91,6 +91,7 @@ export function IntersectObserver( options ) {
         }
 
         ELEMENT_OBSERVER.observe( $element );
+        OBSERVED_ELEMENTS.push( $element );
     }
 
 
