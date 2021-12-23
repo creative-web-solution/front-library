@@ -1,41 +1,40 @@
-import { defer } from '@creative-web-solution/front-library/Helpers/defer';
-
-
-const transitionendEventName = ( function() {
-    let el = document.createElement( 'fakeelement' );
-    let transitions = {
-        "transition": "transitionend",
-        "OTransition": "oTransitionEnd",
-        "MozTransition": "transitionend",
-        "WebkitTransition": "webkitTransitionEnd"
-    };
-
-    for ( let t in transitions ) {
-        if ( typeof el.style[ t ] !== 'undefined' ) {
-            return transitions[ t ];
-        }
-    }
-} )();
+import { transitionendEventName }   from '../Tools/PrefixedProperties';
 
 
 /**
  * Bind a one time transitionend event on a DOM object
- * @function onTransitionEnd
  *
- * @param {HTMLElement} $element
+ * @example
+ * onTransitionEnd( $elem ).then( () =&gt; `{}` );
  *
- * @example onTransitionEnd( $elem ).then( () => {} );
- *
+ * @example
+ * ```js
  * // To remove the event binding, don't chain .then() directly after onTransitionEnd:
  * let transitionEnd = onTransitionEnd( $element );
  * transitionEnd.then( () => {} );
  *
  * transitionEnd.off()
  *
- * @returns {Promise} - Return a standard Promise + an .off() function to cancel event
+ * // To watch for a specific CSS property transition end:
+ * onTransitionEnd( $elem, {
+ * "property": "opacity"
+ * } )
+ *
+ * // To watch a transition end on a pseudo element like "::after":
+ * onTransitionEnd( $elem, {
+ * "pseudoElement": "after"
+ * } )
+ * ```
+ *
+ * @returns Return a standard Promise + an .off() function to cancel event
  */
-export function onTransitionEnd( $element ) {
-    let deferred = defer();
+export default function onTransitionEnd( $element, options = {} ) {
+    let _resolve;
+
+    const promise = new Promise( function( resolve ) {
+        _resolve = resolve;
+    } );
+
 
     function remove() {
         $element.removeEventListener(
@@ -44,15 +43,24 @@ export function onTransitionEnd( $element ) {
         );
     }
 
+
     function onTransitionEnd( e ) {
-        if ( e.target !== $element ) {
+        if (
+            e.target !== $element ||
+            ( options.property && !options.property.includes( e.propertyName ) ) ||
+            ( options.pseudoElement === 'after' && e.pseudoElement !== '::after' ) ||
+            ( options.pseudoElement === 'before' && e.pseudoElement !== '::before' ) ||
+            ( options.pseudoElement === 'both' && !e.pseudoElement ) ||
+            ( !options.pseudoElement && e.pseudoElement !== '' )
+        ) {
             return;
         }
 
         remove();
 
-        deferred.resolve();
+        _resolve( [ e, $element ] );
     }
+
 
     $element.addEventListener(
         transitionendEventName,
@@ -60,7 +68,8 @@ export function onTransitionEnd( $element ) {
         false
     );
 
-    deferred.off = remove;
 
-    return deferred;
+    promise.off = remove;
+
+    return promise;
 }

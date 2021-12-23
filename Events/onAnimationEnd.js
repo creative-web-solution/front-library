@@ -1,32 +1,12 @@
-import { defer } from '@creative-web-solution/front-library/Helpers/defer';
-
-const animationendEventName = ( function() {
-    let el, animation;
-
-    el = document.createElement( 'fakeelement' );
-
-    animation = {
-        "animation": "animationend",
-        "OAnimation": "oAnimationEnd",
-        "MozAnimation": "animationend",
-        "WebkitAnimation": "webkitAnimationEnd"
-    };
-
-    for ( let t in animation ) {
-        if ( el.style[ t ] !== undefined ) {
-            return animation[ t ];
-        }
-    }
-} )();
+import { animationendEventName } from '../Tools/PrefixedProperties';
 
 
 /**
  * Bind a one time animationend event on a DOM object
- * @function onAnimationEnd
  *
- * @param {HTMLElement} $elem
- *
- * @example onAnimationEnd( $elem ).then( () => {} );
+ * @example
+ * ```js
+ * onAnimationEnd( $elem ).then( () => {} );
  *
  * // To remove the event binding, don't chain .then() directly after onAnimationEnd:
  * let animationEnd = onAnimationEnd( $element );
@@ -34,28 +14,52 @@ const animationendEventName = ( function() {
  *
  * animationEnd.off()
  *
- * @returns {Promise} - Return a standard Promise + an .off() function to cancel event
+ * // To watch for a animation end:
+ * onAnimationEnd( $elem, {
+ * "animationName": [ "name-of-my-css-animation" ]
+ * } )
+ *
+ * // To watch a animation end on a pseudo element like "::after":
+ * onAnimationEnd( $elem, {
+ * "pseudoElement": "after"
+ * } )
+ * ```
+ *
+ * @returns Return a standard Promise + an .off() function to cancel event
  */
-export function onAnimationEnd( $elem ) {
-    let deferred = defer();
+export default function onAnimationEnd( $element, options = {} ) {
+    let _resolve;
+
+    const promise = new Promise( function( resolve ) {
+        _resolve = resolve;
+    } );
+
 
     function remove() {
-        $elem.removeEventListener( animationendEventName, onAnimationEnd );
+        $element.removeEventListener( animationendEventName, onAnimationEnd );
     }
 
     function onAnimationEnd( e ) {
-        if ( e.target !== $elem ) {
+        if (
+            e.target !== $element ||
+            ( options.animationName && !options.animationName.includes( e.animationName ) ) ||
+            ( options.pseudoElement === 'after' && e.pseudoElement !== '::after' ) ||
+            ( options.pseudoElement === 'before' && e.pseudoElement !== '::before' ) ||
+            ( options.pseudoElement === 'both' && !e.pseudoElement ) ||
+            ( !options.pseudoElement && e.pseudoElement !== '' )
+        ) {
             return;
         }
 
         remove();
 
-        deferred.resolve();
+        _resolve( [ e, $element ] );
     }
 
-    $elem.addEventListener( animationendEventName, onAnimationEnd, false );
 
-    deferred.off = remove;
+    $element.addEventListener( animationendEventName, onAnimationEnd, false );
 
-    return deferred;
+    promise.off = remove;
+
+    return promise;
 }

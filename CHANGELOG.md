@@ -1,5 +1,11 @@
 # CHANGELOG
 
+
+## 6.2.8
+
+* Transition and animation end: Handle properties filter and pseudo elements
+
+
 ## 6.2.7
 
 * Custom Events: Add target element as param of the callback function on delegated event
