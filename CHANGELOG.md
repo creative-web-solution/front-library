@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 6.2.9
+
+* Add transition helper
+
+
 ## 6.2.8
 
 * Transition and animation end: Handle properties filter and pseudo elements
