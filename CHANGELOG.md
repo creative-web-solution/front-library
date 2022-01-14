@@ -5,6 +5,7 @@
 
 * Typescript cleanup
 * Remove micro templating modules
+* Fix Validator missing files
 
 **Compatibility warning:**
 
