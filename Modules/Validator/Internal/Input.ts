@@ -194,7 +194,7 @@ export default class Input {
             if ( !validator.isValid() ) {
                 this.#validatorsInErrors.push( validator );
             }
-        })
+        });
 
         return this.#validatorsInErrors;
     }
@@ -250,9 +250,7 @@ export default class Input {
      * Return an array of error messages and labels
      */
     getErrorMessages( _locale?: { [ key: string ]: string } ): { message: string, label: string, type: string }[] {
-        if ( !this.#validatorsInErrors ) {
-            this.getErrors();
-        }
+        this.getErrors();
 
         if ( !this.#validatorsInErrors.length ) {
             return [];
@@ -299,9 +297,7 @@ export default class Input {
      * Get custom data of all validators
      */
     getData(): any[] {
-        if ( !this.#validatorsInErrors ) {
-            this.getErrors();
-        }
+        this.getErrors();
 
         if ( !this.#validatorsInErrors.length ) {
             return [];

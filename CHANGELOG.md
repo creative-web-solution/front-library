@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 7.1.1
+
+* Validator: Fix error message generation
+
+
 ## 7.1.0
 
 * Typescript cleanup
