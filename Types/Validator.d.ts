@@ -84,8 +84,8 @@ declare namespace FLib {
                     select?:           string;
                     /** @defaultValue input */
                     inputText?:        string;
-                }
-                eventsHook
+                };
+                eventsHook?;
             }
         }
 

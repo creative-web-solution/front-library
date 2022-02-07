@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.3
+
+* Typescript: Fix some type
+
 
 ## 7.1.2
 

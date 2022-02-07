@@ -123,7 +123,7 @@ export default class Input implements FLib.Validator.Input {
 
         if ( this.#hasValidator && options.hasLiveValidation && this.#inputType !== 'hidden' ) {
             on( this.#isRadio ? this.#$group : $input, {
-                "eventsName":   options.liveValidation?.eventsName[ this.#inputType ],
+                "eventsName":   options.liveValidation?.eventsName?.[ this.#inputType ] as string,
                 "callback":     this.#onLiveValidation
             } );
         }

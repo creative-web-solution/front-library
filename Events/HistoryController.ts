@@ -33,7 +33,7 @@ export default class HistoryController {
     #hasPushstate:           boolean;
     #hasPopStateEvent:       boolean;
     #currentState:           FLib.Events.History.StateObject;
-    #registeredFunctionList: (( url: UrlParser, state: any ) => void)[];
+    #registeredFunctionList: (( url: FLib.Helpers.UrlParser, state: any ) => void)[];
 
 
     get state(): FLib.Events.History.StateObject {
@@ -69,7 +69,7 @@ export default class HistoryController {
 
 
     // Call each registered function for popstate event
-    #callRegisteredFunction = ( url: UrlParser, state: any ): void => {
+    #callRegisteredFunction = ( url: FLib.Helpers.UrlParser, state: any ): void => {
         if ( !this.#registeredFunctionList.length ) {
             return;
         }
