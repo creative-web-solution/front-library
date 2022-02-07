@@ -98,10 +98,10 @@ export default class Tabs {
     #options:        FLib.Tabs.Options;
     #$TABS_LIST:     HTMLElement;
     #$TABS:          NodeList;
-    #tablist:        Tab[];
+    #tablist:        FLib.Tabs.Tab[];
     #status:         string;
     #VERTICAL_MODE:  boolean;
-    #lastOpenedTab:  Tab | undefined;
+    #lastOpenedTab:  FLib.Tabs.Tab | undefined;
     #keyboard:       KeyboardHandler | undefined;
     #$tabsWrapper:   HTMLElement;
 
@@ -124,7 +124,7 @@ export default class Tabs {
     }
 
 
-    #onOpenTab = ( tab: Tab ): void => {
+    #onOpenTab = ( tab: FLib.Tabs.Tab ): void => {
         if ( this.#lastOpenedTab ) {
             this.#lastOpenedTab.close( true );
         }

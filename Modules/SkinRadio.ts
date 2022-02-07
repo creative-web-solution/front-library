@@ -26,7 +26,7 @@ const defaultOptions = {
  * } );
  * ```
  */
-export default class SkinRadioButton {
+export default class SkinRadioButton implements FLib.SkinRadio.SkinRadio {
     #$radio!:   FLib.SkinRadio.CustomRadioButton;
     #options!:  FLib.SkinRadio.Options;
     #$parent!:  FLib.SkinRadio.CustomRadioButtonParent;

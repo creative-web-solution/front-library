@@ -14,7 +14,7 @@ const defaultOptions: FLib.SkinCheckbox.Options = {
  * Skin an HTML input checkbox element.
  * You can access the skin API in the __skinAPI property of the $checkbox HTMLElement or its wrapper.
  */
- export default class SkinCheckbox {
+ export default class SkinCheckbox implements FLib.SkinCheckbox.SkinCheckbox {
 
     #$checkbox!: FLib.SkinCheckbox.CustomCheckbox;
     #options!:   FLib.SkinCheckbox.Options;

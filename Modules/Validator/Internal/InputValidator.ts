@@ -5,7 +5,7 @@ import { getValue } from '../../../Helpers/GetValue';
  * Used to make one validation on one input
  * Store the state (valid or not) between validations
  */
-export default class InputValidator {
+export default class InputValidator implements FLib.Validator.InputValidator {
     #$input:                HTMLElement;
     #name:                  string;
     #isAsynch:              boolean;

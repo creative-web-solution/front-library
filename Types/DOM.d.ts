@@ -1,4 +1,4 @@
-namespace FLib {
+declare namespace FLib {
     namespace DOM {
         type ClassInput = Element | Element[] | Node | NodeList;
 

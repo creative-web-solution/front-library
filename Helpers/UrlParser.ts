@@ -33,7 +33,7 @@
  * url.removeAll()
  * ```
  */
-export class UrlParser {
+export class UrlParser implements FLib.Helpers.UrlParser {
     /** Complete url without userInfo and anchor. Ex: https://demo.domain.com:1337/section/page.html?param=2 */
     absolute     = '';
     /** Complete url with anchor but without userInfo. Ex: https://demo.domain.com:1337/section/page.html?param=2#anchor */

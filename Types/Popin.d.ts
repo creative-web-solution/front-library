@@ -1,7 +1,25 @@
-namespace FLib {
+declare namespace FLib {
     namespace Popin {
         type AnimationFunction = ( $element: HTMLElement ) => Promise<void>;
         type ResponseType          = 'arrayBuffer' | 'blob' | 'json' | 'text' | 'formData';
+
+        interface Controller {
+            load( url: string, data: RequestInit, type?: FLib.Popin.ResponseType ): Promise<void>
+            loadForm( $form: HTMLFormElement ):      Promise<void>
+            loadLink( $link: HTMLAnchorElement ):    Promise<void>
+            set( html: string, openFirst?: boolean ): Promise<void>
+            clear():                                void;
+            close():                                Promise<void>;
+            open():                                 Promise<void>;
+            destroy():                              this;
+        }
+
+        interface Background {
+            isOpened:  boolean;
+            open():    Promise<any>;
+            close():   Promise<any>;
+            destroy(): void;
+        }
 
         interface TemplatesOptions {
             /** @defaultValue `<div class="popin-loader"></div>` */

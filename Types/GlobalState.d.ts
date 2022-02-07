@@ -1,4 +1,4 @@
-namespace FLib {
+declare namespace FLib {
     namespace GlobalState {
         type Options = {
             alwaysDispatch: boolean;

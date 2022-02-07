@@ -5,7 +5,7 @@ import { next }    from '../../DOM/Traversing';
 /**
  * Tab of an accordion
  */
-export default class Tab {
+export default class Tab implements FLib.Accordion.Tab {
     #isOpen:              boolean;
     #originalOpenedState: boolean;
     #$TAB_PANNEL:         HTMLElement | null;

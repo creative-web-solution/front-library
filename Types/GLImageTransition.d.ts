@@ -1,4 +1,4 @@
-namespace FLib {
+declare namespace FLib {
     namespace GLImageTransition {
         type FitType  = 'cover' | 'contains';
 

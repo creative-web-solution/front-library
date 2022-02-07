@@ -1,4 +1,4 @@
-namespace FLib {
+declare namespace FLib {
     namespace Events {
 
         /**
@@ -26,7 +26,7 @@ namespace FLib {
             interface DataRegistry {
                 $element: Element;
                 eventName: string;
-                options:   OnOptionsType;
+                options:   OnOptions;
                 delegate?:  ( e ) => void;
             }
 
@@ -156,7 +156,7 @@ namespace FLib {
                 /** click */
                 click?:                Callback;
                 /** touchend on touch device, click on other */
-                tap?:                  (( e: Event, $target: HTMLElement, coords: CoordsType, type: string ) => void);
+                tap?:                  (( e: Event, $target: HTMLElement, coords: Coords, type: string ) => void);
                 swipeLeft?:            SwipeCallback;
                 swipeRight?:           SwipeCallback;
                 swipeUp?:              SwipeCallback;
@@ -179,12 +179,12 @@ namespace FLib {
          */
         namespace History {
             type StateObject = {
-                url:    UrlParser;
+                url:    FLib.Helpers.UrlParser;
                 state:  any;
                 title:  string;
             }
 
-            type Callback = ( url: UrlParser, state: any ) => void;
+            type Callback = ( url: FLib.Helpers.UrlParser, state: any ) => void;
         }
 
 
@@ -378,10 +378,10 @@ namespace FLib {
 
 
             type CallbackParam = {
-                windowInfo:   WindowInfoType,
-                scrollInfo:   ScrollInfoType,
-                documentInfo: DocumentInfoType,
-                viewportInfo: ViewportInfoType
+                windowInfo:   WindowInfo,
+                scrollInfo:   ScrollInfo,
+                documentInfo: DocumentInfo,
+                viewportInfo: ViewportInfo
             }
 
             type Callback = ( info: CallbackParam, type: Type, e? ) => void;

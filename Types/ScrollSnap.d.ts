@@ -1,4 +1,4 @@
-namespace FLib {
+declare namespace FLib {
     namespace ScrollSnap {
         type SnapType = 'scroll' | 'api';
 

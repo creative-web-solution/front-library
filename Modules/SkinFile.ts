@@ -21,7 +21,7 @@ const defaultOptions: FLib.SkinFile.Options = {
 /**
  * Skin an HTML input file element.
  */
- export default class SkinFile {
+ export default class SkinFile implements FLib.SkinFile.SkinFile {
 
     #options:             FLib.SkinFile.Options;
     #$parent:             FLib.SkinFile.CustomInputFileParent;

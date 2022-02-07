@@ -1,4 +1,4 @@
-namespace FLib {
+declare namespace FLib {
     namespace DragSlider {
         type CallbackParam = {
             item:        any;
@@ -13,7 +13,7 @@ namespace FLib {
             isFirst: boolean;
             isLast:  boolean;
             $item:   HTMLElement;
-            info:    OffsetType;
+            info:    FLib.DOM.Offset;
         }
 
         type DeltaMove = {

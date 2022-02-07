@@ -1,5 +1,14 @@
-namespace FLib {
+declare namespace FLib {
     namespace SkinRadio {
+        interface SkinRadio {
+            check():      this;
+            uncheck():    this;
+            enable():     this;
+            disable():    this;
+            setInvalid(): this;
+            setValid():   this;
+        }
+
         type Options = {
             /** @defaultValue <span class="rb-skin"></span> */
             wrap:          string;

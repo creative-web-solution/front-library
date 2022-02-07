@@ -1,5 +1,14 @@
-namespace FLib {
+declare namespace FLib {
     namespace SkinCheckbox {
+        interface SkinCheckbox {
+            check():      this;
+            uncheck():    this;
+            enable():     this;
+            disable():    this;
+            setInvalid(): this;
+            setValid():   this;
+        }
+
         type Options = {
             /** @defaultValue <span class="cb-skin"></span> */
             wrap:          string;

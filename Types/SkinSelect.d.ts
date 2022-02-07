@@ -1,5 +1,18 @@
-namespace FLib {
+declare declare namespace FLib {
     namespace SkinSelect {
+        interface SkinSelect {
+            enable():     this;
+            disable():    this;
+            setInvalid(): this;
+            setValid():   this;
+            setLoading(): this
+            unsetLoading(): this
+            updateTitle(): this
+            select( optionOrIndex: HTMLElement | number ): this
+            updateOptions( optionsArray?: FLib.SkinSelect.OptionArray[] ): this
+        }
+
+
         type Options = {
             /**
              * If true, skin event the option list

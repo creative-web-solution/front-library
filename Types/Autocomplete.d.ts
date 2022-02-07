@@ -1,9 +1,8 @@
-namespace FLib {
+declare namespace FLib {
     namespace Autocomplete {
         type Item = {
             name: string;
-            [ key: string ]: any;
-        }
+        } & Record<string, any>
 
         type LayerPosition  = 'top' | 'bottom';
 

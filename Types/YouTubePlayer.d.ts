@@ -1,4 +1,4 @@
-namespace FLib {
+declare namespace FLib {
     namespace YouTubePlayer {
         type Options = {
             height:               number;

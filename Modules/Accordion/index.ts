@@ -86,9 +86,9 @@ const DEFAULT_OPTIONS = {
 export default class Accordion {
     #options:       FLib.Accordion.Options;
     #$tabs:         NodeListOf<HTMLElement>;
-    #tablist:       Tab[];
+    #tablist:       FLib.Accordion.Tab[];
     #status:        string;
-    #lastOpenedTab: Tab | null = null;
+    #lastOpenedTab: FLib.Accordion.Tab | null = null;
 
 
     #STATUS_ON  = 'STATUS_ON';
@@ -107,7 +107,7 @@ export default class Accordion {
     }
 
 
-    #onOpenTab = ( tab: Tab ): void => {
+    #onOpenTab = ( tab: FLib.Accordion.Tab ): void => {
         if ( this.#lastOpenedTab ) {
             this.#lastOpenedTab.close( true );
         }
@@ -127,7 +127,7 @@ export default class Accordion {
             this.#tablist.push( new Tab( $tab, {
                 ...this.#options,
                 index,
-                "onOpenTab": this.#options.allowMultipleTab ? null : this.#onOpenTab
+                "onOpenTab": this.#options.allowMultipleTab ? undefined : this.#onOpenTab
             } ) );
         } );
     }

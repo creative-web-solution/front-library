@@ -37,7 +37,7 @@ const defaultOptions: FLib.SkinSelect.Options = {
  * Skin an HTML select element. If options.full is set to true, also skin the options list.
  * You can access the skin API in the __skinAPI property of the $select HTMLElement or its wrapper.
  */
-export default class SkinSelect {
+export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
     #$select:           FLib.SkinSelect.CustomSelect;
     #loading!:          boolean;
     #options!:          FLib.SkinSelect.Options;

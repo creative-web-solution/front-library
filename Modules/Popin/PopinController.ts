@@ -14,7 +14,7 @@ import { CLICK_EVENT_NAME, defaultOptions, toggleTabIndex } from './Tools';
  * let controller = new PopinController( popinOptions );
  * popin.loadForm( $form );
  */
-export default class PopinController {
+export default class PopinController implements FLib.Popin.Controller {
     #options:    FLib.Popin.Options;
     #selectors:  FLib.Popin.SelectorsOptions;
     #background: PopinBackground;

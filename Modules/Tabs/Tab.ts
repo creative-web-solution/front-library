@@ -4,7 +4,7 @@ import { on, off }        from '../../Events/EventsManager';
 /**
  * Tab of a tabs list
  */
-export default class Tab {
+export default class Tab implements FLib.Tabs.Tab {
 
     #options:             FLib.Tabs.TabOptions;
     #$TAB:                HTMLElement;

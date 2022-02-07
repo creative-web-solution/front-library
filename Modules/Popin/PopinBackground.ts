@@ -4,7 +4,7 @@ import Popin                from './Popin';
 import { CLICK_EVENT_NAME } from './Tools';
 
 
-export default class PopinBackground {
+export default class PopinBackground implements FLib.Popin.Background {
 
     #$bgLayer: HTMLElement;
     #isOpened: boolean;

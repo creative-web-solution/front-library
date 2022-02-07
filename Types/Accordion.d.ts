@@ -1,5 +1,10 @@
-namespace FLib {
+declare namespace FLib {
     namespace Accordion {
+
+        interface Tab {
+            close( autoClose?: boolean ): this;
+            destroy(): this;
+        }
 
         type AnimationFunction = ( $tab: HTMLElement, $panel: HTMLElement ) => Promise<void>;
         type Callback          = ( $tab: HTMLElement, $panel: HTMLElement ) => void;
@@ -21,7 +26,7 @@ namespace FLib {
             onOpenAtStart:     Callback;
             onOpen:            Callback;
             onClose:           CloseCallback;
-            animations:        AnimationOptions;
+            animations:        Partial<AnimationOptions>;
         }
 
         interface OptionsInit extends Partial<Options> {
@@ -29,7 +34,7 @@ namespace FLib {
         }
 
         interface TabOptions extends Options {
-            onOpenTab: (( tab: Tab ) => void) | null;
+            onOpenTab?: ( tab: Tab ) => void;
             index:     number;
         }
     }

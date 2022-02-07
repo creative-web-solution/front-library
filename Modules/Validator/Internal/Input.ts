@@ -8,7 +8,7 @@ import { getRadioList }             from '../Tools/RadioButton';
 /*
  * Handle one input
  */
-export default class Input {
+export default class Input implements FLib.Validator.Input {
     #isRadio:                   boolean;
     #inputType:                 string;
     #inputId:                   string;

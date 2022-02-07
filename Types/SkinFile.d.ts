@@ -1,5 +1,12 @@
-namespace FLib {
+declare namespace FLib {
     namespace SkinFile {
+        interface SkinFile {
+            enable():     this;
+            disable():    this;
+            setInvalid(): this;
+            setValid():   this;
+        }
+
         type Options = {
             /** @defaultValue .file-skin */
             selector:             string;

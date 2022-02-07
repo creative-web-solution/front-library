@@ -1,4 +1,4 @@
-namespace FLib {
+declare namespace FLib {
     namespace Notifications {
         type Type =  'info' | 'success' | 'warning' | 'danger';
 
@@ -38,8 +38,8 @@ namespace FLib {
                 info:    string;
             };
             animations: {
-                show: ( $notification, options ) => Promise
-                hide: ( $notification, options ) => Promise
+                show: ( $notification, options ) => Promise<any>
+                hide: ( $notification, options ) => Promise<any>
             };
         }
 

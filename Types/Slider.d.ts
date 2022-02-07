@@ -1,4 +1,4 @@
-namespace FLib {
+declare namespace FLib {
     namespace Slider {
         type SlideDirection = -1 | 1;
 
