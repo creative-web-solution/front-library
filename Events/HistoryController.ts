@@ -1,5 +1,4 @@
 import { on }        from './EventsManager';
-import { UrlParser } from '../Helpers/UrlParser';
 import { slice }     from '../Helpers/Slice';
 
 
@@ -33,7 +32,7 @@ export default class HistoryController {
     #hasPushstate:           boolean;
     #hasPopStateEvent:       boolean;
     #currentState:           FLib.Events.History.StateObject;
-    #registeredFunctionList: (( url: FLib.Helpers.UrlParser, state: any ) => void)[];
+    #registeredFunctionList: (( url: URL, state: any ) => void)[];
 
 
     get state(): FLib.Events.History.StateObject {
@@ -53,7 +52,7 @@ export default class HistoryController {
         this.#defaultTitle = encodeURIComponent( defaultTitle );
 
         this.#currentState = {
-            "url":   new UrlParser( window.location.href ),
+            "url":   new window.URL( window.location.href ),
             "state": {},
             "title": this.#defaultTitle
         };
@@ -69,7 +68,7 @@ export default class HistoryController {
 
 
     // Call each registered function for popstate event
-    #callRegisteredFunction = ( url: FLib.Helpers.UrlParser, state: any ): void => {
+    #callRegisteredFunction = ( url: URL, state: any ): void => {
         if ( !this.#registeredFunctionList.length ) {
             return;
         }
@@ -87,7 +86,7 @@ export default class HistoryController {
         }
 
         this.#currentState = {
-            "url": new UrlParser( document.location.href ),
+            "url": new URL( document.location.href ),
             state,
             "title": ""
         };
@@ -101,15 +100,15 @@ export default class HistoryController {
      *
      * @param state - Native browser state object
      */
-    pushState( state: any, title: string, url: string | UrlParser ): this {
+    pushState( state: any, title: string, url: string | URL ): this {
         if ( !this.#hasPushstate ) {
             return this;
         }
 
-        url = url instanceof UrlParser ? url : new UrlParser( url as string );
+        url = url instanceof URL ? url : new URL( url as string );
 
         this.#currentState = {
-            "url": url as UrlParser,
+            "url": url as URL,
             state,
             "title": title ? encodeURIComponent( title ) : this.#defaultTitle
         };
@@ -118,7 +117,7 @@ export default class HistoryController {
             window.history.pushState(
                 state,
                 this.#currentState.title,
-                this.#currentState.url.absolute2
+                this.#currentState.url.href
             );
         }
         catch ( e ) {
@@ -137,14 +136,14 @@ export default class HistoryController {
             return this;
         }
 
-        anchor = anchor.indexOf( '#' ) === -1 ? anchor : anchor.slice( 1 );
+        anchor = anchor.indexOf( '#' ) === -1 ? `#${ anchor }` : anchor;
 
         try {
-            this.#currentState.url.setAnchor( anchor );
+            this.#currentState.url.hash = anchor.indexOf( '#' ) === -1 ? `#${ anchor }` : anchor;
             window.history.pushState(
                 this.#currentState.state,
                 this.#currentState.title,
-                this.#currentState.url.absolute2
+                this.#currentState.url.href
             );
         }
         catch ( e ) {

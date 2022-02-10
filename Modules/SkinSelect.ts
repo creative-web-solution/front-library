@@ -38,25 +38,25 @@ const defaultOptions: FLib.SkinSelect.Options = {
  * You can access the skin API in the __skinAPI property of the $select HTMLElement or its wrapper.
  */
 export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
-    #$select:           FLib.SkinSelect.CustomSelect;
-    #loading!:          boolean;
+    #$select!:          FLib.SkinSelect.CustomSelect;
+    #loading            = false;
     #options!:          FLib.SkinSelect.Options;
     #extraClass!:       string;
     #$parent!:          FLib.SkinSelect.CustomSelectParent;
     #$title!:           HTMLElement;
-    #isListOpened!:     boolean;
-    #$options!:         NodeList;
-    #$lastOption!:      HTMLElement | null;
-    #focusedItemIndex!: number;
-    #$layer!:           HTMLElement;
+    #isListOpened       = false;
+    #$options:          NodeList | undefined;
+    #$lastOption:       HTMLElement | null = null;
+    #focusedItemIndex   = -1;
+    #$layer:            HTMLElement | undefined;
 
-    constructor( $select: HTMLSelectElement, userOptions?: Partial<FLib.SkinSelect.Options> ) {
+    constructor( $select: FLib.SkinSelect.CustomSelect, userOptions?: Partial<FLib.SkinSelect.Options> ) {
 
-        this.#$select = $select;
-
-        if ( this.#$select.hasAttribute( 'multiple' ) || this.#$select.__skinAPI ) {
+        if ( $select.hasAttribute( 'multiple' ) || $select.__skinAPI ) {
             return;
         }
+
+        this.#$select = $select;
 
         this.#loading = false;
 
@@ -420,6 +420,10 @@ export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
 
 
     #focusItem = ( index: number ): void => {
+        if ( !this.#$options ) {
+            return;
+        }
+
         if ( index < 0 ) {
             index = this.#$options.length - 1;
         }

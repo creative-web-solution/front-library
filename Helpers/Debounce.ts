@@ -9,7 +9,7 @@ export function debounce(
                     threshold = 100,
                     immediate = false
                 ): ( ...args: any[] ) => void {
-    let timeout: ReturnType<typeof setTimeout> | undefined;
+    let timeout: any;
 
     return function<Type>( this: Type, ...args: any[] ) {
 

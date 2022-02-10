@@ -35,12 +35,12 @@ function getPosition( start, end, elapsed, duration ) {
 
 
 class ScrollTo {
-    #startTime!:     number;
+    #startTime:      number | undefined;
     #animationFrame;
-    #duration!:      number;
-    #startPosition!: number;
-    #snapItem!:      FLib.ScrollSnap.Item;
-    #snapItemType!:  FLib.ScrollSnap.SnapType;
+    #duration:       number | undefined;
+    #startPosition:  number | undefined;
+    #snapItem:       FLib.ScrollSnap.Item | undefined;
+    #snapItemType:   FLib.ScrollSnap.SnapType | undefined;
     #scrollPropName: FLib.ScrollSnap.ScrollPropertyType;
     #$element:       HTMLElement;
     #callback:       FLib.ScrollSnap.ScrollToCallback;
@@ -54,6 +54,10 @@ class ScrollTo {
 
 
     #step = ( timestamp: number ) => {
+        if ( !this.#snapItem ) {
+            return;
+        }
+
         if ( !this.#startTime ) {
             this.#startTime = timestamp;
         }
@@ -69,13 +73,13 @@ class ScrollTo {
             );
         }
 
-        if ( elapsed < this.#duration ) {
+        if ( elapsed < (this.#duration as number) ) {
             this.#animationFrame = window.requestAnimationFrame( this.#step.bind( this ) );
         }
         else {
             if ( typeof this.#callback === 'function' ) {
                 window.requestAnimationFrame( () => {
-                    this.#callback( this.#snapItem, this.#snapItemType );
+                    this.#callback( this.#snapItem as FLib.ScrollSnap.Item, this.#snapItemType as FLib.ScrollSnap.SnapType );
                 } );
             }
         }
@@ -98,7 +102,7 @@ class ScrollTo {
         if ( !delta ) {
             if ( typeof this.#callback === 'function' ) {
                 window.requestAnimationFrame( () => {
-                    this.#callback( this.#snapItem, this.#snapItemType );
+                    this.#callback( this.#snapItem as FLib.ScrollSnap.Item, this.#snapItemType as FLib.ScrollSnap.SnapType );
                 } );
             }
             return;

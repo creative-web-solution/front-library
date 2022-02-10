@@ -179,12 +179,12 @@ declare namespace FLib {
          */
         namespace History {
             type StateObject = {
-                url:    FLib.Helpers.UrlParser;
+                url:    URL;
                 state:  any;
                 title:  string;
             }
 
-            type Callback = ( url: FLib.Helpers.UrlParser, state: any ) => void;
+            type Callback = ( url: URL, state: any ) => void;
         }
 
 

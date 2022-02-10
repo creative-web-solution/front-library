@@ -20,17 +20,17 @@ export default class DragSlider {
     #$slider:               HTMLElement;
     #viewportInfo;
     #siteOffset;
-    #listDelta!:             number;
-    #$viewport!:             HTMLElement;
-    #$items!:                NodeList;
-    #$list!:                 HTMLElement;
-    #isDragging!:            boolean;
-    #itemMap!:               Map<HTMLElement, FLib.DragSlider.Item>;
-    #firstItem!:             FLib.DragSlider.Item;
-    #currentSnapItem!:       FLib.DragSlider.Item;
-    #hasAlreadyBeenDragged!: boolean;
-    #startDragCoords!:       FLib.Events.Gesture.Coords;
-    #isInitialized!:         boolean;
+    #listDelta               = 0;
+    #$viewport:              HTMLElement | undefined;
+    #$items:                 NodeList | undefined;
+    #$list:                  HTMLElement | undefined;
+    #isDragging              = false;
+    #itemMap                 = new Map<HTMLElement, FLib.DragSlider.Item>();
+    #firstItem:              FLib.DragSlider.Item | undefined;
+    #currentSnapItem:        FLib.DragSlider.Item | undefined;
+    #hasAlreadyBeenDragged   = false;
+    #startDragCoords:        FLib.Events.Gesture.Coords | undefined;
+    #isInitialized           = false;
     #debouncedOnResize;
 
 
@@ -40,6 +40,7 @@ export default class DragSlider {
 
 
     constructor( $slider: HTMLElement, options: Partial<FLib.DragSlider.Options> ) {
+
         if ( !options.viewportSelector || !options.listSelector || !options.itemSelector || !options.dragClass ) {
             throw '[Drag Slider]: Missing at least one of viewportSelector, listSelector, itemSelector, dragClass';
         }
@@ -80,7 +81,10 @@ export default class DragSlider {
 
 
     #onResize = (): void => {
-        this.#viewportInfo = offset( this.#$viewport );
+        if ( !this.#$items || !this.#$list ) {
+            return;
+        }
+        this.#viewportInfo = offset( this.#$viewport as HTMLElement );
         this.#siteOffset   = parseInt( prop( (this.#$items[ 0 ] as HTMLElement), 'marginLeft' ), 10 );
         this.#listDelta    = this.#viewportInfo.width - this.#$list.scrollWidth;
 
@@ -105,6 +109,8 @@ export default class DragSlider {
 
         this.#itemArray.length = 0;
 
+        const LAST_INDEX = this.#$items.length;
+
         this.#$items.forEach( ( $item: Node, index: number ) => {
             const $ITEM       = $item as HTMLElement;
             const ITEM_OFFSET = offset( $ITEM, false, this.#$list );
@@ -112,7 +118,7 @@ export default class DragSlider {
             this.#itemArray.push({
                 index,
                 "isFirst": index === 0,
-                "isLast":  index === this.#$items.length - 1 || ITEM_OFFSET.left > Math.abs( this.#listDelta ),
+                "isLast":  index === LAST_INDEX - 1 || ITEM_OFFSET.left > Math.abs( this.#listDelta ),
                 "$item":   $ITEM,
                 "info":    ITEM_OFFSET
             });
@@ -161,7 +167,7 @@ export default class DragSlider {
 
         this.#currentSnapItem = snapItem;
 
-        const TWEEN = gsap.to( this.#$list, {
+        const TWEEN = gsap.to( this.#$list as HTMLElement, {
             "duration": 0.3,
             "x":        finalX,
             "y":        0,
@@ -276,7 +282,7 @@ export default class DragSlider {
 
         const ABS_DELTA_X = Math.abs( this.#deltaMove.deltaX );
 
-        if ( ABS_DELTA_X >= this.#options.swipeTresholdMin && ABS_DELTA_X < Math.min( this.#firstItem.info.width * this.#options.swipeTresholdSize, this.#options.swipeTresholdMin * 3 ) ) {
+        if ( ABS_DELTA_X >= this.#options.swipeTresholdMin && ABS_DELTA_X < Math.min( (this.#firstItem as FLib.DragSlider.Item ).info.width * this.#options.swipeTresholdSize, this.#options.swipeTresholdMin * 3 ) ) {
             if ( this.#deltaMove.deltaX < 0 ) {
                 snapItem = this.#getFirstNextItem( this.#deltaMove.x );
             }
@@ -302,7 +308,7 @@ export default class DragSlider {
             this.#hasAlreadyBeenDragged = true;
         }
 
-        if ( !this.#isDraggingActive ) {
+        if ( !this.#isDraggingActive || !this.#$list ) {
             return;
         }
 
@@ -339,8 +345,8 @@ export default class DragSlider {
     #onMove = ( e: Event, $target: HTMLElement, coords: FLib.Events.Gesture.Coords ): void => {
         this.#cancelLinkClick();
 
-        this.#deltaMove.deltaX = coords.pageX - this.#startDragCoords.pageX;
-        this.#deltaMove.deltaY = coords.pageY - this.#startDragCoords.pageY;
+        this.#deltaMove.deltaX = coords.pageX - ( this.#startDragCoords as FLib.Events.Gesture.Coords ).pageX;
+        this.#deltaMove.deltaY = coords.pageY - ( this.#startDragCoords as FLib.Events.Gesture.Coords ).pageY;
 
         this.#deltaMove.newX  = this.#deltaMove.deltaX + this.#deltaMove.x;
 
@@ -351,7 +357,7 @@ export default class DragSlider {
             this.#deltaMove.newX = this.#listDelta;
         }
 
-        gsap.set( this.#$list, {
+        gsap.set( this.#$list as HTMLElement, {
             "x": this.#deltaMove.newX,
             "y": 0,
             "z": 0
@@ -424,20 +430,20 @@ export default class DragSlider {
 
 
     next(): gsap.core.Tween | void {
-        if ( !this.#isDraggingActive || this.#currentSnapItem.isLast ) {
+        if ( !this.#isDraggingActive || ( this.#currentSnapItem as FLib.DragSlider.Item ).isLast ) {
             return;
         }
 
-        return this.#snapToItemAnimation( this.#itemArray[ this.#currentSnapItem.index + 1 ] );
+        return this.#snapToItemAnimation( this.#itemArray[ ( this.#currentSnapItem as FLib.DragSlider.Item ).index + 1 ] );
     }
 
 
     previous(): gsap.core.Tween | void {
-        if ( !this.#isDraggingActive || this.#currentSnapItem.isFirst ) {
+        if ( !this.#isDraggingActive || ( this.#currentSnapItem as FLib.DragSlider.Item ).isFirst ) {
             return;
         }
 
-        return this.#snapToItemAnimation( this.#itemArray[ this.#currentSnapItem.index - 1 ] );
+        return this.#snapToItemAnimation( this.#itemArray[ ( this.#currentSnapItem as FLib.DragSlider.Item ).index - 1 ] );
     }
 
 
@@ -461,7 +467,7 @@ export default class DragSlider {
             "isAtEnd":     this.#deltaMove.x === this.#listDelta
         } );
 
-        return gsap.to( this.#$list, {
+        return gsap.to( this.#$list as HTMLElement, {
             "duration": 0.3,
             "x":        -1 * ITEM.info.left + this.#siteOffset,
             "y":        0,
@@ -491,8 +497,6 @@ export default class DragSlider {
         this.#isInitialized = true;
 
         if ( !this.#$viewport ) {
-            this.#itemMap           = new Map();
-
             const $VP = this.#$slider.querySelector( this.#options.viewportSelector );
             if ( !$VP ) {
                 throw `"${ this.#options.viewportSelector }" not found`;
@@ -514,7 +518,7 @@ export default class DragSlider {
             this.#debouncedOnResize = debounce( this.#onResize );
         }
 
-        if ( !this.#$items.length ) {
+        if ( !this.#$items?.length ) {
             return this;
         }
 
@@ -563,7 +567,7 @@ export default class DragSlider {
         this.#isInitialized         = false;
         this.#hasAlreadyBeenDragged = false;
 
-        if ( !this.#$items.length ) {
+        if ( !this.#$items?.length ) {
             return this;
         }
 
@@ -572,7 +576,7 @@ export default class DragSlider {
             "callback":    this.#debouncedOnResize
         } );
 
-        gestureOff( this.#$viewport, 'dragSlider' );
+        this.#$viewport && gestureOff( this.#$viewport, 'dragSlider' );
 
         gestureOff( document.body, 'dragSlider' );
 
@@ -591,14 +595,15 @@ export default class DragSlider {
             "callback":   this.#onMouseleave
         } );
 
+        if ( this.#$list ) {
+            gsap.killTweensOf( this.#$list );
 
-        gsap.killTweensOf( this.#$list );
+            gsap.set( this.#$list, {
+                "clearProps": "all"
+            } );
+        }
 
-        gsap.set( this.#$list, {
-            "clearProps": "all"
-        } );
-
-        rClass( this.#$viewport, this.#options.dragClass );
+        this.#$viewport && rClass( this.#$viewport, this.#options.dragClass );
 
         rClass( this.#$slider, 'is-active' );
 
