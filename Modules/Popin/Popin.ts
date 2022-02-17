@@ -53,7 +53,7 @@ export default class Popin {
 
         if ( _controllerOptions ) {
             this.#options         = userOptions as FLib.Popin.Options;
-            this.#backgroundLayer = _controllerOptions.background;
+            this.#backgroundLayer = _controllerOptions.background as PopinBackground;
         }
         else {
             this.#options         = extend( defaultOptions, userOptions );
@@ -427,7 +427,8 @@ export default class Popin {
         e.preventDefault();
 
         if ( this.#controllerOptions ) {
-            return this.#controllerOptions.controller.close();
+            this.#controllerOptions.controller.close();
+            return;
         }
 
         this.#closePopin();

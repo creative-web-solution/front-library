@@ -1,10 +1,14 @@
 # CHANGELOG
 
 
+## 7.1.5
+
+* Typescript: Fix some type
+
+
 ## 7.1.4
 
 * Typescript: Fix tsify and browserify compatibility
-* HistoryController: Remove UrlParser for window.URL
 
 
 ## 7.1.3
