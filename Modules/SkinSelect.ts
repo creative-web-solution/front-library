@@ -389,14 +389,17 @@ export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
 
         for ( const opt of Array.from( this.#$select.options ) ) {
             HTML_LIST.push( quickTemplate( this.#options.listTpl.item, {
-                "onClass": opt.selected ? " on" : "",
-                "text":    opt.text,
-                "value":   opt.value
+                "onClass":        opt.selected ? " on" : "",
+                "text":           opt.text,
+                "value":          opt.value,
+                "layerClassName": this.#options.layerClassName,
+                "listClassName":  this.#options.listClassName
             } ) );
         }
 
         this.#$parent.appendChild( strToDOM( quickTemplate( this.#options.listTpl.wrapper, {
-            "items": HTML_LIST.join( '' )
+            "items":         HTML_LIST.join( '' ),
+            "itemClassName": this.#options.itemClassName
         } ) ) );
 
 

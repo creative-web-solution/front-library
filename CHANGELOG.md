@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 7.1.8
+
+* SelectSkin: Fix templating
+
+
 ## 7.1.7
 
 * Typescript: Fix some type
