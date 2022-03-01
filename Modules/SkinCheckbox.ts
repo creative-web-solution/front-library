@@ -16,16 +16,16 @@ const defaultOptions: FLib.SkinCheckbox.Options = {
  */
  export default class SkinCheckbox implements FLib.SkinCheckbox.SkinCheckbox {
 
-    #$checkbox!: FLib.SkinCheckbox.CustomCheckbox;
-    #options!:   FLib.SkinCheckbox.Options;
-    #$parent!:   FLib.SkinCheckbox.CustomCheckboxParent;
+    #$checkbox: FLib.SkinCheckbox.CustomCheckbox;
+    #options:   FLib.SkinCheckbox.Options;
+    #$parent:   FLib.SkinCheckbox.CustomCheckboxParent;
 
 
     constructor( $checkbox: HTMLInputElement, userOptions: Partial<FLib.SkinCheckbox.Options> = {} ) {
 
         // Already skinned
         if ( ($checkbox as FLib.SkinCheckbox.CustomCheckbox).__skinAPI ) {
-            return;
+            throw 'SkinSelect: Select already skinned';
         }
 
         this.#$checkbox = $checkbox;

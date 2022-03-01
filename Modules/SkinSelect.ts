@@ -38,22 +38,26 @@ const defaultOptions: FLib.SkinSelect.Options = {
  * You can access the skin API in the __skinAPI property of the $select HTMLElement or its wrapper.
  */
 export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
-    #$select!:          FLib.SkinSelect.CustomSelect;
+    #$select:           FLib.SkinSelect.CustomSelect;
     #loading            = false;
-    #options!:          FLib.SkinSelect.Options;
-    #extraClass!:       string;
-    #$parent!:          FLib.SkinSelect.CustomSelectParent;
-    #$title!:           HTMLElement;
+    #options:           FLib.SkinSelect.Options;
+    #extraClass:        string;
+    #$parent:           FLib.SkinSelect.CustomSelectParent;
+    #$title:            HTMLElement;
     #isListOpened       = false;
     #$options:          NodeList | undefined;
     #$lastOption:       HTMLElement | null = null;
     #focusedItemIndex   = -1;
     #$layer:            HTMLElement | undefined;
 
+
     constructor( $select: FLib.SkinSelect.CustomSelect, userOptions?: Partial<FLib.SkinSelect.Options> ) {
 
-        if ( $select.hasAttribute( 'multiple' ) || $select.__skinAPI ) {
-            return;
+        if ( $select.hasAttribute( 'multiple' ) ) {
+            throw 'SkinSelect: This feature doesn\'t work on select with multiple selection';
+        }
+        else if ( $select.__skinAPI ) {
+            throw 'SkinSelect: Select already skinned';
         }
 
         this.#$select = $select;
@@ -146,7 +150,7 @@ export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
 
 
     #openList = (): void => {
-        if ( this.#$select.disabled || this.#loading ) {
+        if ( this.#$select?.disabled || this.#loading ) {
             return;
         }
 

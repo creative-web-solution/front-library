@@ -27,16 +27,16 @@ const defaultOptions = {
  * ```
  */
 export default class SkinRadioButton implements FLib.SkinRadio.SkinRadio {
-    #$radio!:   FLib.SkinRadio.CustomRadioButton;
-    #options!:  FLib.SkinRadio.Options;
-    #$parent!:  FLib.SkinRadio.CustomRadioButtonParent;
-    #$rdGroup!: NodeListOf<FLib.SkinRadio.CustomRadioButton>;
+    #$radio:   FLib.SkinRadio.CustomRadioButton;
+    #options:  FLib.SkinRadio.Options;
+    #$parent:  FLib.SkinRadio.CustomRadioButtonParent;
+    #$rdGroup: NodeListOf<FLib.SkinRadio.CustomRadioButton>;
 
     constructor( $radio: HTMLInputElement, userOptions?: Partial<FLib.SkinRadio.Options> ) {
 
         // Already skinned
         if ( ($radio as FLib.SkinRadio.CustomRadioButton).__skinAPI ) {
-            return;
+            throw 'SkinSelect: Select already skinned';
         }
 
         this.#$radio = $radio;
