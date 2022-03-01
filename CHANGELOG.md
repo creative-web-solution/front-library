@@ -1,7 +1,7 @@
 # CHANGELOG
 
 
-## 7.1.8
+## 7.1.9
 
 * SelectSkin: Fix templating
 
