@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## 7.1.10
+
+* SelectSkin: Change selection feature, add:
+    * select( param: number | string | HTMLElement )
+    * selectByIndex( index: number )
+    * selectByOption( optionOrItem: HTMLElement )
+    * selectByValue( value: string | number )
+
+
 ## 7.1.9
 
 * SelectSkin: Fix templating

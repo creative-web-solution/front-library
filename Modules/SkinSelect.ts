@@ -1,6 +1,5 @@
 import { fire, on, off }  from '../Events/EventsManager';
 import { extend }         from '../Helpers/Extend';
-import { isNumber }       from '../Helpers/Type';
 import { wrap }           from '../DOM/Wrap';
 import { strToDOM }       from '../DOM/StrToDOM';
 import { index }          from '../DOM/Index';
@@ -279,42 +278,60 @@ export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
     }
 
 
+    selectByValue( value: string | number ): this {
+        if ( this.#$select.disabled || this.#loading ) {
+            return this;
+        }
+
+        const IDX = Array.from( this.#$select.options ).findIndex( option => option.value === String( value ) );
+
+        if ( IDX < 0 ) {
+            return this;
+        }
+
+        return this.selectByIndex( IDX );
+    }
+
+
+    selectByOption( optionOrItem: HTMLElement ): this {
+        if ( this.#$select.disabled || this.#loading ) {
+            return this;
+        }
+
+        const IDX = index( optionOrItem ) ;
+
+        if ( IDX < 0 ) {
+            return this;
+        }
+
+        return this.selectByIndex( IDX );
+    }
+
+
     /**
      * Select an option
      */
-    select( optionOrIndex: HTMLElement | number ): this {
-        let _index, option;
+    selectByIndex( index: number ): this {
 
         if ( this.#$select.disabled || this.#loading ) {
             return this;
         }
 
-        const isParameterANumber = isNumber( optionOrIndex );
-
-        if ( isParameterANumber ) {
-            _index = optionOrIndex;
-        }
-        else {
-            _index = index( optionOrIndex as HTMLElement );
-        }
-
-        if ( _index < 0 || _index > this.#$select.options.length ) {
+        if ( index < 0 || index > this.#$select.options.length ) {
             return this;
         }
 
-        this.#$select.options[ _index ].selected = true;
+        this.#$select.options[ index ].selected = true;
 
         if ( this.#options.full ) {
-            option = this.#$parent.querySelectorAll( `.${ this.#options.itemClassName }` )[ _index ];
-
-            if ( this.#$lastOption ) {
-                this.#$lastOption.classList.remove( this.#options.activeOptionClass );
-            }
-
-            if ( option ) {
-                option.classList.add( this.#options.activeOptionClass );
-                this.#$lastOption = option;
-            }
+            ( this.#$parent.querySelectorAll( `.${ this.#options.itemClassName }` ) as NodeListOf<HTMLOptionElement>)
+                        .forEach( ( $opt, optIdx ) => {
+                            $opt.selected = optIdx === index;
+                            $opt.classList.toggle( this.#options.activeOptionClass, $opt.selected );
+                            if ( $opt.selected ) {
+                                this.#$lastOption = $opt;
+                            }
+                        } );
         }
 
         fire( this.#$select, {
@@ -324,6 +341,23 @@ export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
         return this;
     }
 
+
+    /**
+     * If arg is a number, it is considered as an option index, not a value.
+     */
+    select( arg: number | string | HTMLElement ): this {
+        if ( typeof arg === 'number' ) {
+            return this.selectByIndex( arg );
+        }
+        else if ( typeof arg === 'string' ) {
+            return this.selectByValue( arg );
+        }
+        else if ( typeof arg === 'object' ) {
+            return this.selectByOption( arg );
+        }
+
+        return this;
+    }
 
     #setSelectOptions = ( data: FLib.SkinSelect.OptionArray[] ): void => {
         let hasSelectedOption;
@@ -422,7 +456,7 @@ export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
         if ( !(e.target as HTMLElement).matches( '.' + this.#options.itemClassName ) ) {
             return;
         }
-        this.select( e.target as HTMLElement );
+        this.selectByOption( e.target as HTMLElement );
     }
 
 
