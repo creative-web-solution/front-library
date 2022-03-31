@@ -5,7 +5,9 @@
  *
  * @see extra/modules/validator.md for details
  */
-export default function isDate( value: string, format = 'd/m/y' ): boolean {
+ export default function isDate( value: string, format = 'd/m/y' ): boolean {
+    format = format.toLocaleLowerCase();
+
     const RE_SEPARATOR = ( /[^dmy]/ ).exec( format );
 
     if ( !RE_SEPARATOR ) {
@@ -18,22 +20,38 @@ export default function isDate( value: string, format = 'd/m/y' ): boolean {
         return false;
     }
 
-    const SPLITTED_FORMAT = format.split( SEPARATOR );
-    const SPLITTED_VALUE  = value.split( SEPARATOR );
+    const ARR_FORMAT = format.split( SEPARATOR );
+    const ARR_VALUE  = value.split( SEPARATOR );
 
-    if ( SPLITTED_FORMAT.length !== SPLITTED_VALUE.length ) {
+    if ( ARR_FORMAT.length !== ARR_VALUE.length ) {
         return false;
     }
 
-    const y = Number( SPLITTED_VALUE[ SPLITTED_FORMAT.indexOf( 'y' ) ] );
-    const m = Number( SPLITTED_VALUE[ SPLITTED_FORMAT.indexOf( 'm' ) ] ) - 1;
-    const d = Number( SPLITTED_VALUE[ SPLITTED_FORMAT.indexOf( 'd' ) ] );
+    const PARSED_DATE = {
+        "d": -1,
+        "m": -1,
+        "y": -1
+    };
 
-    const date = new Date( y, m, d );
+    ARR_FORMAT.forEach( ( format, index ) => {
+        const VALUE = Number( ARR_VALUE[ index ] );
+
+        if ( format.indexOf( 'y' ) > -1 ) {
+            PARSED_DATE.y = VALUE;
+        }
+        else if ( format.indexOf( 'm' ) > -1 ) {
+            PARSED_DATE.m = VALUE - 1;
+        }
+        else if ( format.indexOf( 'd' ) > -1 ) {
+            PARSED_DATE.d = VALUE;
+        }
+    } )
+
+    const date = new Date( PARSED_DATE.y, PARSED_DATE.m, PARSED_DATE.d );
 
     return (
-        date.getDate()     === d &&
-        date.getMonth()    === m &&
-        date.getFullYear() === y
+        date.getDate()     === PARSED_DATE.d &&
+        date.getMonth()    === PARSED_DATE.m &&
+        date.getFullYear() === PARSED_DATE.y
     );
 }

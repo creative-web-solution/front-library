@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 7.1.11
+
+* Validator: Update `date` validator
+
+
 ## 7.1.10
 
 * SelectSkin: Change selection feature, add:
