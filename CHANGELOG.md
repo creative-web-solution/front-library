@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 7.1.12
+
+* Validator: Use dayjs library to validate date
+
+
 ## 7.1.11
 
 * Validator: Update `date` validator

@@ -2,7 +2,7 @@
   "name": "@creative-web-solution/front-library",
   "title": "Frontend library",
   "description": "Frontend functions and modules",
-  "version": "7.1.11",
+  "version": "7.1.12",
   "homepage": "https://github.com/creative-web-solution/front-library",
   "author": "Creative Web Solution <contact@cws-studio.com> (https://www.cws-studio.com)",
   "keywords": [],
@@ -17,7 +17,9 @@
     "npm": ">=6.0.0"
   },
   "scripts": {},
-  "dependencies": {},
+  "dependencies": {
+    "dayjs": "1.11.4"
+  },
   "devDependencies": {
     "babelify": "10.0.0",
     "@babel/preset-env": "^7.14.8",
