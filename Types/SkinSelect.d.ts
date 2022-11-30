@@ -1,18 +1,18 @@
 declare declare namespace FLib {
     namespace SkinSelect {
         interface SkinSelect {
-            enable():                                      this;
-            disable():                                     this;
-            setInvalid():                                  this;
-            setValid():                                    this;
-            setLoading():                                  this;
-            unsetLoading():                                this;
-            updateTitle():                                 this;
-            select( param: number | string | HTMLElement ): this;
-            selectByIndex( index: number ):                 this;
-            selectByOption( optionOrItem: HTMLElement ):     this;
-            selectByValue( value: string | number ):        this;
-            updateOptions( optionsArray?: FLib.SkinSelect.OptionArray[] ): this;
+            enable():                                                          this;
+            disable():                                                         this;
+            setInvalid():                                                      this;
+            setValid():                                                        this;
+            setLoading():                                                      this;
+            unsetLoading():                                                    this;
+            updateTitle():                                                     this;
+            select( param: number | string | HTMLElement, dispatchEvent?: bool ): this;
+            selectByIndex( index: number, dispatchEvent?: bool ):                 this;
+            selectByOption( optionOrItem: HTMLElement, dispatchEvent?: bool ):     this;
+            selectByValue( value: string | number, dispatchEvent?: bool ):        this;
+            updateOptions( optionsArray?: FLib.SkinSelect.OptionArray[] ):       this;
         }
 
 

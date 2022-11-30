@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 7.1.13
+
+* SkinSelect: Update fire event on select
+
+
 ## 7.1.12
 
 * Validator: Use dayjs library to validate date

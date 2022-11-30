@@ -278,7 +278,7 @@ export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
     }
 
 
-    selectByValue( value: string | number ): this {
+    selectByValue( value: string | number, dispatchEvent = true ): this {
         if ( this.#$select.disabled || this.#loading ) {
             return this;
         }
@@ -289,11 +289,11 @@ export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
             return this;
         }
 
-        return this.selectByIndex( IDX );
+        return this.selectByIndex( IDX, dispatchEvent );
     }
 
 
-    selectByOption( optionOrItem: HTMLElement ): this {
+    selectByOption( optionOrItem: HTMLElement, dispatchEvent = true ): this {
         if ( this.#$select.disabled || this.#loading ) {
             return this;
         }
@@ -304,14 +304,14 @@ export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
             return this;
         }
 
-        return this.selectByIndex( IDX );
+        return this.selectByIndex( IDX, dispatchEvent );
     }
 
 
     /**
      * Select an option
      */
-    selectByIndex( index: number ): this {
+    selectByIndex( index: number, dispatchEvent = true ): this {
 
         if ( this.#$select.disabled || this.#loading ) {
             return this;
@@ -334,9 +334,11 @@ export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
                         } );
         }
 
-        fire( this.#$select, {
-            "eventsName": "change"
-        } );
+        if ( dispatchEvent ) {
+            fire( this.#$select, {
+                "eventsName": "change"
+            } );
+        }
 
         return this;
     }
@@ -345,15 +347,15 @@ export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
     /**
      * If arg is a number, it is considered as an option index, not a value.
      */
-    select( arg: number | string | HTMLElement ): this {
+    select( arg: number | string | HTMLElement, dispatchEvent = true ): this {
         if ( typeof arg === 'number' ) {
-            return this.selectByIndex( arg );
+            return this.selectByIndex( arg, dispatchEvent );
         }
         else if ( typeof arg === 'string' ) {
-            return this.selectByValue( arg );
+            return this.selectByValue( arg, dispatchEvent );
         }
         else if ( typeof arg === 'object' ) {
-            return this.selectByOption( arg );
+            return this.selectByOption( arg, dispatchEvent );
         }
 
         return this;
