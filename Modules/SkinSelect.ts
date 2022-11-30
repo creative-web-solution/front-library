@@ -339,6 +339,9 @@ export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
                 "eventsName": "change"
             } );
         }
+        else {
+            this.updateTitle();
+        }
 
         return this;
     }

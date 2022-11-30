@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## 7.1.14
+
+* EventManager: Fix bug on array
+* SkinSelect: Update title on select when dispatch event is off
+
+
 ## 7.1.13
 
 * SkinSelect: Update fire event on select

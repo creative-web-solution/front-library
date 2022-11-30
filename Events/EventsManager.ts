@@ -202,6 +202,9 @@ export const off = function( $elements: any, options: FLib.Events.EventsManager.
             let registry: FLib.Events.EventsManager.DataRegistry[]      = useNativeDOMEvents ? DOMRegistry : ObjectRegistry;
 
             registry.forEach( item => {
+                if ( item.$element !== $element ) {
+                    return;
+                }
                 const callback = item.delegate || item.options._internalCallback || item.options.callback;
 
                 if ( !options.callback || options.callback === item.options.callback ) {
