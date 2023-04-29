@@ -24,7 +24,7 @@
  *
  * @returns A promise with a .off() function to cancel the waiting
  */
-export function wait( waitFor: number | string = -1 ): Promise<any> & { off(); } {
+export function wait( waitFor: number | 'idle' = -1 ): Promise<any> & { off(); } {
     let timeoutId: any, _resolve;
 
 

@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 7.1.15
+
+* Fix type in `wait()` helper
+
+
 ## 7.1.14
 
 * EventManager: Fix bug on array
