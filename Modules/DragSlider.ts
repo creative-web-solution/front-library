@@ -152,6 +152,11 @@ export default class DragSlider {
             if ( Math.abs( finalX - this.#listDelta ) <= 3 ) {
                 finalX = this.#listDelta;
             }
+
+            // If close to the start, then snap to it
+            if ( Math.abs( finalX ) <= 3 ) {
+                finalX = 0;
+            }
         }
 
         const IS_SNAP_TO_END   = finalX === this.#listDelta;

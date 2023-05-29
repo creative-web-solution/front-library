@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 7.1.16
+
+* Fix doc
+* [DragSlider] Fix "first item reach start position" condition
+
 
 ## 7.1.15
 
