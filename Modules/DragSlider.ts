@@ -15,11 +15,16 @@ import { copy }                    from '../Helpers/Extend';
 export default class DragSlider {
     #isDraggingActive:      boolean;
     #options:               FLib.DragSlider.Options;
-    #deltaMove:             FLib.DragSlider.DeltaMove;
+    #deltaMove:             FLib.DragSlider.DeltaMove = {
+        "x":      0,
+        "deltaX": 0,
+        "deltaY": 0,
+        "newX":   0
+    };
     #itemArray:             FLib.DragSlider.Item[];
     #$slider:               HTMLElement;
     #viewportInfo;
-    #siteOffset;
+    #siteOffsetLeft          = 0;
     #listDelta               = 0;
     #$viewport:              HTMLElement | undefined;
     #$items:                 NodeList | undefined;
@@ -44,13 +49,6 @@ export default class DragSlider {
         if ( !options.viewportSelector || !options.listSelector || !options.itemSelector || !options.dragClass ) {
             throw '[Drag Slider]: Missing at least one of viewportSelector, listSelector, itemSelector, dragClass';
         }
-
-        this.#deltaMove = {
-            "x":      0,
-            "deltaX": 0,
-            "deltaY": 0,
-            "newX":   0
-        };
 
         this.#$slider = $slider;
 
@@ -84,8 +82,12 @@ export default class DragSlider {
         if ( !this.#$items || !this.#$list ) {
             return;
         }
-        this.#viewportInfo = offset( this.#$viewport as HTMLElement );
-        this.#siteOffset   = parseInt( prop( (this.#$items[ 0 ] as HTMLElement), 'marginLeft' ), 10 );
+
+        const LAST_INDEX = this.#$items.length - 1;
+
+        this.#viewportInfo    = offset( this.#$viewport as HTMLElement );
+        this.#siteOffsetLeft  = parseInt( prop( (this.#$items[ 0 ] as HTMLElement), 'marginLeft' ), 10 );
+
         this.#listDelta    = this.#viewportInfo.width - this.#$list.scrollWidth;
 
         const prevIsDraggingActive = this.#isDraggingActive;
@@ -108,23 +110,40 @@ export default class DragSlider {
         }
 
         this.#itemArray.length = 0;
+        const ABS_LIST_DELTA = Math.abs( this.#listDelta );
 
-        const LAST_INDEX = this.#$items.length;
-
-        this.#$items.forEach( ( $item: Node, index: number ) => {
-            const $ITEM       = $item as HTMLElement;
+        for (let index = 0; index < this.#$items.length; ++index) {
+            const $ITEM       = this.#$items[ index ] as HTMLElement;
             const ITEM_OFFSET = offset( $ITEM, false, this.#$list );
+
+            if (ITEM_OFFSET.left - this.#siteOffsetLeft <= ABS_LIST_DELTA) {
+                this.#itemArray.push({
+                    index,
+                    "isFirst": index === 0,
+                    "isLast":  false,
+                    "$item":   $ITEM,
+                    "info":    ITEM_OFFSET
+                });
+
+                this.#itemMap.set( $ITEM, this.#itemArray[ index ] );
+                continue;
+            }
 
             this.#itemArray.push({
                 index,
                 "isFirst": index === 0,
-                "isLast":  index === LAST_INDEX - 1 || ITEM_OFFSET.left > Math.abs( this.#listDelta ),
+                "isLast":  true,
                 "$item":   $ITEM,
-                "info":    ITEM_OFFSET
+                "info":    {
+                    ...ITEM_OFFSET,
+                    "left": ABS_LIST_DELTA + this.#siteOffsetLeft,
+                    "x":    ABS_LIST_DELTA + this.#siteOffsetLeft
+                }
             });
-
             this.#itemMap.set( $ITEM, this.#itemArray[ index ] );
-        } );
+
+            break;
+        }
 
         this.#firstItem = this.#itemMap.get( (this.#$items[ 0 ] as HTMLElement) ) as FLib.DragSlider.Item;
 
@@ -137,26 +156,26 @@ export default class DragSlider {
     }
 
 
-    #snapToItemAnimation = ( snapItem: FLib.DragSlider.Item, snapToEnd?: FLib.DragSlider.Item ): gsap.core.Tween => {
+    #snapToItemAnimation =  ( snapItem: FLib.DragSlider.Item ): gsap.core.Tween | void => {
+
+        if (!snapItem) {
+            return;
+        }
+
         let finalX;
 
-        if ( snapToEnd ) {
+        finalX = -1 * snapItem.info.left + this.#siteOffsetLeft;
+
+        finalX = Math.max( Math.min( 0, finalX ), this.#listDelta );
+
+        // If close to the end, then snap to it
+        if ( Math.abs( finalX - this.#listDelta ) <= 3 ) {
             finalX = this.#listDelta;
         }
-        else {
-            finalX = -1 * snapItem.info.left + this.#siteOffset;
 
-            finalX = Math.max( Math.min( 0, finalX ), this.#listDelta );
-
-            // If close to the end, then snap to it
-            if ( Math.abs( finalX - this.#listDelta ) <= 3 ) {
-                finalX = this.#listDelta;
-            }
-
-            // If close to the start, then snap to it
-            if ( Math.abs( finalX ) <= 3 ) {
-                finalX = 0;
-            }
+        // If close to the start, then snap to it
+        if ( Math.abs( finalX ) <= 3 ) {
+            finalX = 0;
         }
 
         const IS_SNAP_TO_END   = finalX === this.#listDelta;
@@ -216,7 +235,7 @@ export default class DragSlider {
 
 
     #getFirstNextItem = ( xPos: number ): { snapItem: FLib.DragSlider.Item, snapToEnd: boolean } => {
-        let lastDelta, snapItem, snapToEnd;
+        let lastDelta, snapItem;
 
         const absXPos = Math.abs( xPos );
 
@@ -230,18 +249,9 @@ export default class DragSlider {
             break;
         }
 
-        const lastItem = this.#itemArray[ this.#itemArray.length - 1 ];
-
-        if ( !snapItem.isLast &&
-            Math.abs( absXPos + this.#viewportInfo.width - ( lastItem.info.left + lastItem.info.width ) ) < lastDelta
-        ) {
-            snapItem = lastItem;
-            snapToEnd = true;
-        }
-
         return {
-            snapItem,
-            snapToEnd
+            "snapItem": snapItem ? snapItem : this.#itemArray[ this.#itemArray.length - 1 ],
+            "snapToEnd": !snapItem
         };
     }
 
@@ -253,25 +263,11 @@ export default class DragSlider {
 
         for ( const item of this.#itemArray ) {
             const IS_LAST_DELTA = typeof lastDelta !== 'undefined';
-            let newDelta = Math.abs( absXPos - item.info.left );
+            let newDelta = Math.abs( absXPos - item.info.left + this.#siteOffsetLeft );
 
-            if ( !IS_LAST_DELTA || newDelta < lastDelta ) {
+            if ( !IS_LAST_DELTA || newDelta <= lastDelta ) {
                 lastDelta = newDelta;
                 snapItem  = item;
-            }
-
-            if ( !IS_LAST_DELTA ) {
-                continue;
-            }
-
-            if ( !snapItem.isLast && item.index === this.#itemMap.size - 1 ) {
-                newDelta = Math.abs( Math.abs( this.#deltaMove.x ) + this.#viewportInfo.width - ( item.info.left + item.info.width ) );
-
-                if ( newDelta < lastDelta ) {
-                    lastDelta = newDelta;
-                    snapItem = item;
-                    snapToEnd = true;
-                }
             }
         }
 
@@ -287,6 +283,7 @@ export default class DragSlider {
 
         const ABS_DELTA_X = Math.abs( this.#deltaMove.deltaX );
 
+        // If move a bit on right or left, juste move by one item only
         if ( ABS_DELTA_X >= this.#options.swipeTresholdMin && ABS_DELTA_X < Math.min( (this.#firstItem as FLib.DragSlider.Item ).info.width * this.#options.swipeTresholdSize, this.#options.swipeTresholdMin * 3 ) ) {
             if ( this.#deltaMove.deltaX < 0 ) {
                 snapItem = this.#getFirstNextItem( this.#deltaMove.x );
@@ -303,7 +300,7 @@ export default class DragSlider {
             return;
         }
 
-        this.#snapToItemAnimation( snapItem.snapItem, snapItem.snapToEnd );
+        this.#snapToItemAnimation( snapItem.snapItem );
     }
 
 
@@ -435,20 +432,24 @@ export default class DragSlider {
 
 
     next(): gsap.core.Tween | void {
-        if ( !this.#isDraggingActive || ( this.#currentSnapItem as FLib.DragSlider.Item ).isLast ) {
+        const CURRENT_ITEM = this.#currentSnapItem as FLib.DragSlider.Item;
+
+        if ( !this.#isDraggingActive || !this.#itemArray[ CURRENT_ITEM.index + 1 ] ) {
             return;
         }
 
-        return this.#snapToItemAnimation( this.#itemArray[ ( this.#currentSnapItem as FLib.DragSlider.Item ).index + 1 ] );
+        return this.#snapToItemAnimation( this.#itemArray[ CURRENT_ITEM.index + 1 ] );
     }
 
 
     previous(): gsap.core.Tween | void {
-        if ( !this.#isDraggingActive || ( this.#currentSnapItem as FLib.DragSlider.Item ).isFirst ) {
+        const CURRENT_ITEM = this.#currentSnapItem as FLib.DragSlider.Item;
+
+        if ( !this.#isDraggingActive || CURRENT_ITEM.isFirst ) {
             return;
         }
 
-        return this.#snapToItemAnimation( this.#itemArray[ ( this.#currentSnapItem as FLib.DragSlider.Item ).index - 1 ] );
+        return this.#snapToItemAnimation( this.#itemArray[ CURRENT_ITEM.index - 1 ] );
     }
 
 
@@ -474,7 +475,7 @@ export default class DragSlider {
 
         return gsap.to( this.#$list as HTMLElement, {
             "duration": 0.3,
-            "x":        -1 * ITEM.info.left + this.#siteOffset,
+            "x":        -1 * ITEM.info.left + this.#siteOffsetLeft,
             "y":        0,
             "z":        0,
             "onUpdateParams": [ this ],
@@ -493,6 +494,9 @@ export default class DragSlider {
         } );
     }
 
+    refresh = () => {
+        this.#onResize();
+    }
 
     init = (): this => {
         if ( this.#isInitialized ) {
@@ -526,6 +530,8 @@ export default class DragSlider {
         if ( !this.#$items?.length ) {
             return this;
         }
+
+        aClass( this.#$slider, 'is-active' );
 
         this.#onResize();
 
@@ -561,8 +567,6 @@ export default class DragSlider {
             "isAtStart":   this.#deltaMove.x === 0,
             "isAtEnd":     this.#deltaMove.x === this.#listDelta
         } );
-
-        aClass( this.#$slider, 'is-active' );
 
         return this;
     }

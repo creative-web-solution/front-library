@@ -1,5 +1,10 @@
 # CHANGELOG
 
+
+## 7.1.17
+
+* [DragSlider] Rework + add refresh function
+
 ## 7.1.16
 
 * Fix doc
