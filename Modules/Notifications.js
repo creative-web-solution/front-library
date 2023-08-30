@@ -5,7 +5,7 @@ import { aClass, rClass } from "@creative-web-solution/front-library/DOM/Class";
 import { append, remove } from "@creative-web-solution/front-library/DOM/Manipulation";
 import { one, off } from "@creative-web-solution/front-library/Events/EventsManager";
 import { wait } from "@creative-web-solution/front-library/Helpers/wait";
-import { onTransitionEnd } from "@creative-web-solution/front-library/Events/onTransitionEnd";
+import onTransitionEnd from "@creative-web-solution/front-library/Events/onTransitionEnd";
 
 
 const DEFAULT_OPTIONS = {
