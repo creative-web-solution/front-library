@@ -1,4 +1,4 @@
-import { slice } from '../Helpers/Slice';
+import { slice } from '../Helpers/slice';
 
 
 let passiveSupported = false,

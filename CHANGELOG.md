@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 6.2.10
+
+* Fix file import name
 
 ## 6.2.9
 
