@@ -1,7 +1,7 @@
 import { on, one, fire } from '@creative-web-solution/front-library/Events/EventsManager';
-import { gesture, gestureOff } from '@creative-web-solution/front-library/Events/Gesture';
+import { gesture, gestureOff } from '@creative-web-solution/front-library/Events/gesture';
 import { KeyboardHandler } from '@creative-web-solution/front-library/Events/KeyboardHandler';
-import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
+import { extend } from '@creative-web-solution/front-library/Helpers/extend';
 import { defer } from '@creative-web-solution/front-library/Helpers/defer';
 import { wait } from '@creative-web-solution/front-library/Helpers/wait';
 import { index } from '@creative-web-solution/front-library/DOM/index';

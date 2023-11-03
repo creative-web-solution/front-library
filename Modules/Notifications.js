@@ -1,8 +1,8 @@
-import { extend } from "@creative-web-solution/front-library/Helpers/Extend";
+import { extend } from "@creative-web-solution/front-library/Helpers/extend";
 import { strToDOM } from "@creative-web-solution/front-library/DOM/strToDOM";
 import { slice } from "@creative-web-solution/front-library/Helpers/slice";
 import { aClass, rClass } from "@creative-web-solution/front-library/DOM/Class";
-import { append, remove } from "@creative-web-solution/front-library/DOM/Manipulation";
+import { append, remove } from "@creative-web-solution/front-library/DOM/manipulation";
 import { one, off } from "@creative-web-solution/front-library/Events/EventsManager";
 import { wait } from "@creative-web-solution/front-library/Helpers/wait";
 import onTransitionEnd from "@creative-web-solution/front-library/Events/onTransitionEnd";

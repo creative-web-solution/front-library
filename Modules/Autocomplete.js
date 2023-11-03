@@ -1,7 +1,7 @@
-import { gesture, gestureOff } from '@creative-web-solution/front-library/Events/Gesture';
-import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
-import { append, remove } from '@creative-web-solution/front-library/DOM/Manipulation';
-import { height } from '@creative-web-solution/front-library/DOM/Size';
+import { gesture, gestureOff } from '@creative-web-solution/front-library/Events/gesture';
+import { extend } from '@creative-web-solution/front-library/Helpers/extend';
+import { append, remove } from '@creative-web-solution/front-library/DOM/manipulation';
+import { height } from '@creative-web-solution/front-library/DOM/size';
 import { offset } from '@creative-web-solution/front-library/DOM/offset';
 import { outerHeight, outerWidth } from '@creative-web-solution/front-library/DOM/OuterSize';
 import { position } from '@creative-web-solution/front-library/DOM/position';

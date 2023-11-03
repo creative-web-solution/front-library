@@ -1,7 +1,7 @@
 import { wait }                   from '@creative-web-solution/front-library/Helpers/wait';
 import { debounce }               from '@creative-web-solution/front-library/Helpers/debounce';
 import { offset }                 from '@creative-web-solution/front-library/DOM/offset';
-import { gesture, gestureOff }    from '@creative-web-solution/front-library/Events/Gesture';
+import { gesture, gestureOff }    from '@creative-web-solution/front-library/Events/gesture';
 import { prop }                   from '@creative-web-solution/front-library/DOM/Styles';
 import { aClass, rClass, tClass } from '@creative-web-solution/front-library/DOM/Class';
 import { on, off }                from '@creative-web-solution/front-library/Events/EventsManager';

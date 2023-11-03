@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 6.2.12
+
+* Fix import name
+
+
 ## 6.2.11
 
 * Fix onTransitionEnd import

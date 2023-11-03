@@ -1,5 +1,5 @@
 import { fire, on, off } from '@creative-web-solution/front-library/Events/EventsManager';
-import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
+import { extend } from '@creative-web-solution/front-library/Helpers/extend';
 import { isNumber } from '@creative-web-solution/front-library/Helpers/Type';
 import { template } from '@creative-web-solution/front-library/Modules/template';
 import { wrap } from '@creative-web-solution/front-library/DOM/wrap';
@@ -8,7 +8,7 @@ import { index } from '@creative-web-solution/front-library/DOM/index';
 import { hClass, aClass } from '@creative-web-solution/front-library/DOM/Class';
 import { rClass } from '@creative-web-solution/front-library/DOM/Class';
 import { position } from '@creative-web-solution/front-library/DOM/position';
-import { height } from '@creative-web-solution/front-library/DOM/Size';
+import { height } from '@creative-web-solution/front-library/DOM/size';
 import { outerHeight } from '@creative-web-solution/front-library/DOM/OuterSize';
 
 

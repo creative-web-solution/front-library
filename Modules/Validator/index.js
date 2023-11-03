@@ -1,5 +1,5 @@
 import { getValue } from '@creative-web-solution/front-library/Helpers/getValue';
-import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
+import { extend } from '@creative-web-solution/front-library/Helpers/extend';
 import { defer } from '@creative-web-solution/front-library/Helpers/defer';
 import { unique } from '@creative-web-solution/front-library/Helpers/unique';
 import { on, off } from '@creative-web-solution/front-library/Events/EventsManager';

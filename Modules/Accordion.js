@@ -1,6 +1,6 @@
 import { aClass, rClass } from '@creative-web-solution/front-library/DOM/Class';
 import { on, off } from '@creative-web-solution/front-library/Events/EventsManager';
-import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
+import { extend } from '@creative-web-solution/front-library/Helpers/extend';
 import { next } from '@creative-web-solution/front-library/DOM/Traversing';
 
 const STATUS_ON = 'STATUS_ON';

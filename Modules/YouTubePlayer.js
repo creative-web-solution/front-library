@@ -1,4 +1,4 @@
-import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
+import { extend } from '@creative-web-solution/front-library/Helpers/extend';
 import { defer } from '@creative-web-solution/front-library/Helpers/defer';
 
 

@@ -1,11 +1,11 @@
 import { on, off } from '@creative-web-solution/front-library/Events/EventsManager';
-import { gesture, gestureOff } from '@creative-web-solution/front-library/Events/Gesture';
-import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
+import { gesture, gestureOff } from '@creative-web-solution/front-library/Events/gesture';
+import { extend } from '@creative-web-solution/front-library/Helpers/extend';
 import { wait } from '@creative-web-solution/front-library/Helpers/wait';
 import { aClass, rClass } from '@creative-web-solution/front-library/DOM/Class';
 import { prop } from '@creative-web-solution/front-library/DOM/Styles';
 import { position } from '@creative-web-solution/front-library/DOM/position';
-import { width, height } from '@creative-web-solution/front-library/DOM/Size';
+import { width, height } from '@creative-web-solution/front-library/DOM/size';
 
 /**
  * @callback ScrollSnap_Handler

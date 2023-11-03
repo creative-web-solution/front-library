@@ -1,9 +1,9 @@
 import { on, off } from '@creative-web-solution/front-library/Events/EventsManager';
 import { KeyboardHandler } from '@creative-web-solution/front-library/Events/KeyboardHandler';
-import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
+import { extend } from '@creative-web-solution/front-library/Helpers/extend';
 import { defer } from '@creative-web-solution/front-library/Helpers/defer';
 import { strToDOM } from '@creative-web-solution/front-library/DOM/strToDOM';
-import { append } from '@creative-web-solution/front-library/DOM/Manipulation';
+import { append } from '@creative-web-solution/front-library/DOM/manipulation';
 import { windowSize } from '@creative-web-solution/front-library/DOM/windowSize';
 import { template } from '@creative-web-solution/front-library/Modules/template';
 

@@ -1,4 +1,4 @@
-import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
+import { extend } from '@creative-web-solution/front-library/Helpers/extend';
 import { wrap } from '@creative-web-solution/front-library/DOM/wrap';
 import { isString } from '@creative-web-solution/front-library/Helpers/Type';
 

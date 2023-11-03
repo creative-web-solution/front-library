@@ -1,6 +1,6 @@
-import onTransitionEnd    from '../Events/OnTransitionEnd';
-import onAnimationEnd     from '../Events/OnAnimationEnd';
-import { wait }           from './Wait';
+import onTransitionEnd    from '../Events/onTransitionEnd';
+import onAnimationEnd     from '../Events/onAnimationEnd';
+import { wait }           from './wait';
 
 
 const KEY = Symbol( 'TransitionHelper' );

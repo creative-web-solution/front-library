@@ -1,5 +1,5 @@
 import { aClass }                           from '@creative-web-solution/front-library/DOM/Class';
-import { append }                           from '@creative-web-solution/front-library/DOM/Manipulation';
+import { append }                           from '@creative-web-solution/front-library/DOM/manipulation';
 import { createMat4, orthoMat4, scaleMat4 } from '@creative-web-solution/front-library/WebGL/Tools/matrix';
 import { defer }                            from '@creative-web-solution/front-library/Helpers/defer';
 

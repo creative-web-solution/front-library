@@ -1,5 +1,5 @@
-import { extend } from '@creative-web-solution/front-library/Helpers/Extend';
-import { wrap } from '@creative-web-solution/front-library/DOM/Wrap';
+import { extend } from '@creative-web-solution/front-library/Helpers/extend';
+import { wrap } from '@creative-web-solution/front-library/DOM/wrap';
 
 
 const defaultOptions = {
