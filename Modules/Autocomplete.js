@@ -20,6 +20,7 @@ import { position } from '@creative-web-solution/front-library/DOM/position';
  * @param {Number} [userOptions.minchar=3]
  * @param {} [userOptions.source]
  * @param {String} userOptions.url
+ * @param {String} [userOptions.method=GET]
  * @param {String} [userOptions.cssPositionning=false] - Use CSS or Javascript for the position of the layer
  * @param {boolean} [userOptions.updateOnSelect=true] - Update or not the text field with the selected value
  * @param {Callback} [userOptions.onSelect] - ({ item, query, resultsList }) => {}
@@ -57,6 +58,7 @@ export function Autocomplete(userOptions = {}) {
         "minchar": 3,
         "source": null,
         "url": "",
+        "method": "GET",
         "updateOnSelect": true,
         "onSelect": null,
         "cssPositionning": false,
@@ -496,6 +498,7 @@ export function Autocomplete(userOptions = {}) {
             myHeaders.append( 'X-Requested-With', 'XMLHttpRequest' );
 
             fetch( newUrl, {
+                "method": options.method,
                 "signal": requestAbortController.signal,
                 "headers": myHeaders
             } )
