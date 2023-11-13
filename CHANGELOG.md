@@ -1,8 +1,15 @@
 # CHANGELOG
 
+
+## 6.2.14
+
+* Remove Modernizr
+
+
 ## 6.2.13
 
 * Autocomplete: Add method ajax call option
+
 
 ## 6.2.12
 

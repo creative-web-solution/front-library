@@ -6,6 +6,7 @@ import { prop }                   from '@creative-web-solution/front-library/DOM
 import { aClass, rClass, tClass } from '@creative-web-solution/front-library/DOM/Class';
 import { on, off }                from '@creative-web-solution/front-library/Events/EventsManager';
 
+const IS_TOUCH_DEVICE = !window.matchMedia('(hover:hover)').matches;
 
 /**
  * DragSlider
@@ -306,8 +307,8 @@ export function DragSlider( $slider, options ) {
                     return false;
                 }
 
-                return !Modernizr.touchdevice ||
-                        Modernizr.touchdevice && Math.abs( deltaMove.deltaY ) < Math.abs( deltaMove.deltaX );
+                return !IS_TOUCH_DEVICE ||
+                        IS_TOUCH_DEVICE && Math.abs( deltaMove.deltaY ) < Math.abs( deltaMove.deltaX );
             }
         } );
 

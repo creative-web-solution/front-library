@@ -9,8 +9,7 @@ import { template } from '@creative-web-solution/front-library/Modules/template'
 
 let $body = document.body;
 
-const CLICK_EVENT_NAME =
-    window.Modernizr && window.Modernizr.touchdevice ? 'touchend' : 'click';
+const CLICK_EVENT_NAME = window.matchMedia('(hover:hover)').matches ? 'click' : 'touchend';
 
 const FOCUSABLE_ELEMENTS = 'a, button, input, select, textarea';
 

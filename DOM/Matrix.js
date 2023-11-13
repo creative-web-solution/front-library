@@ -1,4 +1,5 @@
 import { prop } from '@creative-web-solution/front-library/DOM/Styles';
+import { transformPropertyName } from '../Tools/PrefixedProperties';
 
 /**
  * @typedef {Object} matrix_Object
@@ -47,11 +48,7 @@ import { prop } from '@creative-web-solution/front-library/DOM/Styles';
 export function getMatrix( $elem ) {
     let matrixString, c, matrix;
 
-    if ( !Modernizr || Modernizr.prefixed ) {
-        throw 'Missing dependency: Modernizr.prefixed';
-    }
-
-    matrixString = prop( $elem, Modernizr.prefixed( 'transform' ) );
+    matrixString = prop( $elem, transformPropertyName );
     c = matrixString.split( /\s*[(),]\s*/ ).slice( 1, -1 );
 
     if ( c.length === 6 ) {
