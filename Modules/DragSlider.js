@@ -5,8 +5,48 @@ import { gesture, gestureOff }    from '@creative-web-solution/front-library/Eve
 import { prop }                   from '@creative-web-solution/front-library/DOM/Styles';
 import { aClass, rClass, tClass } from '@creative-web-solution/front-library/DOM/Class';
 import { on, off }                from '@creative-web-solution/front-library/Events/EventsManager';
+import { extend }                 from '@creative-web-solution/front-library/Helpers/extend';
 
 const IS_TOUCH_DEVICE = !window.matchMedia('(hover:hover)').matches;
+
+const defaultOptions = {
+    swipeTresholdMin: 40,
+    swipeTresholdSize: 0.5,
+    lockedClass: 'is-locked',
+    _animReset: function($list) {
+        gsap.set( $list, {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        } );
+    },
+    _animClear: function($list) {
+        gsap.set( $list, {
+            "clearProps": "all"
+        } );
+    },
+    _animKill: function($list) {
+        gsap.killTweensOf( $list );
+    },
+    _animMoveItem: function($list, x, onUpdate) {
+        gsap.to( $list, {
+            "duration": 0.3,
+            "x":        x,
+            "y":        0,
+            "z":        0,
+            "onUpdate": function() {
+                onUpdate(gsap.getProperty( this.targets()[ 0 ], 'x' ));
+            }
+        } );
+    },
+    _setCoordinates: function($list, x) {
+        gsap.set( $list, {
+            "x": x,
+            "y": 0,
+            "z": 0
+        } );
+    }
+}
 
 /**
  * DragSlider
@@ -31,7 +71,7 @@ const IS_TOUCH_DEVICE = !window.matchMedia('(hover:hover)').matches;
  * @param {Number} [options.swipeTresholdMin=40] - in px
  * @param {Number} [options.swipeTresholdSize=0.5] - in % (0.5 = 50% of the size of one item)
  */
-export function DragSlider( $slider, options ) {
+export function DragSlider( $slider, userOptions ) {
     let itemMap, itemArray, listDelta, viewportInfo,
         $items, $list, $viewport, startDragCoords, deltaMove,
         currentSnapItem, firstItem,
@@ -45,9 +85,7 @@ export function DragSlider( $slider, options ) {
 
     isDraggingActive         = false;
 
-    options.swipeTresholdMin  = options.swipeTresholdMin || 40;
-    options.swipeTresholdSize = options.swipeTresholdSize || 0.5;
-    options.lockedClass       = options.lockedClass || 'is-locked';
+    const options = extend( defaultOptions, userOptions );
 
     itemArray = [];
 
@@ -79,12 +117,9 @@ export function DragSlider( $slider, options ) {
 
         if ( !isDraggingActive ) {
             isDragging = false;
-            gsap.killTweensOf( $list );
-            gsap.set( $list, {
-                "x": 0,
-                "y": 0,
-                "z": 0
-            } );
+
+            options._animKill( $list );
+            options._animReset( $list );
         }
 
         tClass( $slider, options.lockedClass, !isDraggingActive );
@@ -148,22 +183,16 @@ export function DragSlider( $slider, options ) {
             "isAtEnd":     IS_SNAP_TO_END
         } );
 
-        gsap.to( $list, {
-            "duration": 0.3,
-            "x":        finalX,
-            "y":        0,
-            "z":        0,
-            "onUpdate": function() {
-                deltaMove.x = gsap.getProperty( this.targets()[ 0 ], 'x' );
+        options._animMoveItem( $list, finalX, (newX) => {
+            deltaMove.x = newX;
 
-                options.onSnapUpdate?.( {
-                    "item":        snapItem,
-                    "xPos":        deltaMove.x,
-                    "moveMaxSize": listDelta,
-                    "isAtStart":   IS_SNAP_TO_START,
-                    "isAtEnd":     IS_SNAP_TO_END
-                } );
-            }
+            options.onSnapUpdate?.( {
+                "item":        snapItem,
+                "xPos":        deltaMove.x,
+                "moveMaxSize": listDelta,
+                "isAtStart":   IS_SNAP_TO_START,
+                "isAtEnd":     IS_SNAP_TO_END
+            } );
         } );
 
         currentSnapItem = snapItem;
@@ -294,7 +323,7 @@ export function DragSlider( $slider, options ) {
 
         isDragging = true;
 
-        gsap.killTweensOf( $list );
+        options._animKill( $list );
 
         startDragCoords = coords;
         listDelta       = viewportInfo.width - $list.scrollWidth;
@@ -337,11 +366,7 @@ export function DragSlider( $slider, options ) {
             deltaMove.newX = listDelta;
         }
 
-        gsap.set( $list, {
-            "x": deltaMove.newX,
-            "y": 0,
-            "z": 0
-        } );
+        options._setCoordinates($list, deltaMove.newX);
 
         options.onDrag?.( {
             "item":        currentSnapItem,
@@ -450,23 +475,17 @@ export function DragSlider( $slider, options ) {
             "isAtEnd":     deltaMove.x === listDelta
         } );
 
-        gsap.to( $list, {
-            "duration": 0.3,
-            "x":        -1 * ITEM.info.left + siteOffset,
-            "y":        0,
-            "z":        0,
-            "onUpdate": function() {
-                deltaMove.x = gsap.getProperty( this.targets()[ 0 ], 'x' );
+        options._animMoveItem($list, -1 * ITEM.info.left + siteOffset, (x) => {
+            deltaMove.x = x;
 
-                options.onSnapUpdate?.( {
-                    "item":        ITEM,
-                    "xPos":        deltaMove.x,
-                    "moveMaxSize": listDelta,
-                    "isAtStart":   deltaMove.x === 0,
-                    "isAtEnd":     deltaMove.x === listDelta
-                } );
-            }
-        } );
+            options.onSnapUpdate?.( {
+                "item":        ITEM,
+                "xPos":        deltaMove.x,
+                "moveMaxSize": listDelta,
+                "isAtStart":   deltaMove.x === 0,
+                "isAtEnd":     deltaMove.x === listDelta
+            } );
+        })
     };
 
 
@@ -567,12 +586,8 @@ export function DragSlider( $slider, options ) {
             "callback":   onMouseleave
         } );
 
-
-        gsap.killTweensOf( $list );
-
-        gsap.set( $list, {
-            "clearProps": "all"
-        } );
+        options._animKill( $list );
+        options._animClear( $list );
 
         rClass( $viewport, options.dragClass );
 

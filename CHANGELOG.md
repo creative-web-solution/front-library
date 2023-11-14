@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 6.2.15
+
+* DragSlider: Make GSAP optional
+
+
 ## 6.2.14
 
 * Remove Modernizr
