@@ -490,6 +490,8 @@ export default class DragSlider {
             return;
         }
 
+        this.#currentSnapItem = ITEM;
+
         this.#options.onSnap?.( {
             "item":        ITEM,
             "xPos":        this.#deltaMove.x,

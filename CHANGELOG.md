@@ -1,5 +1,10 @@
 # CHANGELOG
 
+
+## 7.1.19
+
+* [DragSlider] Fix variable init in goToItem
+
 ## 7.1.18
 
 * [DragSlider] Expose some properties + allow item index in goToItem function
