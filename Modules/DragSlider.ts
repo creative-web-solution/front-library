@@ -39,8 +39,20 @@ export default class DragSlider {
     #debouncedOnResize;
 
 
+    get count(): number {
+        return this.#$items?.length ?? 0;
+    }
+
+    get currentSnapItem(): FLib.DragSlider.Item | undefined {
+        return this.#currentSnapItem;
+    }
+
     get isActive(): boolean {
         return this.#isDraggingActive;
+    }
+
+    get items(): NodeList | undefined {
+        return this.#$items;
     }
 
 
@@ -257,13 +269,13 @@ export default class DragSlider {
 
 
     #getClosestItem = ( xPos: number ): { snapItem: FLib.DragSlider.Item, snapToEnd: boolean } => {
-        let lastDelta, snapItem, snapToEnd = false;
+        let lastDelta, snapItem;
 
         const absXPos = Math.abs( xPos );
 
         for ( const item of this.#itemArray ) {
             const IS_LAST_DELTA = typeof lastDelta !== 'undefined';
-            let newDelta = Math.abs( absXPos - item.info.left + this.#siteOffsetLeft );
+            const newDelta = Math.abs( absXPos - item.info.left + this.#siteOffsetLeft );
 
             if ( !IS_LAST_DELTA || newDelta <= lastDelta ) {
                 lastDelta = newDelta;
@@ -273,7 +285,7 @@ export default class DragSlider {
 
         return {
             snapItem,
-            snapToEnd
+            snapToEnd: false
         };
     }
 
@@ -453,9 +465,22 @@ export default class DragSlider {
     }
 
 
-    goToItem( $block: HTMLElement ): gsap.core.Tween | void {
+    goToItem( blockOrIndex: HTMLElement | number ): gsap.core.Tween | void {
 
         if ( !this.#isDraggingActive ) {
+            return;
+        }
+
+        let $block;
+
+        if (typeof blockOrIndex === 'number') {
+            $block = this.#$items?.[blockOrIndex] as HTMLElement;
+        }
+        else {
+            $block = blockOrIndex;
+        }
+
+        if ( !$block ) {
             return;
         }
 
@@ -494,8 +519,10 @@ export default class DragSlider {
         } );
     }
 
-    refresh = () => {
+    refresh = (): this => {
         this.#onResize();
+
+        return this;
     }
 
     init = (): this => {

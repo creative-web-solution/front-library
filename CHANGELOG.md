@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 7.1.18
+
+* [DragSlider] Expose some properties + allow item index in goToItem function
 
 ## 7.1.17
 
