@@ -29,13 +29,54 @@ declare namespace FLib {
 
 
     namespace Matrix {
+        type Matrix3D = {
+            a1: number;
+            b1: number;
+            c1: number;
+            d1: number;
+            a2: number;
+            b2: number;
+            c2: number;
+            d2: number;
+            a3: number;
+            b3: number;
+            c3: number;
+            d3: number;
+            a4: number;
+            b4: number;
+            c4: number;
+            d4: number;
+        }
 
-        type Translate = {
+        type Matrix2D = {
+            a1: number;
+            b1: number;
+            c1: number;
+            a2: number;
+            b2: number;
+            c2: number;
+            a3: number;
+            b3: number;
+            c3: number;
+        }
+
+        type Translation = {
             tx: number;
             ty: number;
             tz: number;
         }
 
+        type Rotation = {
+            rx: number;
+            ry: number;
+            rz: number;
+        }
+
+        type Scale = {
+            sx: number;
+            sy: number;
+            sz: number;
+        }
 
         type Transform = {
             tx: number;
@@ -44,26 +85,9 @@ declare namespace FLib {
             rx: number;
             ry: number;
             rz: number;
-        }
-
-
-        type Matrix = {
-            m11: number;
-            m21: number;
-            m31: number;
-            m41: number;
-            m12: number;
-            m22: number;
-            m32: number;
-            m42: number;
-            m13: number;
-            m23: number;
-            m33: number;
-            m43: number;
-            m14: number;
-            m24: number;
-            m34: number;
-            m44: number;
+            sx: number;
+            sy: number;
+            sz: number;
         }
     }
 }

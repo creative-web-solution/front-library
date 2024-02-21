@@ -6,13 +6,13 @@ import { wait }           from './Wait';
 const KEY = Symbol( 'TransitionHelper' );
 
 
-function addWatcher( $element: HTMLElement, styleChange: ( $element: HTMLElement ) => (Promise<void> | any ), isAnimation: boolean, options: { delay?: 'idle' | number, pseudoElement?: 'after' | 'before' | 'both', property?: string[], animationName?: string[] } = {} ): Promise<HTMLElement> {
+function addWatcher( $element: HTMLElement, styleChange: ( $element: HTMLElement ) => (Promise<void> | any ), isAnimation: boolean, options: { delay?: 'idle' | number, pseudoElement?: 'after' | 'before' | 'both', properties?: string[], animationName?: string[] } = {} ): Promise<HTMLElement> {
     if ( $element[ KEY ] ) {
         $element[ KEY ].off();
     }
 
-    if ( typeof options.delay !== undefined ) {
-        options.delay = 'idle'
+    if ( typeof options.delay !== 'number' && options.delay !== 'idle') {
+        options.delay = 'idle';
     }
 
     $element[ KEY ] = isAnimation ?
@@ -21,16 +21,16 @@ function addWatcher( $element: HTMLElement, styleChange: ( $element: HTMLElement
                             "pseudoElement": options.pseudoElement
                         } ) :
                         onTransitionEnd( $element, {
-                            "property":      options.property,
+                            "property":      options.properties,
                             "pseudoElement": options.pseudoElement
                         } );
-
-    wait( options.delay ).then( () => styleChange( $element ) );
 
     $element[ KEY ].then( () => {
         $element[ KEY ] = null;
         return $element;
     } );
+
+    wait( options.delay ).then( () => styleChange( $element ) );
 
     return $element[ KEY ];
 }
@@ -54,7 +54,7 @@ function addWatcher( $element: HTMLElement, styleChange: ( $element: HTMLElement
  * } );
  * ```
  */
-export function transitionWatcher( $element: HTMLElement, styleChange: ( $element: HTMLElement ) => (Promise<void> | any ), options?: { delay: 'idle' | number, pseudoElement?: 'after' | 'before' | 'both', animationName?: string[] } ): Promise<HTMLElement> {
+export function transitionWatcher( $element: HTMLElement, styleChange: ( $element: HTMLElement ) => (Promise<void> | any ), options?: { delay?: 'idle' | number, pseudoElement?: 'after' | 'before' | 'both', properties?: string[], animationName?: string[] } ): Promise<HTMLElement> {
     return addWatcher( $element, styleChange, false, options );
 }
 
@@ -77,7 +77,7 @@ export function transitionWatcher( $element: HTMLElement, styleChange: ( $elemen
  * } );
  * ```
  */
- export function animationWatcher( $element: HTMLElement, animationStart: ( $element: HTMLElement ) => (Promise<void> | any ), options?: { delay: 'idle' | number, pseudoElement?: 'after' | 'before' | 'both', animationName?: string[] } ): Promise<HTMLElement> {
+ export function animationWatcher( $element: HTMLElement, animationStart: ( $element: HTMLElement ) => (Promise<void> | any ), options?: { delay?: 'idle' | number, pseudoElement?: 'after' | 'before' | 'both', animationName?: string[] } ): Promise<HTMLElement> {
     return addWatcher( $element, animationStart, true, options );
 }
 

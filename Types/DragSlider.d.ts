@@ -51,6 +51,11 @@ declare namespace FLib {
              * @defaultValue 0.5
             */
             swipeTresholdSize:number;
+            _animReset: ($list) => void;
+            _animClear: ($list) => void;
+            _animKill: ($list) => void;
+            _animMoveItem: ($list, x, onUpdate) => Promise<any> | void;
+            _setCoordinates: ($list, x) => void;
         }
     }
 }

@@ -6,8 +6,46 @@ import { prop }                    from '../DOM/Styles';
 import { aClass, rClass, tClass }  from '../DOM/Class';
 import { on, off }                 from '../Events/EventsManager';
 import { isTouchDevice }           from '../Tools/TouchDeviceSupport';
-import { copy }                    from '../Helpers/Extend';
+import { extend }                  from '../Helpers/Extend';
 
+const defaultOptions = {
+    swipeTresholdMin: 40,
+    swipeTresholdSize: 0.5,
+    lockedClass: 'is-locked',
+    _animReset: function($list) {
+        gsap.set( $list, {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        } );
+    },
+    _animClear: function($list) {
+        gsap.set( $list, {
+            "clearProps": "all"
+        } );
+    },
+    _animKill: function($list) {
+        gsap.killTweensOf( $list );
+    },
+    _animMoveItem: function($list, x, onUpdate) {
+        return gsap.to( $list, {
+            "duration": 0.3,
+            "x":        x,
+            "y":        0,
+            "z":        0,
+            "onUpdate": function() {
+                onUpdate(gsap.getProperty( this.targets()[ 0 ], 'x' ));
+            }
+        } );
+    },
+    _setCoordinates: function($list, x) {
+        gsap.set( $list, {
+            "x": x,
+            "y": 0,
+            "z": 0
+        } );
+    }
+}
 
 /**
  * DragSlider
@@ -56,9 +94,9 @@ export default class DragSlider {
     }
 
 
-    constructor( $slider: HTMLElement, options: Partial<FLib.DragSlider.Options> ) {
+    constructor( $slider: HTMLElement, userOptions: Partial<FLib.DragSlider.Options> ) {
 
-        if ( !options.viewportSelector || !options.listSelector || !options.itemSelector || !options.dragClass ) {
+        if ( !userOptions.viewportSelector || !userOptions.listSelector || !userOptions.itemSelector || !userOptions.dragClass ) {
             throw '[Drag Slider]: Missing at least one of viewportSelector, listSelector, itemSelector, dragClass';
         }
 
@@ -66,11 +104,7 @@ export default class DragSlider {
 
         this.#isDraggingActive = false;
 
-        this.#options = copy( options );
-
-        this.#options.swipeTresholdMin  = options.swipeTresholdMin || 40;
-        this.#options.swipeTresholdSize = options.swipeTresholdSize || 0.5;
-        this.#options.lockedClass       = options.lockedClass || 'is-locked';
+        this.#options = extend( defaultOptions, userOptions );
 
         this.#itemArray = [];
 
@@ -95,8 +129,6 @@ export default class DragSlider {
             return;
         }
 
-        const LAST_INDEX = this.#$items.length - 1;
-
         this.#viewportInfo    = offset( this.#$viewport as HTMLElement );
         this.#siteOffsetLeft  = parseInt( prop( (this.#$items[ 0 ] as HTMLElement), 'marginLeft' ), 10 );
 
@@ -107,12 +139,8 @@ export default class DragSlider {
 
         if ( !this.#isDraggingActive ) {
             this.#isDragging = false;
-            gsap.killTweensOf( this.#$list );
-            gsap.set( this.#$list, {
-                "x": 0,
-                "y": 0,
-                "z": 0
-            } );
+            this.#options._animKill( this.#$list );
+            this.#options._animReset( this.#$list );
         }
 
         tClass( this.#$slider, this.#options.lockedClass, !this.#isDraggingActive );
@@ -168,8 +196,7 @@ export default class DragSlider {
     }
 
 
-    #snapToItemAnimation =  ( snapItem: FLib.DragSlider.Item ): gsap.core.Tween | void => {
-
+    #snapToItemAnimation =  ( snapItem: FLib.DragSlider.Item ): Promise<any> | void => {
         if (!snapItem) {
             return;
         }
@@ -203,26 +230,17 @@ export default class DragSlider {
 
         this.#currentSnapItem = snapItem;
 
-        const TWEEN = gsap.to( this.#$list as HTMLElement, {
-            "duration": 0.3,
-            "x":        finalX,
-            "y":        0,
-            "z":        0,
-            "onUpdateParams": [ this ],
-            "onUpdate": function( ctx ) {
-                ctx.#deltaMove.x = gsap.getProperty( this.targets()[ 0 ], 'x' ) as number;
+        return this.#options._animMoveItem( this.#$list, finalX, (newX) => {
+            this.#deltaMove.x = newX;
 
-                ctx.#options.onSnapUpdate?.( {
-                    "item":        snapItem,
-                    "xPos":        ctx.#deltaMove.x,
-                    "moveMaxSize": ctx.#listDelta,
-                    "isAtStart":   IS_SNAP_TO_START,
-                    "isAtEnd":     IS_SNAP_TO_END
-                } );
-            }
+            this.#options.onSnapUpdate?.( {
+                "item":        snapItem,
+                "xPos":        this.#deltaMove.x,
+                "moveMaxSize": this.#listDelta,
+                "isAtStart":   IS_SNAP_TO_START,
+                "isAtEnd":     IS_SNAP_TO_END
+            } );
         } );
-
-        return TWEEN
     }
 
 
@@ -247,7 +265,7 @@ export default class DragSlider {
 
 
     #getFirstNextItem = ( xPos: number ): { snapItem: FLib.DragSlider.Item, snapToEnd: boolean } => {
-        let lastDelta, snapItem;
+        let snapItem;
 
         const absXPos = Math.abs( xPos );
 
@@ -256,7 +274,6 @@ export default class DragSlider {
                 continue;
             }
 
-            lastDelta = Math.abs( absXPos - item.info.left );
             snapItem  = item;
             break;
         }
@@ -328,10 +345,11 @@ export default class DragSlider {
 
         this.#isDragging = true;
 
-        gsap.killTweensOf( this.#$list );
+        this.#options._animKill( this.#$list );
 
         this.#startDragCoords = coords;
         this.#listDelta       = this.#viewportInfo.width - this.#$list.scrollWidth;
+        this.#deltaMove.newX  = this.#deltaMove.x;
 
         gesture( document.body, 'dragSlider', {
             "move":        this.#onMove,
@@ -371,11 +389,7 @@ export default class DragSlider {
             this.#deltaMove.newX = this.#listDelta;
         }
 
-        gsap.set( this.#$list as HTMLElement, {
-            "x": this.#deltaMove.newX,
-            "y": 0,
-            "z": 0
-        } );
+        this.#options._setCoordinates(this.#$list, this.#deltaMove.newX);
 
         this.#options.onDrag?.( {
             "item":        this.#currentSnapItem,
@@ -443,7 +457,7 @@ export default class DragSlider {
     }
 
 
-    next(): gsap.core.Tween | void {
+    next(): Promise<any> | void {
         const CURRENT_ITEM = this.#currentSnapItem as FLib.DragSlider.Item;
 
         if ( !this.#isDraggingActive || !this.#itemArray[ CURRENT_ITEM.index + 1 ] ) {
@@ -454,7 +468,7 @@ export default class DragSlider {
     }
 
 
-    previous(): gsap.core.Tween | void {
+    previous(): Promise<any> | void {
         const CURRENT_ITEM = this.#currentSnapItem as FLib.DragSlider.Item;
 
         if ( !this.#isDraggingActive || CURRENT_ITEM.isFirst ) {
@@ -465,7 +479,7 @@ export default class DragSlider {
     }
 
 
-    goToItem( blockOrIndex: HTMLElement | number ): gsap.core.Tween | void {
+    goToItem( blockOrIndex: HTMLElement | number ): Promise<any> | void {
 
         if ( !this.#isDraggingActive ) {
             return;
@@ -500,25 +514,17 @@ export default class DragSlider {
             "isAtEnd":     this.#deltaMove.x === this.#listDelta
         } );
 
-        return gsap.to( this.#$list as HTMLElement, {
-            "duration": 0.3,
-            "x":        -1 * ITEM.info.left + this.#siteOffsetLeft,
-            "y":        0,
-            "z":        0,
-            "onUpdateParams": [ this ],
-            "onUpdate": function( ctx ) {
+        return this.#options._animMoveItem(this.#$list, -1 * ITEM.info.left + this.#siteOffsetLeft, (x) => {
+            this.#deltaMove.x = x;
 
-                ctx.#deltaMove.x = gsap.getProperty( this.targets()[ 0 ], 'x' ) as number;
-
-                ctx.#options.onSnapUpdate?.( {
-                    "item":        ITEM,
-                    "xPos":        ctx.#deltaMove.x,
-                    "moveMaxSize": ctx.#listDelta,
-                    "isAtStart":   ctx.#deltaMove.x === 0,
-                    "isAtEnd":     ctx.#deltaMove.x === ctx.#listDelta
-                } );
-            }
-        } );
+            this.#options.onSnapUpdate?.( {
+                "item":        ITEM,
+                "xPos":        this.#deltaMove.x,
+                "moveMaxSize": this.#listDelta,
+                "isAtStart":   this.#deltaMove.x === 0,
+                "isAtEnd":     this.#deltaMove.x === this.#listDelta
+            } );
+        });
     }
 
     refresh = (): this => {
@@ -634,11 +640,8 @@ export default class DragSlider {
         } );
 
         if ( this.#$list ) {
-            gsap.killTweensOf( this.#$list );
-
-            gsap.set( this.#$list, {
-                "clearProps": "all"
-            } );
+            this.#options._animKill( this.#$list );
+            this.#options._animClear( this.#$list );
         }
 
         this.#$viewport && rClass( this.#$viewport, this.#options.dragClass );
