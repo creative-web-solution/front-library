@@ -4,6 +4,7 @@ import Input                        from './Internal/Input';
 
 
 export const addValidator = validatorFunctionsController.addValidator;
+export const removeValidator = validatorFunctionsController.removeValidator;
 
 
 const defaultOptions = {

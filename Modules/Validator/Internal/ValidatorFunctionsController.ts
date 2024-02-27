@@ -5,23 +5,25 @@ import InputValidator from './InputValidator';
  * Object managing all validation functions
  */
 class ValidatorFunctions {
-    #validators: FLib.Validator.Validator[] = [];
+    #validators: Map<string, FLib.Validator.Validator> = new Map();
 
-    /*
-     * Add new validator to the list
-     */
     addValidator = ( name: string, selector: string, isAsynch: boolean | FLib.Validator.ValidateFunction, func?: FLib.Validator.ValidateFunction ) => {
         if ( typeof func === 'undefined' ) {
             func    = (isAsynch as unknown) as FLib.Validator.ValidateFunction;
             isAsynch = false;
         }
 
-        this.#validators.push( {
+        this.#validators.set(name, {
             name,
             selector,
             "validate": func,
             "isAsynch": isAsynch as boolean
         } );
+    }
+
+
+    removeValidator = ( name: string ) => {
+        this.#validators.delete(name);
     }
 
 

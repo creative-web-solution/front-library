@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## 7.1.21
+
+* [Validator] Avoid registering the same validator several times
+* [Validator] Add a function to remove a validator
+
+
 ## 7.1.20
 
 * Remove legacy Modernizr addons
