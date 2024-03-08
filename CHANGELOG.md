@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 7.1.22
+
+* [Validator] Fix MultiRequired validator
+
+
 ## 7.1.21
 
 * [Validator] Avoid registering the same validator several times

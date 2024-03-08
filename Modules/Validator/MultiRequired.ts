@@ -63,7 +63,8 @@ addValidator( 'multirequired', '[data-multirequired]', ( $input, value, isLiveVa
                 isRadioListChecked( $elem.__$radioGroup ) ) ||
             ( $elem.type !== 'checkbox' &&
                 $elem.type !== 'radio' &&
-                Array.isArray( VALUE ) ? VALUE.length > 0 : !isEmpty( VALUE as string ) )
+                (Array.isArray( VALUE ) ? VALUE.length > 0 : !isEmpty( VALUE as string ))
+            )
         ) {
             count++
         }
