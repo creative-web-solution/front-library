@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.23
+
+* [TransitionHelpers] Fix delay issue
+
 
 ## 7.1.22
 

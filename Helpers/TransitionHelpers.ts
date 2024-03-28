@@ -12,7 +12,7 @@ function addWatcher( $element: HTMLElement, styleChange: ( $element: HTMLElement
     }
 
     if ( typeof options.delay !== 'number' && options.delay !== 'idle') {
-        options.delay = 'idle';
+        options.delay = -1;
     }
 
     $element[ KEY ] = isAnimation ?
@@ -30,7 +30,7 @@ function addWatcher( $element: HTMLElement, styleChange: ( $element: HTMLElement
         return $element;
     } );
 
-    wait( options.delay ).then( () => styleChange( $element ) );
+    wait( options.delay ).then( () => wait() ).then( () => styleChange( $element ) );
 
     return $element[ KEY ];
 }
