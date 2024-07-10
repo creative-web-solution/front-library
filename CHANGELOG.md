@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 7.1.24
+
+* [Gesture] Fix currentTarget
+* [EventsManager] Callback signature harmonization
+
+
 ## 7.1.23
 
 * [TransitionHelpers] Fix delay issue

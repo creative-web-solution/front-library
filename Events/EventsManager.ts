@@ -71,15 +71,21 @@ function passiveTestFnc() {return;}
 }() );
 
 
-function getDelegation( $element: Node, selector: string, callback: ( e: Event, $target: Element ) => void ) {
+function getDelegation( $element: Node, callback: ( e: Event, $target: Element ) => void, selector?: string ) {
+    if (selector) {
+        return e => {
+            const $target = e.target.closest( selector );
+
+            if ( !$target || !$element.contains( $target ) ) {
+                return;
+            }
+
+            callback.call( $target, e, $target );
+        };
+    }
+
     return e => {
-        const $target = e.target.closest( selector );
-
-        if ( !$target || !$element.contains( $target ) ) {
-            return;
-        }
-
-        callback.call( $target, e, $target );
+        callback.call( $element, e, $element as Element );
     };
 }
 
@@ -153,14 +159,8 @@ export const on = function( $elements: any, options: FLib.Events.EventsManager.O
             };
 
             if ( useNativeDOMEvents ) {
-                if ( options.selector ) {
-                    data.delegate = getDelegation( $element, options.selector, cbFunction );
-
-                    $element.addEventListener( eventName, data.delegate, eventOptions );
-                }
-                else {
-                    $element.addEventListener( eventName, cbFunction, eventOptions );
-                }
+                data.delegate = getDelegation( $element, cbFunction, options.selector );
+                $element.addEventListener( eventName, data.delegate, eventOptions );
                 DOMRegistry.push( data );
             }
             else {
@@ -178,7 +178,7 @@ export const one = function( $elements: any, options: FLib.Events.EventsManager.
 
     function _internalCallback( this: any, e ) {
         off( $elements || this, options );
-        options.callback.call( this, e );
+        options.callback.call( this, e, this );
     }
 
     on( $elements, {

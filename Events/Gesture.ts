@@ -483,7 +483,12 @@ class GestureManager {
 
         const touchCoords = getPos( e );
 
-        this.#$currentTargetElement = e.target;
+        if (this.#options.selector) {
+            this.#$currentTargetElement = e.target?.closest(this.#options.selector) ?? this.#$element;
+        }
+        else {
+            this.#$currentTargetElement = this.#$element
+        }
 
         if ( this.#options.start ) {
             this.#options.start.call( this.#$currentTargetElement, e, this.#$currentTargetElement, touchCoords, 'start' );
