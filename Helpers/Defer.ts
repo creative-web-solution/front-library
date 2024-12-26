@@ -1,32 +1,34 @@
+export type DeferredPromise<T> = Promise<T | undefined> & { resolve: ( a?: T | PromiseLike<T> ) => void; reject:  ( a?: T | PromiseLike<T> ) => void; }
+
 /**
  * Deferred promise
  *
  * @example
- * let dfd = defer()
+ * let prom = defer()
  *
  * // To resolve:
- * dfd.resolve()
+ * prom.resolve()
  *
  * // To reject:
- * dfd.reject()
+ * prom.reject()
  *
  * @returns - a promise with a resolve and reject function
  */
-export function defer(): Promise<any> & { resolve: ( a?: any ) => void; reject:  ( a?: any ) => void; } {
-    let res: (a: any ) => void,
-        rej: (a: any ) => void;
+export function defer<T>(): DeferredPromise<T> {
+    let res: (a?: T | PromiseLike<T> ) => void,
+        rej: (a?: T | PromiseLike<T> ) => void;
 
-    const promise = new Promise( ( resolve, reject ) => {
+    const promise = new Promise<T | undefined>( ( resolve, reject ) => {
         res = resolve;
         rej = reject;
-    } ) as Promise<any> & { resolve: ( a?: any ) => void; reject:  ( a?: any ) => void; } ;
+    } ) as DeferredPromise<T>;
 
-    promise.resolve = ( a: any ) => {
+    promise.resolve = ( a?: T | PromiseLike<T> ) => {
         res( a );
         return promise;
     };
 
-    promise.reject = ( a : any )=> {
+    promise.reject = ( a?: T | PromiseLike<T> )=> {
         rej( a );
         return promise;
     };

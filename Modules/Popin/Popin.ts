@@ -399,14 +399,12 @@ export default class Popin {
     }
 
 
-    #openPopinHandler = ( e: Event ): void => {
+    #openPopinHandler = ( e: Event, $target: HTMLElement ): void => {
         e.preventDefault();
 
         if ( this.#loadingPromise ) {
             return;
         }
-
-        const $target = e.target as HTMLElement;
 
         if ( $target.nodeName === 'FORM' ) {
             this.#_loadForm( $target as HTMLFormElement );

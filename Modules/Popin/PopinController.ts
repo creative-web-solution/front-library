@@ -104,10 +104,10 @@ export default class PopinController implements FLib.Popin.Controller {
 
 
 
-    #openPopinHandler = ( e: Event): void => {
+    #openPopinHandler = ( e: Event, $target: HTMLElement): void => {
         e.preventDefault();
 
-        this.#parseElement( e.target as HTMLElement );
+        this.#parseElement( $target );
     }
 
 

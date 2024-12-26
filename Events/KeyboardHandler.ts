@@ -64,7 +64,7 @@ export default class KeyboardHandler {
     }
 
 
-    #onKeypress = ( e: KeyboardEvent ): void => {
+    #onKeypress = ( e: KeyboardEvent, $target: HTMLElement ): void => {
         const key = e.key;
 
         // Block all key except tab, CTRL R, CMD R or F5
@@ -78,12 +78,12 @@ export default class KeyboardHandler {
             e.preventDefault();
         }
 
-        this.#handleCallbacks( e, e.target, [ 'onKey' ] );
+        this.#handleCallbacks( e, $target, [ 'onKey' ] );
 
         const FNC = this.#eventsName.get( key );
 
         if ( FNC ) {
-            this.#handleCallbacks( e, e.target, FNC( e ) );
+            this.#handleCallbacks( e, $target, FNC( e ) );
         }
     }
 

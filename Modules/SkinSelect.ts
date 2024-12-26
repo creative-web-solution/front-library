@@ -457,11 +457,11 @@ export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
 
 
     // Handle click on the skinned ul>li list
-    #fakeOptionsClickHandler = ( e: MouseEvent ): void => {
-        if ( !(e.target as HTMLElement).matches( '.' + this.#options.itemClassName ) ) {
+    #fakeOptionsClickHandler = ( e: MouseEvent, $target: HTMLElement ): void => {
+        if ( !$target.matches( '.' + this.#options.itemClassName ) ) {
             return;
         }
-        this.selectByOption( e.target as HTMLElement );
+        this.selectByOption( $target );
     }
 
 

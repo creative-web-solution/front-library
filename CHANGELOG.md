@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 7.1.26
+
+* Use $target instead of e.target in EventManager callbacks
+
+
+## 7.1.25
+
+* [Defer] Fix type
+
+
 ## 7.1.24
 
 * [Gesture] Fix currentTarget
