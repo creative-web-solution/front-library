@@ -1,6 +1,6 @@
 # Front Library
 
-@version: 7.1.25
+@version: 7.1.26
 
 
 ## Use

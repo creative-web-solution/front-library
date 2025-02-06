@@ -9,24 +9,24 @@
  *
  * @returns New modified array
  */
-export function insert( list: any[], what: any, indexWhere: number ): any[] {
+export function insert(list: any[], what: any, indexWhere: number): any[] {
     const listLength = list.length;
 
-    if ( !listLength ) {
-        return list;
+    if (!listLength) {
+        return [what];
     }
 
-    if ( indexWhere <= 0 ) {
-        return [ what, ...list ];
+    if (indexWhere <= 0) {
+        return [what, ...list];
     }
 
-    if ( indexWhere >= listLength ) {
-        return [ ...list, what ];
+    if (indexWhere >= listLength) {
+        return [...list, what];
     }
 
     return [
-        ...list.slice( 0, indexWhere ),
+        ...list.slice(0, indexWhere),
         what,
-        ...list.slice( indexWhere, list.length )
+        ...list.slice(indexWhere, list.length),
     ];
 }

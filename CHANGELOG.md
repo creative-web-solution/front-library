@@ -2,6 +2,8 @@
 
 ## 7.1.26
 
+* Remove unused types
+* Fix insert function
 * Use $target instead of e.target in EventManager callbacks
 
 
