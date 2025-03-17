@@ -37,7 +37,7 @@ export default class Popin {
     #keyboardControls;
     #options:           FLib.Popin.Options;
     #controllerOptions: FLib.Popin.ControllerOptions | undefined;
-    #backgroundLayer:   PopinBackground;
+    #backgroundLayer:   PopinBackground | undefined;
     #tick;
     #$popin:            HTMLElement;
 
@@ -57,7 +57,7 @@ export default class Popin {
         }
         else {
             this.#options         = extend( defaultOptions, userOptions );
-            this.#backgroundLayer = new PopinBackground( this, this.#options );
+            this.#backgroundLayer = this.#options.isBackgroundAside ? new PopinBackground( this, this.#options ) : undefined;
         }
 
 
@@ -195,9 +195,6 @@ export default class Popin {
 
         return this.#showBackgroundLayer()
             .then( () => {
-                if ( this.#isInlinePopin ) {
-                    this.#addAccessibility();
-                }
                 return this.#animations.initOpenPopin( this.#$popin );
             } )
             .then( () => {
@@ -206,6 +203,9 @@ export default class Popin {
                 }
             } )
             .then( () => {
+                if ( this.#isInlinePopin ) {
+                    this.#addAccessibility();
+                }
                 return this.#animations.openPopin( this.#$popin );
             } )
             .then( () => {

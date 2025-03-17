@@ -17,6 +17,7 @@ export const defaultOptions = {
     "marginHeight": 20,
     "autoResize": false,
     "enableKeyboard": true,
+    "isBackgroundAside": true,
     "onLoad": (): Promise<any> => {
         return Promise.resolve();
     },

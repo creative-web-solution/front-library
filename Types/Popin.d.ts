@@ -75,6 +75,8 @@ declare namespace FLib {
             errorMessage:      string;
             /** @defaultValue true */
             enableKeyboard:    boolean;
+            /** @defaultValue true */
+            isBackgroundAside: boolean;
             onOpen?:            ( $popin: HTMLElement ) => void;
             onClose?:           ( $popin: HTMLElement ) => void;
             onLoad:             ( $popin: HTMLElement ) => Promise<void>;

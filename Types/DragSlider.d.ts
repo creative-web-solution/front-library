@@ -1,11 +1,13 @@
 declare namespace FLib {
     namespace DragSlider {
         type CallbackParam = {
-            item:        any;
-            xPos:        number;
-            moveMaxSize: number;
-            isAtStart:   boolean;
-            isAtEnd:     boolean;
+            item:         any;
+            xPos:         number;
+            moveMaxSize:  number;
+            isAtStart:    boolean;
+            isAtEnd:      boolean;
+            visibleItems: Item[];
+            hiddenItems:  Item[];
         }
 
         type Item = {
@@ -36,6 +38,7 @@ declare namespace FLib {
             onDrag?:            Callback;
             onStopDrag?:        Callback;
             onSnap?:            Callback;
+            onSnapEnd?:         Callback;
             onSnapUpdate?:      Callback;
             onMouseEnter?:      Callback;
             onMouseLeave?:      Callback;
@@ -54,7 +57,7 @@ declare namespace FLib {
             _animReset: ($list) => void;
             _animClear: ($list) => void;
             _animKill: ($list) => void;
-            _animMoveItem: ($list, x, onUpdate) => Promise<any> | void;
+            _animMoveItem: ($list, x, onUpdate) => Promise<any>;
             _setCoordinates: ($list, x) => void;
         }
     }

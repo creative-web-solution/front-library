@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 7.1.27
+
+* [Slider]: Remove gsap
+* [DragSlider]
+    * Remove gsap
+    * Add accessibility feature
+    * Take last item margin in account
+    * Improvements
+* [YouTubePlayer]: Update parameters doc
+* [Popin]:
+    * Fix focus issue
+    * Handle background to be inside the popin
+
+
 ## 7.1.26
 
 * Remove unused types

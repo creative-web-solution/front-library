@@ -13,39 +13,41 @@ const defaultOptions = {
     swipeTresholdSize: 0.5,
     lockedClass: 'is-locked',
     _animReset: function($list) {
-        gsap.set( $list, {
-            "x": 0,
-            "y": 0,
-            "z": 0
-        } );
+        // gsap.set( $list, {
+        //     "x": 0,
+        //     "y": 0,
+        //     "z": 0
+        // } );
     },
     _animClear: function($list) {
-        gsap.set( $list, {
-            "clearProps": "all"
-        } );
+        // gsap.set( $list, {
+        //     "clearProps": "all"
+        // } );
     },
     _animKill: function($list) {
-        gsap.killTweensOf( $list );
+        // gsap.killTweensOf( $list );
     },
     _animMoveItem: function($list, x, onUpdate) {
-        return gsap.to( $list, {
-            "duration": 0.3,
-            "x":        x,
-            "y":        0,
-            "z":        0,
-            "onUpdate": function() {
-                onUpdate(gsap.getProperty( this.targets()[ 0 ], 'x' ));
-            }
-        } );
+        // return gsap.to( $list, {
+        //     "duration": 0.3,
+        //     "x":        x,
+        //     "y":        0,
+        //     "z":        0,
+        //     "onUpdate": function() {
+        //         onUpdate(gsap.getProperty( this.targets()[ 0 ], 'x' ));
+        //     }
+        // } );
     },
     _setCoordinates: function($list, x) {
-        gsap.set( $list, {
-            "x": x,
-            "y": 0,
-            "z": 0
-        } );
+        // gsap.set( $list, {
+        //     "x": x,
+        //     "y": 0,
+        //     "z": 0
+        // } );
     }
 }
+
+const MINIMUM_MOVEMENT_TO_START_DRAG = 3; // px
 
 /**
  * DragSlider
@@ -63,6 +65,7 @@ export default class DragSlider {
     #$slider:               HTMLElement;
     #viewportInfo;
     #siteOffsetLeft          = 0;
+    #siteOffsetRight         = 0;
     #listDelta               = 0;
     #$viewport:              HTMLElement | undefined;
     #$items:                 NodeList | undefined;
@@ -74,6 +77,8 @@ export default class DragSlider {
     #hasAlreadyBeenDragged   = false;
     #startDragCoords:        FLib.Events.Gesture.Coords | undefined;
     #isInitialized           = false;
+    #visibleItems:           FLib.DragSlider.Item[] = [];
+    #hiddenItems:            FLib.DragSlider.Item[] = [];
     #debouncedOnResize;
 
 
@@ -91,6 +96,14 @@ export default class DragSlider {
 
     get items(): NodeList | undefined {
         return this.#$items;
+    }
+
+    get visibleItems(): FLib.DragSlider.Item[] {
+        return this.#visibleItems;
+    }
+
+    get hiddenItems(): FLib.DragSlider.Item[] {
+        return this.#hiddenItems;
     }
 
 
@@ -131,8 +144,9 @@ export default class DragSlider {
 
         this.#viewportInfo    = offset( this.#$viewport as HTMLElement );
         this.#siteOffsetLeft  = parseInt( prop( (this.#$items[ 0 ] as HTMLElement), 'marginLeft' ), 10 );
+        this.#siteOffsetRight = parseInt( prop( (this.#$items[ this.#$items.length - 1 ] as HTMLElement), 'marginRight' ), 10 );
 
-        this.#listDelta    = this.#viewportInfo.width - this.#$list.scrollWidth;
+        this.#listDelta    = this.#viewportInfo.width - this.#$list.scrollWidth - this.#siteOffsetLeft - this.#siteOffsetRight;
 
         const prevIsDraggingActive = this.#isDraggingActive;
         this.#isDraggingActive     = this.#listDelta < 0;
@@ -152,37 +166,42 @@ export default class DragSlider {
         this.#itemArray.length = 0;
         const ABS_LIST_DELTA = Math.abs( this.#listDelta );
 
+        let flag = false;
+
         for (let index = 0; index < this.#$items.length; ++index) {
             const $ITEM       = this.#$items[ index ] as HTMLElement;
             const ITEM_OFFSET = offset( $ITEM, false, this.#$list );
+            const DATA = {
+                index,
+                "isFirst": index === 0,
+                "isLast":  false,
+                "$item":   $ITEM,
+                "info":    ITEM_OFFSET
+            };
 
             if (ITEM_OFFSET.left - this.#siteOffsetLeft <= ABS_LIST_DELTA) {
-                this.#itemArray.push({
-                    index,
-                    "isFirst": index === 0,
-                    "isLast":  false,
-                    "$item":   $ITEM,
-                    "info":    ITEM_OFFSET
-                });
+                this.#itemArray.push(DATA);
 
-                this.#itemMap.set( $ITEM, this.#itemArray[ index ] );
+                this.#itemMap.set( $ITEM, DATA );
                 continue;
             }
 
-            this.#itemArray.push({
-                index,
-                "isFirst": index === 0,
-                "isLast":  true,
-                "$item":   $ITEM,
-                "info":    {
-                    ...ITEM_OFFSET,
-                    "left": ABS_LIST_DELTA + this.#siteOffsetLeft,
-                    "x":    ABS_LIST_DELTA + this.#siteOffsetLeft
-                }
-            });
-            this.#itemMap.set( $ITEM, this.#itemArray[ index ] );
+            DATA.isLast = true;
 
-            break;
+            if (!flag) {
+                this.#itemArray.push(DATA);
+                // this.#itemArray.push({
+                //     ...DATA,
+                //     "info":    {
+                //         ...ITEM_OFFSET,
+                //         "left": ABS_LIST_DELTA + this.#siteOffsetLeft,
+                //         "x":    ABS_LIST_DELTA + this.#siteOffsetLeft
+                //     }
+                // });
+            }
+            flag = true;
+
+            this.#itemMap.set( $ITEM, DATA );
         }
 
         this.#firstItem = this.#itemMap.get( (this.#$items[ 0 ] as HTMLElement) ) as FLib.DragSlider.Item;
@@ -193,17 +212,19 @@ export default class DragSlider {
         else {
             this.#currentSnapItem = this.#itemArray[ this.#currentSnapItem.index ];
         }
+
+        this.#updateAccessibilityFeature();
     }
 
 
-    #snapToItemAnimation =  ( snapItem: FLib.DragSlider.Item ): Promise<any> | void => {
+    #snapToItemAnimation =  ( snapItem: FLib.DragSlider.Item ): Promise<any> => {
         if (!snapItem) {
-            return;
+            return Promise.resolve();
         }
 
         let finalX;
 
-        finalX = -1 * snapItem.info.left + this.#siteOffsetLeft;
+        finalX = -1 * snapItem.info.left;
 
         finalX = Math.max( Math.min( 0, finalX ), this.#listDelta );
 
@@ -225,10 +246,14 @@ export default class DragSlider {
             "xPos":        this.#deltaMove.x,
             "moveMaxSize": this.#listDelta,
             "isAtStart":   IS_SNAP_TO_START,
-            "isAtEnd":     IS_SNAP_TO_END
+            "isAtEnd":     IS_SNAP_TO_END,
+            "visibleItems": this.#visibleItems,
+            "hiddenItems":  this.#hiddenItems
         } );
 
         this.#currentSnapItem = snapItem;
+
+        finalX += this.#siteOffsetLeft;
 
         return this.#options._animMoveItem( this.#$list, finalX, (newX) => {
             this.#deltaMove.x = newX;
@@ -238,9 +263,11 @@ export default class DragSlider {
                 "xPos":        this.#deltaMove.x,
                 "moveMaxSize": this.#listDelta,
                 "isAtStart":   IS_SNAP_TO_START,
-                "isAtEnd":     IS_SNAP_TO_END
+                "isAtEnd":     IS_SNAP_TO_END,
+                "visibleItems": this.#visibleItems,
+                "hiddenItems":  this.#hiddenItems
             } );
-        } );
+        } ).then(() => this.#updateAccessibilityFeature());
     }
 
 
@@ -329,7 +356,17 @@ export default class DragSlider {
             return;
         }
 
-        this.#snapToItemAnimation( snapItem.snapItem );
+        this.#snapToItemAnimation( snapItem.snapItem ).then(() => {
+            this.#options.onSnapEnd?.({
+                "item":        this.#currentSnapItem,
+                "xPos":        this.#deltaMove.x,
+                "moveMaxSize": this.#listDelta,
+                "isAtStart":   this.#deltaMove.x === 0,
+                "isAtEnd":     this.#deltaMove.x === this.#listDelta,
+                "visibleItems": this.#visibleItems,
+                "hiddenItems":  this.#hiddenItems
+            })
+        });
     }
 
 
@@ -348,7 +385,7 @@ export default class DragSlider {
         this.#options._animKill( this.#$list );
 
         this.#startDragCoords = coords;
-        this.#listDelta       = this.#viewportInfo.width - this.#$list.scrollWidth;
+        this.#listDelta       = this.#viewportInfo.width - this.#$list.scrollWidth - this.#siteOffsetLeft - this.#siteOffsetRight;
         this.#deltaMove.newX  = this.#deltaMove.x;
 
         gesture( document.body, 'dragSlider', {
@@ -369,7 +406,9 @@ export default class DragSlider {
             "xPos":        this.#deltaMove.x,
             "moveMaxSize": this.#listDelta,
             "isAtStart":   this.#deltaMove.x === 0,
-            "isAtEnd":     this.#deltaMove.x === this.#listDelta
+            "isAtEnd":     this.#deltaMove.x === this.#listDelta,
+            "visibleItems": this.#visibleItems,
+            "hiddenItems":  this.#hiddenItems
         } );
     }
 
@@ -380,13 +419,17 @@ export default class DragSlider {
         this.#deltaMove.deltaX = coords.pageX - ( this.#startDragCoords as FLib.Events.Gesture.Coords ).pageX;
         this.#deltaMove.deltaY = coords.pageY - ( this.#startDragCoords as FLib.Events.Gesture.Coords ).pageY;
 
+        if (Math.abs(this.#deltaMove.deltaX) < MINIMUM_MOVEMENT_TO_START_DRAG) {
+            return;
+        }
+
         this.#deltaMove.newX  = this.#deltaMove.deltaX + this.#deltaMove.x;
 
         if ( this.#deltaMove.newX > 0 ) {
             this.#deltaMove.newX = 0;
         }
-        else if ( this.#deltaMove.newX < this.#listDelta ) {
-            this.#deltaMove.newX = this.#listDelta;
+        else if ( this.#deltaMove.newX < this.#listDelta + this.#siteOffsetRight ) {
+            this.#deltaMove.newX = this.#listDelta + this.#siteOffsetRight;
         }
 
         this.#options._setCoordinates(this.#$list, this.#deltaMove.newX);
@@ -396,19 +439,24 @@ export default class DragSlider {
             "xPos":        this.#deltaMove.newX,
             "moveMaxSize": this.#listDelta,
             "isAtStart":   this.#deltaMove.newX === 0,
-            "isAtEnd":     this.#deltaMove.newX === this.#listDelta
+            "isAtEnd":     this.#deltaMove.newX === this.#listDelta,
+            "visibleItems": this.#visibleItems,
+            "hiddenItems":  this.#hiddenItems
         } );
     }
 
 
     #onStopDrag = (): void => {
         gestureOff( document.body, 'dragSlider' );
-
         this.#isDragging = false;
 
-        this.#deltaMove.x = this.#deltaMove.newX;
-
         this.#activeLinkClick();
+
+        if (this.#deltaMove.x === this.#deltaMove.newX) {
+            return;
+        }
+
+        this.#deltaMove.x = this.#deltaMove.newX;
 
         this.#snapToItem();
 
@@ -417,7 +465,9 @@ export default class DragSlider {
             "xPos":        this.#deltaMove.x,
             "moveMaxSize": this.#listDelta,
             "isAtStart":   this.#deltaMove.x === 0,
-            "isAtEnd":     this.#deltaMove.x === this.#listDelta
+            "isAtEnd":     this.#deltaMove.x === this.#listDelta,
+            "visibleItems": this.#visibleItems,
+            "hiddenItems":  this.#hiddenItems
         } );
     }
 
@@ -432,7 +482,9 @@ export default class DragSlider {
             "xPos":        this.#deltaMove.x,
             "moveMaxSize": this.#listDelta,
             "isAtStart":   this.#deltaMove.x === 0,
-            "isAtEnd":     this.#deltaMove.x === this.#listDelta
+            "isAtEnd":     this.#deltaMove.x === this.#listDelta,
+            "visibleItems": this.#visibleItems,
+            "hiddenItems":  this.#hiddenItems
         } );
     }
 
@@ -447,7 +499,9 @@ export default class DragSlider {
             "xPos":        this.#deltaMove.x,
             "moveMaxSize": this.#listDelta,
             "isAtStart":   this.#deltaMove.x === 0,
-            "isAtEnd":     this.#deltaMove.x === this.#listDelta
+            "isAtEnd":     this.#deltaMove.x === this.#listDelta,
+            "visibleItems": this.#visibleItems,
+            "hiddenItems":  this.#hiddenItems
         } );
     }
 
@@ -457,32 +511,32 @@ export default class DragSlider {
     }
 
 
-    next(): Promise<any> | void {
+    next(): Promise<any> {
         const CURRENT_ITEM = this.#currentSnapItem as FLib.DragSlider.Item;
 
         if ( !this.#isDraggingActive || !this.#itemArray[ CURRENT_ITEM.index + 1 ] ) {
-            return;
+            return Promise.resolve();
         }
 
         return this.#snapToItemAnimation( this.#itemArray[ CURRENT_ITEM.index + 1 ] );
     }
 
 
-    previous(): Promise<any> | void {
+    previous(): Promise<any> {
         const CURRENT_ITEM = this.#currentSnapItem as FLib.DragSlider.Item;
 
         if ( !this.#isDraggingActive || CURRENT_ITEM.isFirst ) {
-            return;
+            return Promise.resolve();
         }
 
         return this.#snapToItemAnimation( this.#itemArray[ CURRENT_ITEM.index - 1 ] );
     }
 
 
-    goToItem( blockOrIndex: HTMLElement | number ): Promise<any> | void {
+    goToItem( blockOrIndex: HTMLElement | number ): Promise<any> {
 
         if ( !this.#isDraggingActive ) {
-            return;
+            return Promise.resolve();
         }
 
         let $block;
@@ -495,13 +549,13 @@ export default class DragSlider {
         }
 
         if ( !$block ) {
-            return;
+            return Promise.resolve();
         }
 
         const ITEM = this.#itemMap.get( $block );
 
         if ( !ITEM ) {
-            return;
+            return Promise.resolve();
         }
 
         this.#currentSnapItem = ITEM;
@@ -511,7 +565,9 @@ export default class DragSlider {
             "xPos":        this.#deltaMove.x,
             "moveMaxSize": this.#listDelta,
             "isAtStart":   this.#deltaMove.x === 0,
-            "isAtEnd":     this.#deltaMove.x === this.#listDelta
+            "isAtEnd":     this.#deltaMove.x === this.#listDelta,
+            "visibleItems": this.#visibleItems,
+            "hiddenItems":  this.#hiddenItems
         } );
 
         return this.#options._animMoveItem(this.#$list, -1 * ITEM.info.left + this.#siteOffsetLeft, (x) => {
@@ -522,8 +578,33 @@ export default class DragSlider {
                 "xPos":        this.#deltaMove.x,
                 "moveMaxSize": this.#listDelta,
                 "isAtStart":   this.#deltaMove.x === 0,
-                "isAtEnd":     this.#deltaMove.x === this.#listDelta
+                "isAtEnd":     this.#deltaMove.x === this.#listDelta,
+                "visibleItems": this.#visibleItems,
+                "hiddenItems":  this.#hiddenItems
             } );
+        }).then(() => this.#updateAccessibilityFeature());
+    }
+
+    #updateAccessibilityFeature = (): void => {
+        this.#visibleItems.length = 0;
+        this.#hiddenItems.length = 0;
+
+        this.#itemMap.forEach(item => {
+            const hideElement1 = item.info.left + this.#deltaMove.x < 0;
+            const hideElement2 = item.info.left + item.info.width + this.#deltaMove.x > this.#viewportInfo.width;
+
+            if (hideElement1 || hideElement2) {
+                item.$item.setAttribute("tabindex", "-1");
+                item.$item.setAttribute("inert", "");
+                item.$item.setAttribute("aria-hidden", "true");
+                this.#hiddenItems.push(item);
+                return;
+            }
+
+            item.$item.removeAttribute("tabindex");
+            item.$item.removeAttribute("inert");
+            item.$item.setAttribute("aria-hidden", "false");
+            this.#visibleItems.push(item);
         });
     }
 
@@ -600,7 +681,9 @@ export default class DragSlider {
             "xPos":        this.#deltaMove.x,
             "moveMaxSize": this.#listDelta,
             "isAtStart":   this.#deltaMove.x === 0,
-            "isAtEnd":     this.#deltaMove.x === this.#listDelta
+            "isAtEnd":     this.#deltaMove.x === this.#listDelta,
+            "visibleItems": this.#visibleItems,
+            "hiddenItems":  this.#hiddenItems
         } );
 
         return this;

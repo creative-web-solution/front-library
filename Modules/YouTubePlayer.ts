@@ -10,7 +10,6 @@ const defaultOptions: Partial<FLib.YouTubePlayer.Options> = {
         "autoplay": 0,
         "controls": 2,
         "autohide": 1,
-        "modestbranding": 1,
         "showinfo": 0
     }
 };
@@ -35,11 +34,13 @@ const defaultOptions: Partial<FLib.YouTubePlayer.Options> = {
  *             }
  *         },
  *         "playerVars": {
- *             "autoplay": 0,
- *             "controls": 2,
- *             "autohide": 1,
- *             "modestbranding": 1,
- *             "showinfo": 0,
+ *           "enablejsapi": 1,
+ *           "autoplay": 1,
+ *           "controls": 2,
+ *           "autohide": 1,
+ *           "showinfo": 0,
+ *           "origin": "my-domain.com",
+ *           "playsinline": 1,
  *             // ... All available youtube player options
  *         }
  *     }

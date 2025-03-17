@@ -28,16 +28,16 @@ const defaultOptions = {
     "activeClass":          "active-slide",
     "loop":                 true,
     "_setStyle": ( $elem, styles ) => {
-        gsap.set( $elem, styles );
+        // gsap.set( $elem, styles );
     },
     "_tweenTo": ( $elem, styles ) => {
-        gsap.to( $elem, styles );
+        // gsap.to( $elem, styles );
     },
     "_tweenFromTo": ( $elem, init, styles ) => {
-        gsap.fromTo( $elem, init, styles );
+        // gsap.fromTo( $elem, init, styles );
     },
     "_killTweens": ( $elem ) => {
-        gsap.killTweensOf( $elem );
+        // gsap.killTweensOf( $elem );
     }
 };
 
@@ -63,7 +63,7 @@ export default class Slider {
     #STATE_IDLE     = 'idle';
     #STATE_MOVING   = 'moving';
     #state          = this.#STATE_IDLE;
-    #EASE_NONE      = Linear.easeNone;
+    #EASE_NONE      = "none";
     #options:       FLib.Slider.Options;
 
 
