@@ -9,7 +9,7 @@ declare namespace FLib {
              * @defaultValue //www.youtube.com/iframe_api
              */
             apiUrl:              string;
-            onPlayerStateChange?: ( e: YT.PlayerEvent ) => void;
+            onPlayerStateChange?: YT.PlayerEventHandler<YT.OnStateChangeEvent>;
             /**
              * @defaultValue `{ "autoplay": 0, "controls": 2, "autohide": 1, "modestbranding": 1, "showinfo": 0 }`
              */

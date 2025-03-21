@@ -106,7 +106,13 @@ export default class YouTubePlayer {
             "width":      this.#options.width,
             "videoId":    this.#options.videoId,
 
-            "playerVars": this.#options.playerVars
+            "playerVars": this.#options.playerVars,
+
+            "events": {
+                "onReady": () => {
+                    _resolve( player );
+                }
+              }
         } );
 
         if ( this.#options.onPlayerStateChange ) {
@@ -117,8 +123,6 @@ export default class YouTubePlayer {
         }
 
         $wrapper.YTPlayer = player;
-
-        window.requestAnimationFrame( () => _resolve( player ) );
 
         return promise;
     }

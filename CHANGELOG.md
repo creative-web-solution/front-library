@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 7.1.28
+
+* [YouTubePlayer]: Update types + use ready event to handle end of loading
+
+
 ## 7.1.27
 
 * [Slider]: Remove gsap
