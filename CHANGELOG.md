@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 7.1.29
+
+* [DragSlider]: Fix callback issue
+
+
 ## 7.1.28
 
 * [YouTubePlayer]: Update types + use ready event to handle end of loading
