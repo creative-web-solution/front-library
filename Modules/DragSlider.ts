@@ -140,13 +140,11 @@ export default class DragSlider {
     }
 
     #cancelLinkClick = (): void => {
-        aClass(this.#$slider, this.#options.dragClass);
+        wait().then(() => aClass(this.#$slider, this.#options.dragClass));
     };
 
     #activeLinkClick = (): void => {
-        wait().then(() => {
-            rClass(this.#$slider, this.#options.dragClass);
-        });
+        wait().then(() => rClass(this.#$slider, this.#options.dragClass));
     };
 
     #onResize = (): void => {
@@ -455,8 +453,6 @@ export default class DragSlider {
         $target: HTMLElement,
         coords: FLib.Events.Gesture.Coords
     ): void => {
-        this.#cancelLinkClick();
-
         this.#deltaMove.deltaX =
             coords.pageX -
             (this.#startDragCoords as FLib.Events.Gesture.Coords).pageX;
@@ -467,6 +463,8 @@ export default class DragSlider {
         if (Math.abs(this.#deltaMove.deltaX) < MINIMUM_MOVEMENT_TO_START_DRAG) {
             return;
         }
+
+        this.#cancelLinkClick();
 
         this.#deltaMove.newX = this.#deltaMove.deltaX + this.#deltaMove.x;
         this.#deltaMove.newX = Math.max(

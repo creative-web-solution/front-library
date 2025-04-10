@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 7.1.30
+
+* [DragSlider]: Fix link cancellation
+
+
 ## 7.1.29
 
 * [DragSlider]: Fix callback issue
