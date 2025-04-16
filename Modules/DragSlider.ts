@@ -570,12 +570,18 @@ export default class DragSlider {
 
         this.#currentSnapItem = ITEM;
 
-        const xPos = -1 * ITEM.info.left + this.#siteOffsetLeft;
+        const finalX = Math.max(
+            Math.min(
+                this.#minXPos,
+                -1 * ITEM.info.left + this.#siteOffsetLeft
+            ),
+            this.#maxXPos
+        );
 
-        this.#options.onSnap?.(this.#getCallbackOptions(xPos, ITEM));
+        this.#options.onSnap?.(this.#getCallbackOptions(finalX, ITEM));
 
         return this.#options
-            ._animMoveItem(this.#$list, xPos, (x) => {
+            ._animMoveItem(this.#$list, finalX, (x) => {
                 this.#deltaMove.x = x;
 
                 this.#options.onSnapUpdate?.(

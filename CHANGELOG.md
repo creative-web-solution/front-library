@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 7.1.31
+
+* [DragSlider]: Fix the move range when using api
+
+
 ## 7.1.30
 
 * [DragSlider]: Fix link cancellation
