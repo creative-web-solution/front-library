@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.32
+
+* [Autocomplete]: Fix Typescript type
+
 ## 7.1.31
 
 * [DragSlider]: Fix the move range when using api

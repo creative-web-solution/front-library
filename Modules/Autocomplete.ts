@@ -163,6 +163,8 @@ export default class Autocomplete {
 
         const wrapperStyle = this.#$layer.style;
 
+        wrapperStyle.display = 'block';
+
         if ( !this.#options.cssPositionning ) {
             parentFieldOffset = offset( this.#$field.parentNode );
             wrapperHeight = height( this.#$layer );
@@ -178,8 +180,6 @@ export default class Autocomplete {
             wrapperStyle.left  = `${ parentFieldOffset.left }px`;
             wrapperStyle.width = `${ outerWidth( this.#$field ) }px`;
         }
-
-        wrapperStyle.display = 'block';
 
         this.#$layer.scrollTop = 0;
 

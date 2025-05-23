@@ -31,7 +31,7 @@ declare namespace FLib {
             */
             updateOnSelect: boolean;
             onSelect: ({ item, query, resultsList }) => void;
-            queryParams: ( query: string ) => { "search": string };
+            queryParams: ( query: string ) => Record<string, any>;
             normalize: ( data: any ) => { success: boolean, results: Item[] };
             /**
              * Allow to manipulate the displayed value of items
