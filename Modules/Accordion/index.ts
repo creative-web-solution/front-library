@@ -1,5 +1,6 @@
 import { aClass, rClass }       from '../../DOM/Class';
 import { extend }               from '../../Helpers/Extend';
+import { on, off }              from '../../Events/EventsManager';
 import Tab                      from './Tab';
 
 
@@ -84,11 +85,12 @@ const DEFAULT_OPTIONS = {
  * Set aria-expanded to "true" on the tab you want open at start
  */
 export default class Accordion {
+    #$accordionWrapper: HTMLElement;
     #options:       FLib.Accordion.Options;
     #$tabs:         NodeListOf<HTMLElement>;
-    #tablist:       FLib.Accordion.Tab[];
+    #tablist        = new Map<HTMLElement, Tab>();
     #status:        string;
-    #lastOpenedTab: FLib.Accordion.Tab | null = null;
+    #lastOpenedTabs = new Set<Tab>();
 
 
     #STATUS_ON  = 'STATUS_ON';
@@ -96,25 +98,15 @@ export default class Accordion {
 
 
     constructor( $accordionWrapper: HTMLElement, userOptions: FLib.Accordion.OptionsInit ) {
+        this.#$accordionWrapper = $accordionWrapper;
 
         this.#options       = extend( DEFAULT_OPTIONS, userOptions );
 
         this.#$tabs         = $accordionWrapper.querySelectorAll( this.#options.tabSelector );
-        this.#tablist       = [];
         this.#status        = this.#STATUS_OFF;
 
         this.#on();
     }
-
-
-    #onOpenTab = ( tab: FLib.Accordion.Tab ): void => {
-        if ( this.#lastOpenedTab ) {
-            this.#lastOpenedTab.close( true );
-        }
-
-        this.#lastOpenedTab = tab;
-    }
-
 
     #on = (): void => {
         if( this.#status === this.#STATUS_ON ){
@@ -124,11 +116,16 @@ export default class Accordion {
         this.#status = this.#STATUS_ON;
 
         this.#$tabs.forEach( ( $tab, index ) => {
-            this.#tablist.push( new Tab( $tab, {
+            this.#tablist.set($tab, new Tab( $tab, {
                 ...this.#options,
                 index,
-                "onOpenTab": this.#options.allowMultipleTab ? undefined : this.#onOpenTab
             } ) );
+        } );
+
+        on( this.#$accordionWrapper, {
+            "eventsName": "click",
+            "selector": this.#options.tabSelector,
+            "callback": this.#toggleTab
         } );
     }
 
@@ -144,9 +141,65 @@ export default class Accordion {
             tab.destroy();
         } );
 
-        this.#tablist.length = 0;
+        this.#tablist.clear();
+
+        off( this.#$accordionWrapper, {
+            "eventsName": "click",
+            "callback": this.#toggleTab
+        } );
     }
 
+    #toggleTab = ( e: Event, $target: HTMLElement ): void => {
+        e.preventDefault();
+
+        const tab = this.#tablist.get($target);
+
+        if (!tab) {
+            return;
+        }
+
+        if (tab.isOpen) {
+            this.closeTab(tab)
+            return;
+        }
+
+        this.openTab(tab)
+    }
+
+    closeTab(tab: Tab): this {
+        if (this.#options.atLeastOneOpen && this.#lastOpenedTabs.size < 2) {
+            return this;
+        }
+
+        tab.close(false);
+        this.#lastOpenedTabs.delete(tab);
+
+        return this;
+    }
+
+    openTab(tab: Tab): this {
+        if (!this.#options.allowMultipleTab && this.#lastOpenedTabs.size > 0) {
+            this.#lastOpenedTabs.forEach(tab => {
+                tab.close(true);
+            });
+            this.#lastOpenedTabs.clear();
+        }
+
+        tab.open();
+        this.#lastOpenedTabs.add(tab);
+
+        return this;
+    }
+
+    openTabByElement($tab: HTMLElement): this {
+        const tab = this.#tablist.get($tab);
+
+        if (tab) {
+            this.openTab(tab);
+        }
+
+        return this;
+    }
 
     /**
      * Remove all events, css class, ...

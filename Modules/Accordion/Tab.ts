@@ -1,17 +1,19 @@
-import { on, off } from '../../Events/EventsManager';
 import { next }    from '../../DOM/Traversing';
 
 
 /**
  * Tab of an accordion
  */
-export default class Tab implements FLib.Accordion.Tab {
+export default class Tab {
     #isOpen:              boolean;
     #originalOpenedState: boolean;
     #$TAB_PANNEL:         HTMLElement | null;
     #options;
     #$TAB;
 
+    get isOpen(): boolean {
+        return this.#isOpen;
+    }
 
     constructor( $TAB: HTMLElement, options: FLib.Accordion.TabOptions ) {
         this.#options     = options;
@@ -22,10 +24,6 @@ export default class Tab implements FLib.Accordion.Tab {
 
         this.#isOpen = this.#originalOpenedState = $TAB.getAttribute( 'aria-expanded' ) === 'true';
 
-        on( $TAB, {
-            "eventsName": "click",
-            "callback": this.#toggleTab
-        } );
 
         if ( this.#isOpen ) {
             this.#openTab( true );
@@ -51,39 +49,27 @@ export default class Tab implements FLib.Accordion.Tab {
                         }
                     } );
 
-        if ( this.#options.onOpenTab ) {
-            this.#options.onOpenTab( this );
-        }
         this.#isOpen = true;
         this.#changeTabState();
     }
-
 
     #closeTab = ( autoClose?: boolean ): void => {
         this.#options.animations
                     .close( this.#$TAB, this.#$TAB_PANNEL )
                     .then( () => {
-                        if ( this.#options.onClose ) {
-                            this.#options.onClose( this.#$TAB, this.#$TAB_PANNEL, autoClose );
-                        }
+                        this.#options.onClose?.( this.#$TAB, this.#$TAB_PANNEL, autoClose );
                     } );
 
         this.#isOpen = false;
         this.#changeTabState();
     }
 
-
-    #toggleTab = ( e: Event ): void => {
-        e.preventDefault();
-
-        if( this.#isOpen && ( !this.#options.atLeastOneOpen || this.#options.allowMultipleTab ) ) {
-            this.#closeTab();
+    open(): this {
+        if( !this.#isOpen ) {
+            this.#openTab( false );
         }
-        else if( !this.#isOpen ) {
-            this.#openTab();
-        }
+        return this;
     }
-
 
     close( autoClose?: boolean ): this {
         if( this.#isOpen ) {
@@ -96,11 +82,6 @@ export default class Tab implements FLib.Accordion.Tab {
 
     destroy(): this {
         this.#options.animations.destroy( this.#$TAB, this.#$TAB_PANNEL );
-
-        off( this.#$TAB, {
-            "eventsName": "click",
-            "callback":   this.#toggleTab
-        } );
 
         this.#$TAB.setAttribute( 'aria-expanded', this.#originalOpenedState ? 'true' : 'false' );
 

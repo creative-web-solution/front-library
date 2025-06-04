@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.35
+
+* [Accordion]: Rework
+
 ## 7.1.34
 
 * [DragSlider]: Add new params to onChangeState callback
