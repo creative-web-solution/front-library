@@ -186,7 +186,7 @@ export default class DragSlider {
         );
 
         if (prevIsDraggingActive !== this.#isDraggingActive) {
-            this.#options.onChangeState?.(this.#isDraggingActive);
+            this.#options.onChangeState?.(this.#isDraggingActive, this.#getCallbackOptions(this.#deltaMove.x));
         }
 
         this.#itemArray.length = 0;
@@ -216,14 +216,6 @@ export default class DragSlider {
 
             if (!flag) {
                 this.#itemArray.push(DATA);
-                // this.#itemArray.push({
-                //     ...DATA,
-                //     "info":    {
-                //         ...ITEM_OFFSET,
-                //         "left": ABS_LIST_DELTA + this.#siteOffsetLeft,
-                //         "x":    ABS_LIST_DELTA + this.#siteOffsetLeft
-                //     }
-                // });
             }
             flag = true;
 

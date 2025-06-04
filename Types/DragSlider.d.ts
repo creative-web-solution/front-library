@@ -43,7 +43,7 @@ declare namespace FLib {
             onMouseEnter?:      Callback;
             onMouseLeave?:      Callback;
             onInit?:            Callback;
-            onChangeState?:     ( isDragging: boolean ) => void;
+            onChangeState?:     ( isActive: boolean, options: CallbackParam ) => void;
             /**
              * In px.
              * @defaultValue 40

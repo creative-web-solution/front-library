@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.34
+
+* [DragSlider]: Add new params to onChangeState callback
+
 ## 7.1.33
 
 * [DragSlider]: Update delta computing
