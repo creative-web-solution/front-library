@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.36
+
+* [DragSlider]: Fix end positioning when margin right and left are not equals
+
 ## 7.1.35
 
 * [Accordion]: Rework
