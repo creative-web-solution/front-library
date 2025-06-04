@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.33
+
+* [DragSlider]: Update delta computing
+
 ## 7.1.32
 
 * [Autocomplete]: Fix Typescript type

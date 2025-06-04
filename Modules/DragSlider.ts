@@ -397,6 +397,9 @@ export default class DragSlider {
     };
 
     #getMaxMoveSize(): number {
+        if (Math.abs(this.#viewportInfo.width - this.#$list!.scrollWidth) < 1) {
+            return 0;
+        }
         return (
             this.#viewportInfo.width -
             this.#$list!.scrollWidth -
