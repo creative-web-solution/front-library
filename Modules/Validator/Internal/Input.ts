@@ -10,7 +10,7 @@ import { getRadioList }             from '../Tools/RadioButton';
  */
 export default class Input implements FLib.Validator.Input {
     #isRadio:                   boolean;
-    #inputType:                 string;
+    #inputType:                 "optin" | "hidden" | "select" | "file" | "inputText";
     #inputId:                   string;
     #$input:                    HTMLElement;
     #$group:                    FLib.Validator.CustomValidatorRadioInput[] | undefined;
@@ -67,6 +67,9 @@ export default class Input implements FLib.Validator.Input {
         else if ( $input.nodeName === 'SELECT' ) {
             this.#inputType = 'select';
         }
+        else if ( $input.type === 'file' ) {
+            this.#inputType = 'file';
+        }
         else {
             this.#inputType = 'inputText';
         }
@@ -121,9 +124,9 @@ export default class Input implements FLib.Validator.Input {
         this.#hasError    = false;
 
 
-        if ( this.#hasValidator && options.hasLiveValidation && this.#inputType !== 'hidden' ) {
+        if ( this.#hasValidator && options.hasLiveValidation && this.#inputType !== 'hidden' && typeof options.liveValidation?.eventsName?.[ this.#inputType ] === "string" ) {
             on( this.#isRadio ? this.#$group : $input, {
-                "eventsName":   options.liveValidation?.eventsName?.[ this.#inputType ] as string,
+                "eventsName":   options.liveValidation.eventsName[ this.#inputType ]!,
                 "callback":     this.#onLiveValidation
             } );
         }
@@ -324,7 +327,7 @@ export default class Input implements FLib.Validator.Input {
      */
     destroy(): this {
 
-        if ( this.#hasValidator && this.#options.hasLiveValidation && this.#inputType !== 'hidden' ) {
+        if ( this.#hasValidator && this.#options.hasLiveValidation && this.#inputType !== 'hidden' && typeof this.#options.liveValidation.eventsName[ this.#inputType ] === "string" ) {
             off( this.#isRadio ? this.#$group : this.#$input, {
                 "eventsName":   this.#options.liveValidation.eventsName[ this.#inputType ],
                 "callback":     this.#onLiveValidation

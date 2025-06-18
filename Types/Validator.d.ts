@@ -84,6 +84,8 @@ declare namespace FLib {
                     select?:           string;
                     /** @defaultValue input */
                     inputText?:        string;
+                    /** @defaultValue change */
+                    file?:             string;
                 };
                 eventsHook?;
             }

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.37
+
+* [Validator]: Add specific event handling in live validation for input file.
+
 ## 7.1.36
 
 * [DragSlider]: Fix end positioning when margin right and left are not equals
