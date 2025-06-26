@@ -45,6 +45,7 @@ export const defaultOptions = {
     },
     "selectors": {
         "popin": ".popin",
+        "popinBody": ".popin",
         "popinContent": ".popin-content",
         "links": "a[data-popin]",
         "forms": "form[data-popin]",

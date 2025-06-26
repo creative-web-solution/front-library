@@ -115,6 +115,16 @@ export default class Popin {
             }
         );
 
+        if (!this.#options.isBackgroundAside && !this.#options.modal) {
+            on(
+                this.#$popin,
+                {
+                    "eventsName": CLICK_EVENT_NAME,
+                    "callback":  this.#clickBgHandler
+                }
+            );
+        }
+
 
         if ( this.#options.enableKeyboard ) {
             this.#keyboardControls = new KeyboardHandler( this.#$popin, {
@@ -430,6 +440,14 @@ export default class Popin {
         }
 
         this.#closePopin();
+    }
+
+    #clickBgHandler = ( e: Event ): void => {
+        const $target = e.target as HTMLElement;
+
+        if (!$target?.closest(this.#options.selectors.popinBody)) {
+            this.#closePopinHandler(e);
+        }
     }
 
 

@@ -35,6 +35,8 @@ declare namespace FLib {
         interface SelectorsOptions {
             /** @defaultValue .popin */
             popin:               string;
+            /** @defaultValue .popin */
+            popinBody:           string;
             /** @defaultValue .popin-content */
             popinContent:        string;
             /** @defaultValue a[data-popin] */

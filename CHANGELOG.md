@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.38
+
+* [Slider]: Handle popin inside the background layer
+
 ## 7.1.37
 
 * [Validator]: Add specific event handling in live validation for input file.
