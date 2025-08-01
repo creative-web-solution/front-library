@@ -395,7 +395,7 @@ export default class DragSlider {
         return (
             this.#viewportInfo.width -
             this.#$list!.scrollWidth -
-            Math.max(this.#siteOffsetLeft, this.#siteOffsetRight)
+            this.#siteOffsetRight
         );
     }
 

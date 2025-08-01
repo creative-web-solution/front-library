@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.39
+
+* [DragSlider]: Fix end positioning
+
 ## 7.1.38
 
 * [Slider]: Handle popin inside the background layer
