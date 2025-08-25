@@ -388,6 +388,10 @@ export default class SliderControls {
 
         clearTimeout( this.#autoslideTimeoutId );
 
+        if (!currentSlide) {
+            return;
+        }
+
         this.#autoslideTimeoutId = setTimeout(
             this.#makeAutoslide,
             ( currentSlide.delay as number || this.#options.autoslide as number ) * 1000

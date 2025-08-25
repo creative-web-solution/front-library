@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.40
+
+* [Slider]: Improve auto slide function
+
 ## 7.1.39
 
 * [DragSlider]: Fix end positioning
