@@ -159,8 +159,10 @@ export default class Input implements FLib.Validator.Input {
         this.#hasError                  = false;
         this.#isLiveValidation          = isLiveValidation;
 
+        const mustCancelValidation = (this.#$input as HTMLInputElement).disabled || this.#$input.hasAttribute(this.#options.cancelFieldValidationAttribute) || this.#$input.closest(`[${ this.#options.cancelFieldValidationAttribute }]`);
+
         // This input has no (known) validation
-        if ( !this.#hasValidator ) {
+        if ( !this.#hasValidator || mustCancelValidation ) {
             return Promise.resolve();
         }
 

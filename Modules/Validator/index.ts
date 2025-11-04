@@ -14,6 +14,7 @@ const defaultOptions = {
     "onInvalidate":             null,
     "validatorsOptions":        null,
     "customErrorLabelPrefix":   "data-error-label",
+    "cancelFieldValidationAttribute": "data-cancel-validation",
     "errorMessages":            {},
     "liveValidation": {
         "onValidate":           null,

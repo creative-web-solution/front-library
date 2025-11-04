@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.41
+
+* [Validator]: Add feature to cancel validation on a field. Do not validate a disabled field.
+
 ## 7.1.40
 
 * [Slider]: Improve auto slide function

@@ -69,6 +69,8 @@ declare namespace FLib {
             filter:                    string;
             /** @defaultValue data-error-label */
             customErrorLabelPrefix:    string;
+            /** @defaultValue data-cancel-validation */
+            cancelFieldValidationAttribute: string;
             /** @defaultValue `{}` */
             errorMessages:             { [ key: string ]: string };
             validatorsOptions?:        { [ key: string ]: any };
