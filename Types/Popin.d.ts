@@ -83,13 +83,13 @@ declare namespace FLib {
             onClose?:           ( $popin: HTMLElement ) => void;
             onLoad:             ( $popin: HTMLElement ) => Promise<void>;
             /** @defaultValue `() => 'text'` */
-            setLinkResponseType: ( url: string, $link: HTMLAnchorElement ) => ResponseType;
+            setLinkResponseType: ( url: string, $link: HTMLAnchorElement, $popin: HTMLElement ) => ResponseType;
             /** @defaultValue `() => 'text'` */
-            setFormResponseType: ( $form: HTMLElement ) => ResponseType;
+            setFormResponseType: ( $form: HTMLElement, $popin: HTMLElement ) => ResponseType;
             /** @defaultValue `() => true` */
-            checkValidity:       ( $form: HTMLElement ) => boolean | Promise<void>;
+            checkValidity:       ( $form: HTMLElement, $popin: HTMLElement ) => boolean | Promise<void>;
             /** @defaultValue `(body) => { return { success: true, data: body }`  */
-            normalize:           ( body, response, isHttpError: boolean ) => { success: boolean, data };
+            normalize:           ( body, response, isHttpError: boolean, $popin: HTMLElement ) => { success: boolean, data };
             /**
              * If false, ajax http error (404, 500, ...) should be handled in the normalize function
              * @defaultValue true

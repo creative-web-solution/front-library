@@ -342,7 +342,7 @@ export default class Popin {
                             data => {
                                 const [ body, response ] = data;
                                 const isHttpError = response.status < 200 || response.status >= 300;
-                                const normResponse = this.#options.normalize( body, response, isHttpError );
+                                const normResponse = this.#options.normalize( body, response, isHttpError, this.#$popin );
 
                                 if ( normResponse.success ) {
                                     this.#setPopin( normResponse.data ).then( () => {
@@ -378,7 +378,7 @@ export default class Popin {
     #_loadLink = ( $link: HTMLAnchorElement ): Promise<void> => {
         return this.#_load(
             $link.href,
-            this.#options.setLinkResponseType( $link.href, $link ),
+            this.#options.setLinkResponseType( $link.href, $link, this.#$popin ),
         );
     }
 
@@ -387,7 +387,7 @@ export default class Popin {
         let validationResult;
 
         if ( this.#options.checkValidity ) {
-            validationResult = this.#options.checkValidity( $form );
+            validationResult = this.#options.checkValidity( $form, this.#$popin );
             if ( validationResult === false ) {
                 return Promise.reject();
             }
@@ -400,7 +400,7 @@ export default class Popin {
                     .then( () => {
                         return this.#_load(
                             $form.action,
-                            this.#options.setFormResponseType( $form ),
+                            this.#options.setFormResponseType( $form, this.#$popin ),
                             {
                                 "body": new FormData( $form ),
                                 "method": $form.method || 'POST'

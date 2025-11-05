@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.42
+
+* [Popin]: Add popin element in callback function param
+
 ## 7.1.41
 
 * [Validator]: Add feature to cancel validation on a field. Do not validate a disabled field.
