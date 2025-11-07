@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.43
+
+* [Validator]: Add max file size validation
+
 ## 7.1.42
 
 * [Popin]: Add popin element in callback function param
