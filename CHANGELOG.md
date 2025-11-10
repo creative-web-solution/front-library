@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.44
+
+* [SkinSelect]: Fix click handler on full skinned select
+
 ## 7.1.43
 
 * [Validator]: Add max file size validation

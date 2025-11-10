@@ -116,6 +116,7 @@ export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
 
             on( this.#$parent, {
                 "eventsName": "click",
+                "selector": `.${ this.#options.itemClassName }`,
                 "callback":   this.#fakeOptionsClickHandler
             } );
 
@@ -461,6 +462,7 @@ export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
         if ( !$target.matches( '.' + this.#options.itemClassName ) ) {
             return;
         }
+
         this.selectByOption( $target );
     }
 
@@ -517,11 +519,11 @@ export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
 
 
     #onKeydown = ( e: KeyboardEvent ): void => {
-        switch ( e.keyCode ) {
-            case 38: // UP
-            case 40: // DOWN
-            case 13: // ENTER
-            case 27: // ESCAPE
+        switch ( e.key ) {
+            case "ArrowUp":
+            case "ArrowDown":
+            case "Enter":
+            case "Escape":
                 e.preventDefault();
                 break;
         }
@@ -529,11 +531,11 @@ export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
 
 
     #onKeyup = ( e: KeyboardEvent ): void => {
-        switch ( e.keyCode ) {
-            case 38: // UP
+        switch ( e.key ) {
+            case "ArrowUp":
                 this.#focusItem( this.#focusedItemIndex - 1 );
                 break;
-            case 40: // DOWN
+            case "ArrowDown":
                 if ( !this.#isListOpened ) {
                     this.#openList();
                     break;
@@ -541,8 +543,8 @@ export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
                 this.#focusItem( this.#focusedItemIndex + 1 );
                 break;
 
-            case 13: // ENTER
-            case 32: // SPACE
+            case "Enter":
+            case " ":
                 if ( !this.#isListOpened ) {
                     this.#openList();
                     break;
@@ -551,7 +553,7 @@ export default class SkinSelect implements FLib.SkinSelect.SkinSelect {
                 this.#closeList();
                 break;
 
-            case 27: // ESCAPE
+            case "Escape":
                 this.#closeList();
                 break;
         }
