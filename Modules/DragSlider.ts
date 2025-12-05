@@ -12,6 +12,7 @@ const defaultOptions = {
     swipeTresholdMin: 40,
     swipeTresholdSize: 0.5,
     lockedClass: "is-locked",
+    makeSlideOutideViewportInert: false,
     _animReset: function ($list) {
         // gsap.set( $list, {
         //     "x": 0,
@@ -597,16 +598,20 @@ export default class DragSlider {
                 this.#viewportInfo.width;
 
             if (hideElement1 || hideElement2) {
-                item.$item.setAttribute("tabindex", "-1");
-                item.$item.setAttribute("inert", "");
-                item.$item.setAttribute("aria-hidden", "true");
+                if (this.#options.makeSlideOutideViewportInert) {
+                    item.$item.setAttribute("tabindex", "-1");
+                    item.$item.setAttribute("inert", "");
+                    item.$item.setAttribute("aria-hidden", "true");
+                }
                 this.#hiddenItems.push(item);
                 return;
             }
 
-            item.$item.removeAttribute("tabindex");
-            item.$item.removeAttribute("inert");
-            item.$item.setAttribute("aria-hidden", "false");
+            if (this.#options.makeSlideOutideViewportInert) {
+                item.$item.removeAttribute("tabindex");
+                item.$item.removeAttribute("inert");
+                item.$item.setAttribute("aria-hidden", "false");
+            }
             this.#visibleItems.push(item);
         });
     };

@@ -44,7 +44,7 @@ declare namespace FLib {
             $button?: HTMLElement
         }
         type Callback     = ( data: CallbackParam ) => void;
-        type InitCallback = ({ currentSlide: SlidePropertiesType }) => void;
+        type InitCallback = ({ currentSlide }: { currentSlide: SlideProperties }) => void;
 
         type Options = {
             /** @defaultValue 0 */

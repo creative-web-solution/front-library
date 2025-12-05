@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 7.1.45
+
+* [Slider]: Fix type
+* [DragSlider]: The feature that make slide outside viewport inert is tied to an option
+
 ## 7.1.44
 
 * [SkinSelect]: Fix click handler on full skinned select

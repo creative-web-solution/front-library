@@ -31,6 +31,7 @@ declare namespace FLib {
             viewportSelector:   string;
             listSelector:       string;
             itemSelector:       string;
+            makeSlideOutideViewportInert: boolean;
             dragClass:          string;
             /** @defaultValue is-locked */
             lockedClass:        string;
