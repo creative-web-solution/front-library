@@ -399,19 +399,19 @@ export default class SliderControls {
     }
 
 
-    #updateBullets = ( targetSlide: Slide, currentSlide?: Slide ): void => {
+    #updateBullets = ( targetSlide: FLib.Slider.SlideProperties, currentSlide?: FLib.Slider.SlideProperties ): void => {
         if ( !this.#$bullets ) {
             return;
         }
 
-        if ( currentSlide && this.#$bullets[ currentSlide.index ] ) {
-            const $BULLET = this.#$bullets[ currentSlide.index ] as HTMLElement;
+        if ( currentSlide && this.#$bullets[ currentSlide.pageIndex ] ) {
+            const $BULLET = this.#$bullets[ currentSlide.pageIndex ] as HTMLElement;
             $BULLET.setAttribute( 'aria-selected', 'false' );
             $BULLET.setAttribute( 'tabindex', '-1' );
         }
 
-        if ( targetSlide && this.#$bullets[ targetSlide.index ] ) {
-            const $BULLET = this.#$bullets[ targetSlide.index ] as HTMLElement;
+        if ( targetSlide && this.#$bullets[ targetSlide.pageIndex ] ) {
+            const $BULLET = this.#$bullets[ targetSlide.pageIndex ] as HTMLElement;
             $BULLET.setAttribute( 'aria-selected', 'true' );
             $BULLET.setAttribute( 'tabindex', '0' );
         }

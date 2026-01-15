@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.46
+
+* [Slider]: Fix bullet pager
+
 ## 7.1.45
 
 * [Slider]: Fix type
