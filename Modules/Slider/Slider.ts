@@ -116,6 +116,10 @@ export default class Slider {
         return this.#options.moveByPage ? this.#nbPages : this.#nbSlides;
     }
 
+    get options(): FLib.Slider.Options {
+        return this.#options;
+    }
+
 
     constructor( $slider: HTMLElement, userOptions: Partial<FLib.Slider.Options> = {} ) {
 

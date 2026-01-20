@@ -404,14 +404,18 @@ export default class SliderControls {
             return;
         }
 
-        if ( currentSlide && this.#$bullets[ currentSlide.pageIndex ] ) {
-            const $BULLET = this.#$bullets[ currentSlide.pageIndex ] as HTMLElement;
+        const currentSlideIndex = (this.#slider.options.moveByPage ? currentSlide?.pageIndex : currentSlide?.index) ?? 0;
+
+        if ( currentSlide && this.#$bullets[ currentSlideIndex ] ) {
+            const $BULLET = this.#$bullets[ currentSlideIndex ] as HTMLElement;
             $BULLET.setAttribute( 'aria-selected', 'false' );
             $BULLET.setAttribute( 'tabindex', '-1' );
         }
 
-        if ( targetSlide && this.#$bullets[ targetSlide.pageIndex ] ) {
-            const $BULLET = this.#$bullets[ targetSlide.pageIndex ] as HTMLElement;
+        const targetlideIndex = (this.#slider.options.moveByPage ? targetSlide?.pageIndex : targetSlide?.index) ?? 0;
+
+        if ( targetSlide && this.#$bullets[ targetlideIndex ] ) {
+            const $BULLET = this.#$bullets[ targetlideIndex ] as HTMLElement;
             $BULLET.setAttribute( 'aria-selected', 'true' );
             $BULLET.setAttribute( 'tabindex', '0' );
         }
