@@ -1,6 +1,5 @@
-import { extend } from '../Helpers/Extend';
-import { slice }  from '../Helpers/Slice';
-
+import { extend } from "../Helpers/Extend";
+import { slice } from "../Helpers/Slice";
 
 /**
  * Manage media queries events
@@ -70,6 +69,10 @@ import { slice }  from '../Helpers/Slice';
  * myBreakpoint = mquery.currentBreakpoint; // =&gt; { name, query, ... } or false
  * myBreakpoint.is( 'mob' ); // =&gt; true|false
  * myBreakpoint.in( ['mob', 'tab'] ); // =&gt; true|false
+ * myBreakpoint.isBefore('tablet'); // =&gt; true|false
+ * myBreakpoint.isBeforeOrSame('tablet'); // =&gt; true|false
+ * myBreakpoint.isAfter('tablet'); // =&gt; true|false
+ * myBreakpoint.isAfterOrSame('tablet'); // =&gt; true|false
  *
  * // List of all breakpoints
  * array = mquery.list;
@@ -85,17 +88,21 @@ import { slice }  from '../Helpers/Slice';
  * ```
  */
 export default class MediaQueriesEvents {
-
-    #breakpointsList:   FLib.Events.MediaqueriesEvents.Breakpoint[];
+    #breakpointsList: FLib.Events.MediaqueriesEvents.Breakpoint[];
     #currentBreakpoint: FLib.Events.MediaqueriesEvents.Breakpoint | undefined;
-    #functionHash:      Record<string, FLib.Events.MediaqueriesEvents.InternalCallbackType[]>;
-    #isSuspended        = false;
-    #options:           FLib.Events.MediaqueriesEvents.Options;
+    #functionHash: Record<
+        string,
+        FLib.Events.MediaqueriesEvents.InternalCallbackType[]
+    >;
+    #isSuspended = false;
+    #options: FLib.Events.MediaqueriesEvents.Options;
 
-    #globalHashName     = '__globalHashName';
+    #globalHashName = "__globalHashName";
 
     /** Current active breakpoint */
-    get currentBreakpoint(): FLib.Events.MediaqueriesEvents.Breakpoint | undefined {
+    get currentBreakpoint():
+        | FLib.Events.MediaqueriesEvents.Breakpoint
+        | undefined {
         return this.#currentBreakpoint;
     }
 
@@ -104,52 +111,67 @@ export default class MediaQueriesEvents {
         return this.#breakpointsList;
     }
 
-
-    constructor( breakpointsList: FLib.Events.MediaqueriesEvents.ListOptions[], userOptions: FLib.Events.MediaqueriesEvents.Options ) {
+    constructor(
+        breakpointsList: FLib.Events.MediaqueriesEvents.ListOptions[],
+        userOptions: FLib.Events.MediaqueriesEvents.Options,
+    ) {
         const DEFAULT_OPTIONS = {
-            "unit": "px"
+            unit: "px",
         };
 
-        this.#options = extend(
-            {},
-            DEFAULT_OPTIONS,
-            userOptions
-        );
+        this.#options = extend({}, DEFAULT_OPTIONS, userOptions);
 
         this.#functionHash = {
-            [ `${ this.#globalHashName }` ]: []
+            [`${this.#globalHashName}`]: [],
         };
 
         // Handlers
-        this.#breakpointsList = breakpointsList.map( breakpointItem => {
+        this.#breakpointsList = breakpointsList.map((breakpointItem, index) => {
             const breakpoint: FLib.Events.MediaqueriesEvents.Breakpoint = {
                 ...breakpointItem,
-                "query": breakpointItem.query || this.#createQuery( breakpointItem ),
-                "handler": mql => {
-                    if ( mql.matches ) {
+                index,
+                query:
+                    breakpointItem.query || this.#createQuery(breakpointItem),
+                handler: (mql) => {
+                    if (mql.matches) {
                         this.#currentBreakpoint = breakpoint;
                     }
 
-                    if ( !this.#isSuspended ) {
-                        this.#update( breakpoint, mql.matches );
+                    if (!this.#isSuspended) {
+                        this.#update(breakpoint, mql.matches);
                     }
                 },
-                "in": breakpointNameList => {
-                    if ( !breakpointNameList || !breakpointNameList.length ) {
+                in: (breakpointNameList) => {
+                    if (!breakpointNameList || !breakpointNameList.length) {
                         return false;
                     }
-                    return breakpointNameList.includes( breakpoint.name );
+                    return breakpointNameList.includes(breakpoint.name);
                 },
-                "is": breakpointName => breakpoint.name === breakpointName
+                is: (breakpointName) => breakpoint.name === breakpointName,
+                isBefore: (breakpointName: string) =>
+                    this.#checkPosition(breakpointName, "before", breakpoint),
+                isBeforeOrSame: (breakpointName: string) =>
+                    this.#checkPosition(
+                        breakpointName,
+                        "beforeSame",
+                        breakpoint,
+                    ),
+                isAfter: (breakpointName: string) =>
+                    this.#checkPosition(breakpointName, "after", breakpoint),
+                isAfterOrSame: (breakpointName: string) =>
+                    this.#checkPosition(
+                        breakpointName,
+                        "afterSame",
+                        breakpoint,
+                    ),
             };
 
-            if ( breakpoint.query.addEventListener ) {
-                breakpoint.query.addEventListener( "change", breakpoint.handler );
+            if (breakpoint.query.addEventListener) {
+                breakpoint.query.addEventListener("change", breakpoint.handler);
+            } else {
+                breakpoint.query.addListener(breakpoint.handler);
             }
-            else {
-                breakpoint.query.addListener( breakpoint.handler );
-            }
-            this.#functionHash[ breakpoint.name ] = [];
+            this.#functionHash[breakpoint.name] = [];
 
             return breakpoint;
         });
@@ -157,75 +179,145 @@ export default class MediaQueriesEvents {
         this.#currentBreakpoint = this.#getCurrentBreakpoint();
     }
 
+    isBefore(breakpointName: string): boolean {
+        return this.#checkPosition(
+            breakpointName,
+            "before",
+            this.#currentBreakpoint,
+        );
+    }
+
+    isBeforeOrSame(breakpointName: string): boolean {
+        return this.#checkPosition(
+            breakpointName,
+            "beforeSame",
+            this.#currentBreakpoint,
+        );
+    }
+
+    isAfter(breakpointName: string): boolean {
+        return this.#checkPosition(
+            breakpointName,
+            "after",
+            this.#currentBreakpoint,
+        );
+    }
+
+    isAfterOrSame(breakpointName: string): boolean {
+        return this.#checkPosition(
+            breakpointName,
+            "afterSame",
+            this.#currentBreakpoint,
+        );
+    }
 
     // TOOLS
 
+    #checkPosition(
+        breakpointName: string,
+        type: "before" | "beforeSame" | "after" | "afterSame" | "same",
+        targetBreakpoint?: FLib.Events.MediaqueriesEvents.Breakpoint,
+    ): boolean {
+        const breakpoint = this.#getBreakpoint(breakpointName);
+        if (!targetBreakpoint || !breakpoint) {
+            return false;
+        }
 
-    #processList = ( list: FLib.Events.MediaqueriesEvents.InternalCallbackType[], breakpoint: FLib.Events.MediaqueriesEvents.Breakpoint, isMatching: boolean ): void => {
-        list.forEach( obj => {
-            if (
-                obj.type === 'both' ||
-                isMatching && obj.type === 'enter' ||
-                !isMatching && obj.type === 'leave'
-            ) {
-                obj.callback( breakpoint, isMatching )
-            }
-        } );
+        if (type === "same") {
+            return targetBreakpoint.index === breakpoint.index;
+        } else if (type === "before") {
+            return targetBreakpoint.index < breakpoint.index;
+        } else if (type === "beforeSame") {
+            return targetBreakpoint.index <= breakpoint.index;
+        } else if (type === "after") {
+            return targetBreakpoint.index > breakpoint.index;
+        } else if (type === "afterSame") {
+            return targetBreakpoint.index >= breakpoint.index;
+        }
+
+        return false;
     }
 
+    #processList = (
+        list: FLib.Events.MediaqueriesEvents.InternalCallbackType[],
+        breakpoint: FLib.Events.MediaqueriesEvents.Breakpoint,
+        isMatching: boolean,
+    ): void => {
+        list.forEach((obj) => {
+            if (
+                obj.type === "both" ||
+                (isMatching && obj.type === "enter") ||
+                (!isMatching && obj.type === "leave")
+            ) {
+                obj.callback(breakpoint, isMatching);
+            }
+        });
+    };
 
     // Call each registered function
-    #update = ( breakpoint: FLib.Events.MediaqueriesEvents.Breakpoint, isMatching: boolean ): void => {
-        if ( this.#functionHash[ breakpoint.name ] && this.#functionHash[ breakpoint.name ].length ) {
-            this.#processList( this.#functionHash[ breakpoint.name ], breakpoint, isMatching );
+    #update = (
+        breakpoint: FLib.Events.MediaqueriesEvents.Breakpoint,
+        isMatching: boolean,
+    ): void => {
+        if (
+            this.#functionHash[breakpoint.name] &&
+            this.#functionHash[breakpoint.name].length
+        ) {
+            this.#processList(
+                this.#functionHash[breakpoint.name],
+                breakpoint,
+                isMatching,
+            );
         }
 
-        if ( this.#functionHash[ this.#globalHashName ].length ) {
-            this.#processList( this.#functionHash[ this.#globalHashName ], breakpoint, isMatching );
+        if (this.#functionHash[this.#globalHashName].length) {
+            this.#processList(
+                this.#functionHash[this.#globalHashName],
+                breakpoint,
+                isMatching,
+            );
         }
-    }
+    };
 
+    #getBreakpoint = (
+        breakpointName: string,
+    ): FLib.Events.MediaqueriesEvents.Breakpoint | undefined => {
+        return this.#breakpointsList.find((bp) => bp.name === breakpointName);
+    };
 
-    #getBreakpoint = ( breakpointName: string ): FLib.Events.MediaqueriesEvents.Breakpoint | undefined => {
-        return this.#breakpointsList.find( bp => bp.name === breakpointName );
-    }
+    #getCurrentBreakpoint = ():
+        | FLib.Events.MediaqueriesEvents.Breakpoint
+        | undefined => {
+        return this.#breakpointsList.find((bp) => bp.query.matches);
+    };
 
-
-    #getCurrentBreakpoint = (): FLib.Events.MediaqueriesEvents.Breakpoint | undefined => {
-        return this.#breakpointsList.find( bp => bp.query.matches );
-    }
-
-
-    #createQuery = ( breakpoint: FLib.Events.MediaqueriesEvents.ListOptions ): MediaQueryList => {
+    #createQuery = (
+        breakpoint: FLib.Events.MediaqueriesEvents.ListOptions,
+    ): MediaQueryList => {
         let minQuery, maxQuery, query;
 
-        if ( typeof breakpoint.min === 'number' ) {
-            minQuery = `(min-width:${ breakpoint.min }${ this.#options.unit })`;
+        if (typeof breakpoint.min === "number") {
+            minQuery = `(min-width:${breakpoint.min}${this.#options.unit})`;
         }
 
-        if ( typeof breakpoint.max === 'number' ) {
-            maxQuery = `(max-width:${ breakpoint.max }${ this.#options.unit })`;
+        if (typeof breakpoint.max === "number") {
+            maxQuery = `(max-width:${breakpoint.max}${this.#options.unit})`;
         }
 
-        if ( minQuery && maxQuery ) {
-            query = `${ minQuery } and ${ maxQuery }`;
-        }
-        else if ( minQuery ) {
+        if (minQuery && maxQuery) {
+            query = `${minQuery} and ${maxQuery}`;
+        } else if (minQuery) {
             query = minQuery;
-        }
-        else if ( maxQuery ) {
+        } else if (maxQuery) {
             query = maxQuery;
-        }
-        else {
-            throw `MEDIA QUERIES EVENTS: Need at least 'min' or 'max' property to create a breakpoint: ${ breakpoint.name }`;
+        } else {
+            throw `MEDIA QUERIES EVENTS: Need at least 'min' or 'max' property to create a breakpoint: ${breakpoint.name}`;
         }
 
-        return window.matchMedia( query );
-    }
-
+        return window.matchMedia(query);
+    };
 
     // API
-
 
     /**
      * Return the value of the property with the name of the current breakpoint of an object
@@ -236,13 +328,12 @@ export default class MediaQueriesEvents {
      * mediaQueryEvent.getValue( { "small": "val1", "medium": "val2", ... } );
      * ```
      */
-    getValue<Value>( obj: Record<string, Value> ): Value | undefined {
-        if ( !this.#currentBreakpoint ) {
+    getValue<Value>(obj: Record<string, Value>): Value | undefined {
+        if (!this.#currentBreakpoint) {
             return;
         }
-        return obj[ this.#currentBreakpoint.name ];
+        return obj[this.#currentBreakpoint.name];
     }
-
 
     /**
      * Bind a function to be called on a specific breakpoint
@@ -250,134 +341,147 @@ export default class MediaQueriesEvents {
      * @param callback - Callback
      * @param breakpointName - Name of the breakpoint
      * @param type - Select when the function will be called: when entering the query, when leaving it, or on both
-    */
-    on( callback: FLib.Events.MediaqueriesEvents.Callback, breakpointName: string, type: FLib.Events.MediaqueriesEvents.CallbackType = 'enter' ): this {
-        if ( !this.#functionHash[ breakpointName ] ) {
+     */
+    on(
+        callback: FLib.Events.MediaqueriesEvents.Callback,
+        breakpointName: string,
+        type: FLib.Events.MediaqueriesEvents.CallbackType = "enter",
+    ): this {
+        if (!this.#functionHash[breakpointName]) {
             return this;
         }
 
-        this.#functionHash[ breakpointName ].push( {
+        this.#functionHash[breakpointName].push({
             callback,
-            type
-        } );
+            type,
+        });
 
         return this;
     }
-
 
     /**
      * Unbind a function to be called on a specific breakpoint
      *
      * @param callback - Function to remove from the registered function list
      * @param breakpointName - Name of the breakpoint
-    */
-    off( callback: FLib.Events.MediaqueriesEvents.Callback, breakpointName: string ): this {
-        if ( !this.#functionHash[ breakpointName ] ) {
+     */
+    off(
+        callback: FLib.Events.MediaqueriesEvents.Callback,
+        breakpointName: string,
+    ): this {
+        if (!this.#functionHash[breakpointName]) {
             return this;
         }
 
-        const obj = this.#functionHash[ breakpointName ].find( o => o.callback === callback );
+        const obj = this.#functionHash[breakpointName].find(
+            (o) => o.callback === callback,
+        );
 
-        slice( this.#functionHash[ breakpointName ], obj );
+        slice(this.#functionHash[breakpointName], obj);
 
         return this;
     }
-
 
     /**
      * Register a function to be called on all media queries change
      *
      * @param callback - Function to call on mediaquery change
      * @param type - Select when the function will be called: when entering the query, when leaving it, or on both
-    */
-    register( callback: FLib.Events.MediaqueriesEvents.Callback, type: FLib.Events.MediaqueriesEvents.CallbackType = 'enter' ): this {
-        this.#functionHash[ this.#globalHashName ].push({
+     */
+    register(
+        callback: FLib.Events.MediaqueriesEvents.Callback,
+        type: FLib.Events.MediaqueriesEvents.CallbackType = "enter",
+    ): this {
+        this.#functionHash[this.#globalHashName].push({
             callback,
-            type
+            type,
         });
 
         return this;
     }
 
-
     /**
      * Unregister a function
      *
      * @param callback - Function to remove from the registered function list
-    */
-    remove( callback: FLib.Events.MediaqueriesEvents.Callback ): this {
-        const obj = this.#functionHash[ this.#globalHashName ].find( o => o.callback === callback );
+     */
+    remove(callback: FLib.Events.MediaqueriesEvents.Callback): this {
+        const obj = this.#functionHash[this.#globalHashName].find(
+            (o) => o.callback === callback,
+        );
 
-        slice( this.#functionHash[ this.#globalHashName ], obj );
+        slice(this.#functionHash[this.#globalHashName], obj);
 
         return this;
     }
-
 
     /**
      * Force the refresh of all registered function
-    */
+     */
     refresh(): this {
-        if ( !this.#currentBreakpoint ) {
+        if (!this.#currentBreakpoint) {
             return this;
         }
 
-        this.#update( this.#currentBreakpoint, this.#currentBreakpoint.query.matches );
+        this.#update(
+            this.#currentBreakpoint,
+            this.#currentBreakpoint.query.matches,
+        );
 
         return this;
     }
-
 
     /**
      * Call a function with the current breakpoint
      *
      * @param callback - Function to call
      */
-    get( callback: FLib.Events.MediaqueriesEvents.Callback ): this {
-        if ( !this.#currentBreakpoint || !callback ) {
+    get(callback: FLib.Events.MediaqueriesEvents.Callback): this {
+        if (!this.#currentBreakpoint || !callback) {
             return this;
         }
 
-        callback( this.#currentBreakpoint, this.#currentBreakpoint.query.matches );
+        callback(
+            this.#currentBreakpoint,
+            this.#currentBreakpoint.query.matches,
+        );
 
         return this;
     }
-
 
     /**
      * Check if we are in a specific range
      *
      * @param breakpointName - Name of a breakpoint
      */
-    is( breakpointName: string ): boolean {
-        const breakpoint = this.#getBreakpoint( breakpointName );
-
-        return breakpoint ? breakpoint.query.matches : false;
+    is(breakpointName: string): boolean {
+        return this.#checkPosition(
+            breakpointName,
+            "same",
+            this.#currentBreakpoint,
+        );
     }
-
 
     /**
      * Check if the current breakpoint is in a list
      *
      * @param breakpointNameList - Array of breakpoint name
      */
-    in( breakpointNameList: string[] ): boolean {
-        if ( !this.#currentBreakpoint || !breakpointNameList || !breakpointNameList.length ) {
+    in(breakpointNameList: string[]): boolean {
+        if (!this.#currentBreakpoint || !breakpointNameList?.length) {
             return false;
         }
-        return breakpointNameList.includes( this.#currentBreakpoint.name );
+        return breakpointNameList.includes(this.#currentBreakpoint.name);
     }
 
-
     /**
-      * Stop media queries callback
+     * Stop media queries callback
      */
     suspend(): this {
         this.#isSuspended = true;
 
         return this;
     }
-
 
     /**
      * Active media queries callback
