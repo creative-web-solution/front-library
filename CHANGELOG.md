@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.49
+
+- [Accordion]: Fix bug when a tab is opened at start
+
 ## 7.1.48
 
 - [MediaQueriesEvents]: Add position check function
