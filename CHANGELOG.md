@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 7.1.50
+
+- [Autocomplete]: Rework module
+- [DOM]: Update Index function
+- [DOM]: Add type to strToDOM
+- [QuickTemplate]: Add params for opening and closing tag
+
 ## 7.1.49
 
 - [Accordion]: Fix bug when a tab is opened at start

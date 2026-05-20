@@ -12,24 +12,25 @@
  *
  * @returns The created DOM element
  */
-export function strToDOM( html: string, tag = 'DIV' ): Node | DocumentFragment {
+export function strToDOM<T extends HTMLElement>(html: string, tag = "DIV"): T {
     let $child;
 
     const $frag: DocumentFragment = document.createDocumentFragment();
-    const $elem: HTMLElement      = document.createElement( tag );
+    const $elem: HTMLElement = document.createElement(tag);
 
     $elem.innerHTML = html;
 
-    while ( $elem.childNodes.length ) {
-        $child = $elem.childNodes[ 0 ];
+    while ($elem.childNodes.length) {
+        $child = $elem.childNodes[0];
 
-        if ( $child && $child.nodeType === 1 ) {
-            $frag.appendChild( $child );
-        }
-        else {
-            $elem.removeChild( $child );
+        if ($child && $child.nodeType === 1) {
+            $frag.appendChild($child);
+        } else {
+            $elem.removeChild($child);
         }
     }
 
-    return $frag.childNodes.length === 1 ? $frag.childNodes[ 0 ] : $frag;
+    const $result = $frag.childNodes.length === 1 ? $frag.childNodes[0] : $frag;
+
+    return $result as T;
 }
