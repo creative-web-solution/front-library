@@ -1,5 +1,5 @@
 
-export const FOCUSABLE_ELEMENTS_SELECTOR = 'a,button,input,select,textarea';
+export const FOCUSABLE_ELEMENTS_SELECTOR = 'a,button,input,select,textarea,iframe';
 
 export function toggleTabIndex( $elements: NodeListOf<HTMLElement> | undefined | null, $popin: HTMLElement, activate: boolean ): void {
     $elements = $elements || $popin.querySelectorAll( FOCUSABLE_ELEMENTS_SELECTOR );

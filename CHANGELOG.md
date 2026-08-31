@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.52
+
+- [Popin]: Fix tabulation inside popin
+
 ## 7.1.51
 
 - [Validator]: Update error message selection

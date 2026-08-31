@@ -39,7 +39,7 @@ export default class PopinAccessibility {
 
 
     handleForwardTab( e: Event ): void {
-        if ( this.#$elements?.length || !this.#$lastElement ) {
+        if ( !this.#$elements?.length || !this.#$lastElement ) {
             e.preventDefault();
             return;
         }
