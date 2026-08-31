@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.51
+
+- [Validator]: Update error message selection
+
 ## 7.1.50
 
 - [Autocomplete]: Rework module

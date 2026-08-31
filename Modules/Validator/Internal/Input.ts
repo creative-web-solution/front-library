@@ -206,17 +206,6 @@ export default class Input implements FLib.Validator.Input {
 
 
     #labelToMessage = ( validatorName: string, _locale?: { [ key: string ]: string }, avoidDefaultMessage?: boolean ): string => {
-        let customInlineDefaultMessage,
-            customErrorDefaultMessage,
-            customInlineMessage;
-
-        if ( !avoidDefaultMessage ) {
-            // In attribute data-error-label
-            customInlineDefaultMessage = this.#inlineCustomErrorMessages[ 'default' ];
-            // In global options configuration
-            customErrorDefaultMessage = this.#options.errorMessages[ 'default' ];
-        }
-
         // Forced in parameters of this function
         const forcedJSMessage = _locale ? _locale[ validatorName ] : null;
 
@@ -225,27 +214,24 @@ export default class Input implements FLib.Validator.Input {
         }
 
         // In attribute data-error-label-VALIDATOR_NAME
-        customInlineMessage = this.#inlineCustomErrorMessages[ validatorName ];
-        if ( customInlineMessage ) {
-            customInlineMessage =
-                this.#options.errorMessages[ customInlineMessage ] ||
-                customInlineMessage;
-        }
+        const customInlineMessage = this.#inlineCustomErrorMessages[ validatorName ];
 
         if ( customInlineMessage ) {
-            return customInlineMessage;
+            return this.#options.errorMessages[ customInlineMessage ] ||
+                customInlineMessage;
         }
 
         // In global options configuration
         const customErrorMessage = this.#options.errorMessages[ validatorName ];
 
-        if ( customErrorMessage ) {
-            return customErrorMessage;
+        if ( avoidDefaultMessage ) {
+            return customErrorMessage || validatorName;
         }
 
         return (
-            customInlineDefaultMessage ||
-            customErrorDefaultMessage ||
+            this.#inlineCustomErrorMessages[ 'default' ] ||
+            this.#options.errorMessages[ 'default' ] ||
+            customErrorMessage ||
             validatorName
         );
     }
