@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.53
+
+- Add AriaAnnouncementHelper
+
 ## 7.1.52
 
 - [Popin]: Fix tabulation inside popin
