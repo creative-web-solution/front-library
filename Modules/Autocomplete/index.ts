@@ -25,7 +25,6 @@ type AutocompleteOptions<ItemDataType> = {
         results: ItemDataType[];
     }) => void;
     $searchField: HTMLInputElement;
-    shouldMarkValue?: boolean;
 };
 
 const PREVENT_DEFAULT_KEY_LIST = [
@@ -49,7 +48,6 @@ const DEFAULT_OPTIONS = {
     layerPosition: "top",
     $layerWrapper: document.body,
     minChar: 3,
-    shouldMarkValue: false,
 };
 
 export default class Autocomplete<ItemDataType> {
@@ -222,13 +220,11 @@ export default class Autocomplete<ItemDataType> {
         this.resetResults();
 
         this.#currentResults = results.map((item, index) => {
-            const markedItem = this.#options.shouldMarkValue
-                ? this.#adapter.markValue({
+            const markedItem = this.#adapter.markValue?.({
                       item,
                       index,
                       query: this.#currentQuery,
-                  })
-                : item;
+                  }) ?? item;
             const $item = strToDOM(
                 this.#adapter.itemRender({
                     item: markedItem,

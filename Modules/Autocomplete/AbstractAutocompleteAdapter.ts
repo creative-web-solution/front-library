@@ -8,12 +8,12 @@ export default abstract class AbstractAutocompleteAdapter<ItemDataType> {
         query: string,
         $input: HTMLElement,
     ): Record<string, any>;
-    abstract markValue(options: {
+    markValue?(options: {
         item: ItemDataType;
         index: number;
         query: string;
     }): ItemDataType;
-    abstract updateInputValueFromItem?(options: {
+    updateInputValueFromItem?(options: {
         item: ItemDataType;
         index: number;
         query: string;

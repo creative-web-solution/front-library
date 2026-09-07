@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.54
+
+- [Autocomplete]: Remove shouldMarkValue configuration
+
 ## 7.1.53
 
 - Add AriaAnnouncementHelper
