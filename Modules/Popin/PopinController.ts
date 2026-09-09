@@ -1,9 +1,8 @@
-import { on, off }        from '../../Events/EventsManager';
-import { extend }         from '../../Helpers/Extend';
-import Popin              from './Popin';
-import PopinBackground    from './PopinBackground';
-import { CLICK_EVENT_NAME, defaultOptions, toggleTabIndex } from './Tools';
-
+import { on, off } from "../../Events/EventsManager";
+import { extend } from "../../Helpers/Extend";
+import Popin from "./Popin";
+import PopinBackground from "./PopinBackground";
+import { CLICK_EVENT_NAME, defaultOptions } from "./Tools";
 
 /**
  * Create a controller tha manage all popin in the page
@@ -15,137 +14,135 @@ import { CLICK_EVENT_NAME, defaultOptions, toggleTabIndex } from './Tools';
  * popin.loadForm( $form );
  */
 export default class PopinController implements FLib.Popin.Controller {
-    #options:    FLib.Popin.Options;
-    #selectors:  FLib.Popin.SelectorsOptions;
+    #options: FLib.Popin.Options;
+    #selectors: FLib.Popin.SelectorsOptions;
     #background: PopinBackground;
-    #popin:      Popin;
+    #popin: Popin;
 
-
-    constructor( userOptions: FLib.Popin.OptionsInit = {}, $popin?: HTMLElement ) {
-
-        if ( !( "AbortController" in window ) ) {
-            throw 'This plugin uses fecth and AbortController. You may need to add a polyfill for this browser.';
+    constructor(
+        userOptions: FLib.Popin.OptionsInit = {},
+        $popin?: HTMLElement,
+    ) {
+        if (!("AbortController" in window)) {
+            throw "This plugin uses fecth and AbortController. You may need to add a polyfill for this browser.";
         }
 
-        this.#options = extend( defaultOptions, userOptions );
+        this.#options = extend(defaultOptions, userOptions);
 
         this.#selectors = this.#options.selectors;
 
         // global var, only one background for all popin
-        this.#background = new PopinBackground( this, this.#options );
+        this.#background = new PopinBackground(this, this.#options);
 
-        this.#popin = new Popin( {
-            ...this.#options
-        },
-        $popin,
-        {
-            "controller": this,
-            "background": this.#background
-         } );
-
+        this.#popin = new Popin(
+            {
+                ...this.#options,
+            },
+            $popin,
+            {
+                controller: this,
+                background: this.#background,
+            },
+        );
 
         // ------------------- BINDING
 
-        if ( $popin ) {
-            toggleTabIndex( null, $popin, false );
-
-            on( document.body,
-                {
-                    "eventsName": CLICK_EVENT_NAME,
-                    "selector":   `a[href="#${ $popin.id }"]`,
-                    "callback":   this.#openPopinHandler
-                } );
+        if ($popin) {
+            on(document.body, {
+                eventsName: CLICK_EVENT_NAME,
+                selector: `a[href="#${$popin.id}"]`,
+                callback: this.#openPopinHandler,
+            });
             return;
         }
 
-        on( document.body,
-            {
-                "eventsName": CLICK_EVENT_NAME,
-                "selector":  this.#selectors.links,
-                "callback":  this.#openPopinHandler
+        on(document.body, {
+            eventsName: CLICK_EVENT_NAME,
+            selector: this.#selectors.links,
+            callback: this.#openPopinHandler,
+        });
+        on(document.body, {
+            eventsName: "submit",
+            selector: this.#selectors.forms,
+            callback: this.#openPopinHandler,
+        });
 
-            } );
-        on( document.body,
-            {
-                "eventsName": "submit",
-                "selector":  this.#selectors.forms,
-                "callback":  this.#openPopinHandler
+        const $triggerOnLoadPopin = document.querySelector(
+            `[${this.#selectors.openOnLoadAttribute}]`,
+        );
 
-            } );
-
-        const $triggerOnLoadPopin = document.querySelector( `[${ this.#selectors.openOnLoadAttribute }]` );
-
-        if ( $triggerOnLoadPopin ) {
+        if ($triggerOnLoadPopin) {
             this.#parseElement(
                 $triggerOnLoadPopin as HTMLElement,
-                $triggerOnLoadPopin.getAttribute( this.#selectors.openOnLoadAttribute )
+                $triggerOnLoadPopin.getAttribute(
+                    this.#selectors.openOnLoadAttribute,
+                ),
             );
         }
     }
 
-
-    #parseElement = ( $dom: HTMLElement, customUrl?: string | null ): Promise<void> => {
-        if ( customUrl ) {
-            return this.#popin.load( customUrl );
+    #parseElement = (
+        $dom: HTMLElement,
+        customUrl?: string | null,
+    ): Promise<void> => {
+        if (customUrl) {
+            return this.#popin.load(customUrl);
         }
 
-        if ( $dom.nodeName === 'FORM' ) {
-            return this.#popin.loadForm( $dom as HTMLFormElement );
+        if ($dom.nodeName === "FORM") {
+            return this.#popin.loadForm($dom as HTMLFormElement);
         }
 
-        const anchor = $dom.getAttribute( 'href' );
+        const anchor = $dom.getAttribute("href");
 
-        if ( anchor && anchor.indexOf( '#' ) === 0 ) {
+        if (anchor && anchor.indexOf("#") === 0) {
             return this.#popin.open();
         }
 
-        return this.#popin.loadLink( $dom as HTMLAnchorElement );
-    }
+        return this.#popin.loadLink($dom as HTMLAnchorElement);
+    };
 
-
-
-    #openPopinHandler = ( e: Event, $target: HTMLElement): void => {
+    #openPopinHandler = (e: Event, $target: HTMLElement): void => {
         e.preventDefault();
 
-        this.#parseElement( $target );
-    }
-
+        this.#parseElement($target);
+    };
 
     /**
      * Load a file and display it in the popin
      *
      * @param data - All parameters available for window.fetch
      */
-    load( url: string, data: RequestInit, type?: FLib.Popin.ResponseType ): Promise<void> {
-        return this.#popin.load( url, data, type );
+    load(
+        url: string,
+        data: RequestInit,
+        type?: FLib.Popin.ResponseType,
+    ): Promise<void> {
+        return this.#popin.load(url, data, type);
     }
-
 
     /**
      * Send a form and display the result it in the popin
      */
-    loadForm( $form: HTMLFormElement ): Promise<void> {
-        return this.#popin.loadForm( $form );
+    loadForm($form: HTMLFormElement): Promise<void> {
+        return this.#popin.loadForm($form);
     }
-
 
     /**
      * Load a page from a link and display the result it in the popin
      */
-    loadLink( $link: HTMLAnchorElement ): Promise<void> {
-        return this.#popin.loadLink( $link );
+    loadLink($link: HTMLAnchorElement): Promise<void> {
+        return this.#popin.loadLink($link);
     }
-
 
     /**
      * Insert some html in the popin and open it
      *
      * @param openFirst - Open the popin THEN insert the html
      */
-    set( html: string, openFirst?: boolean ): Promise<void> {
-        return this.#popin.set( html, openFirst );
+    set(html: string, openFirst?: boolean): Promise<void> {
+        return this.#popin.set(html, openFirst);
     }
-
 
     /**
      * Remove the content of the popin
@@ -154,14 +151,12 @@ export default class PopinController implements FLib.Popin.Controller {
         return this.#popin.clear();
     }
 
-
     /**
      * Close the popin
      */
     close(): Promise<void> {
         return this.#popin.close();
     }
-
 
     /**
      * Open the popin
@@ -170,7 +165,6 @@ export default class PopinController implements FLib.Popin.Controller {
         return this.#popin.open();
     }
 
-
     /**
      * Remove all events, css class or inline styles
      */
@@ -178,15 +172,11 @@ export default class PopinController implements FLib.Popin.Controller {
         this.#background.destroy();
         this.#popin.destroy();
 
-        off(
-            document.body,
-            {
-                "eventsName": `${ CLICK_EVENT_NAME } submit`,
-                "callback":   this.#openPopinHandler
-            }
-        );
+        off(document.body, {
+            eventsName: `${CLICK_EVENT_NAME} submit`,
+            callback: this.#openPopinHandler,
+        });
 
         return this;
     }
-
 }

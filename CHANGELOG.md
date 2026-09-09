@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.55
+
+- [Popin]: Rework accessibility
+
 ## 7.1.54
 
 - [Autocomplete]: Remove shouldMarkValue configuration
