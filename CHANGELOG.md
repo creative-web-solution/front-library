@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.57
+
+- [KeyboardHandler]: Handle onHome and onEnd callbak. Set onNext as RIGHT or DOWN and onPrevious as LEFT or UP.
+
 ## 7.1.56
 
 - [Popin]: Handle modal tabulation with iframe

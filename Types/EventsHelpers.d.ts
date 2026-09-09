@@ -114,8 +114,7 @@ declare namespace FLib {
             };
 
             type PreventAndStopPropagation =
-                | boolean
-                | ((e, $target: HTMLElement) => boolean);
+                boolean | ((e, $target: HTMLElement) => boolean);
             type Callback = (
                 e: Event,
                 $target: HTMLElement,
@@ -196,11 +195,7 @@ declare namespace FLib {
             }
 
             type Elements =
-                | Node
-                | NodeList
-                | Node[]
-                | HTMLElement
-                | HTMLElement[];
+                Node | NodeList | Node[] | HTMLElement | HTMLElement[];
         }
 
         /**
@@ -292,10 +287,12 @@ declare namespace FLib {
                 onDown?: Callback;
                 onPageUp?: Callback;
                 onPageDown?: Callback;
-                /** Called when pressing LEFT or DOWN arrow keys */
+                /** Called when pressing LEFT or UP arrow keys */
                 onPrevious?: Callback;
-                /** Called when pressing RIGHT or UP arrow keys */
+                /** Called when pressing RIGHT or DOWN arrow keys */
                 onNext?: Callback;
+                onHome?: Callback;
+                onEnd?: Callback;
                 /** Called on every key */
                 onKey?: Callback;
             };
