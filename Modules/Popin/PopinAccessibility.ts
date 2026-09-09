@@ -30,6 +30,7 @@ export default class PopinAccessibility {
     }
 
     handleBackwardTab(e: Event): void {
+        this.#getFocusableElements();
         if (document.activeElement === this.#$firstElement) {
             e.preventDefault();
             this.focusLastElement();
@@ -37,6 +38,7 @@ export default class PopinAccessibility {
     }
 
     handleForwardTab(e: Event): void {
+        this.#getFocusableElements();
         if (document.activeElement === this.#$lastElement) {
             e.preventDefault();
             this.focusFirstElement();
@@ -46,7 +48,10 @@ export default class PopinAccessibility {
     refresh(): void {
         this.#addSentinels();
         this.#handleFocusBackInDocument();
+        this.#getFocusableElements();
+    }
 
+    #getFocusableElements(): void {
         this.#$elements = Array.from(
             this.#$popin.querySelectorAll<HTMLElement>(
                 FOCUSABLE_ELEMENTS_SELECTOR,

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.56
+
+- [Popin]: Handle modal tabulation with iframe
+
 ## 7.1.55
 
 - [Popin]: Rework accessibility
