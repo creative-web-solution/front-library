@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.58
+
+- [Popin]: Fix trap focus bug
+
 ## 7.1.57
 
 - [KeyboardHandler]: Handle onHome and onEnd callbak. Set onNext as RIGHT or DOWN and onPrevious as LEFT or UP.

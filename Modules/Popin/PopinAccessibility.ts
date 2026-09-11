@@ -47,8 +47,8 @@ export default class PopinAccessibility {
 
     refresh(): void {
         this.#addSentinels();
-        this.#handleFocusBackInDocument();
         this.#getFocusableElements();
+        this.#handleFocusBackInDocument();
     }
 
     #getFocusableElements(): void {
@@ -56,7 +56,7 @@ export default class PopinAccessibility {
             this.#$popin.querySelectorAll<HTMLElement>(
                 FOCUSABLE_ELEMENTS_SELECTOR,
             ),
-        ).filter(($element) => $element.offsetParent !== null);
+        ).filter(($element) => $element.offsetParent !== null && $element !== this.#$startSentinel && $element !== this.#$endSentinel);
         this.#$firstElement = this.#$elements[0] ?? this.#$popin;
         this.#$lastElement = this.#$elements[this.#$elements.length - 1];
     }
