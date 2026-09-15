@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.59
+
+- [DragSlider]: Refresh elements on first interaction
+
 ## 7.1.58
 
 - [Popin]: Fix trap focus bug

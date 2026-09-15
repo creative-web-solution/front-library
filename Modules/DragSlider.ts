@@ -75,7 +75,6 @@ export default class DragSlider {
     #itemMap = new Map<HTMLElement, FLib.DragSlider.Item>();
     #firstItem: FLib.DragSlider.Item | undefined;
     #currentSnapItem: FLib.DragSlider.Item | undefined;
-    #hasAlreadyBeenDragged = false;
     #startDragCoords: FLib.Events.Gesture.Coords | undefined;
     #isInitialized = false;
     #visibleItems: FLib.DragSlider.Item[] = [];
@@ -83,6 +82,7 @@ export default class DragSlider {
     #debouncedOnResize;
     #minXPos: number = 0;
     #maxXPos: number = 0;
+    #interactedWithSliderOneTime: boolean = false;
 
     get count(): number {
         return this.#$items?.length ?? 0;
@@ -405,10 +405,7 @@ export default class DragSlider {
         $target: HTMLElement,
         coords: FLib.Events.Gesture.Coords
     ): void => {
-        if (!this.#hasAlreadyBeenDragged) {
-            this.#onResize();
-            this.#hasAlreadyBeenDragged = true;
-        }
+        this.#checkForFirstInteraction();
 
         if (!this.#isDraggingActive || !this.#$list) {
             return;
@@ -515,6 +512,8 @@ export default class DragSlider {
     };
 
     next(): Promise<any> {
+        this.#checkForFirstInteraction();
+
         const CURRENT_ITEM = this.#currentSnapItem as FLib.DragSlider.Item;
 
         if (
@@ -530,6 +529,8 @@ export default class DragSlider {
     }
 
     previous(): Promise<any> {
+        this.#checkForFirstInteraction();
+
         const CURRENT_ITEM = this.#currentSnapItem as FLib.DragSlider.Item;
 
         if (!this.#isDraggingActive || CURRENT_ITEM.isFirst) {
@@ -545,6 +546,8 @@ export default class DragSlider {
         if (!this.#isDraggingActive) {
             return Promise.resolve();
         }
+
+        this.#checkForFirstInteraction();
 
         let $block;
 
@@ -585,6 +588,14 @@ export default class DragSlider {
                 );
             })
             .then(() => this.#updateAccessibilityFeature());
+    }
+
+
+    #checkForFirstInteraction(): void {
+        if (!this.#interactedWithSliderOneTime) {
+            this.#interactedWithSliderOneTime = true;
+            this.#onResize();
+        }
     }
 
     #updateAccessibilityFeature = (): void => {
@@ -697,7 +708,7 @@ export default class DragSlider {
 
     destroy(): this {
         this.#isInitialized = false;
-        this.#hasAlreadyBeenDragged = false;
+        this.#interactedWithSliderOneTime = false;
 
         if (!this.#$items?.length) {
             return this;
