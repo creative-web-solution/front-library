@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 7.1.60
+
+- [Accordion]: Updates for accessibility
+- [Tabs]: Add manual selection handling
+
 ## 7.1.59
 
 - [DragSlider]: Refresh elements on first interaction

@@ -6,19 +6,20 @@ import Tab                 from './Tab';
 
 const DEFAULT_OPTIONS = {
     "tabSelector":      "li[aria-selected]",
+    "selectOnFocus":    false,
     "animations": {
-        "open": function( $TAB, $TAB_PANNEL ) {
-            aClass( [ $TAB, $TAB_PANNEL ], 'on' );
+        "open": function( $tab: HTMLElement, $panel: HTMLElement ) {
+            aClass( [ $tab, $panel ], 'on' );
 
             return Promise.resolve();
         },
-        "close": function( $TAB, $TAB_PANNEL ) {
-            rClass( [ $TAB, $TAB_PANNEL ], 'on' );
+        "close": function( $tab: HTMLElement, $panel: HTMLElement ) {
+            rClass( [ $tab, $panel ], 'on' );
 
             return Promise.resolve();
         },
-        "destroy": function( $TAB, $TAB_PANNEL ) {
-            rClass( [ $TAB, $TAB_PANNEL ], 'on' );
+        "destroy": function( $tab: HTMLElement, $panel: HTMLElement ) {
+            rClass( [ $tab, $panel ], 'on' );
 
             return Promise.resolve();
         }
@@ -98,10 +99,11 @@ export default class Tabs {
     #options:        FLib.Tabs.Options;
     #$TABS_LIST:     HTMLElement;
     #$TABS:          NodeList;
-    #tablist:        FLib.Tabs.Tab[];
+    #tablist:        Tab[];
     #status:         string;
     #VERTICAL_MODE:  boolean;
-    #lastOpenedTab:  FLib.Tabs.Tab | undefined;
+    #lastOpenedTab:  Tab | undefined;
+    #lastFocusedTab: Tab | undefined;
     #keyboard:       KeyboardHandler | undefined;
     #$tabsWrapper:   HTMLElement;
 
@@ -124,7 +126,7 @@ export default class Tabs {
     }
 
 
-    #onOpenTab = ( tab: FLib.Tabs.Tab ): void => {
+    #onOpenTab = ( tab: Tab ): void => {
         if ( this.#lastOpenedTab ) {
             this.#lastOpenedTab.close( true );
         }
@@ -134,18 +136,54 @@ export default class Tabs {
 
 
     #onNext = (): void => {
-        const lastIndex   = this.#lastOpenedTab ? this.#lastOpenedTab.index : 0;
+        if (this.#options.selectOnFocus) {
+            const lastIndex   = this.#lastOpenedTab ? this.#lastOpenedTab.index : 0;
+            const indexToOpen = lastIndex + 1 >= this.#tablist.length ? 0 : lastIndex + 1;
+
+            this.#tablist[ indexToOpen ].open();
+            return;
+        }
+
+        const lastIndex   = this.#lastFocusedTab ? this.#lastFocusedTab.index : 0;
         const indexToOpen = lastIndex + 1 >= this.#tablist.length ? 0 : lastIndex + 1;
 
-        this.#tablist[ indexToOpen ].open();
+        this.#tablist[ indexToOpen ].focusTab();
     }
 
 
     #onPrevious = (): void => {
-        const lastIndex   = this.#lastOpenedTab ? this.#lastOpenedTab.index : 0;
+        if (this.#options.selectOnFocus) {
+            const lastIndex   = this.#lastOpenedTab ? this.#lastOpenedTab.index : 0;
+            const indexToOpen = lastIndex - 1 < 0 ? this.#tablist.length - 1 : lastIndex - 1;
+
+            this.#tablist[ indexToOpen ].open();
+            return;
+        }
+
+        const lastIndex   = this.#lastFocusedTab ? this.#lastFocusedTab.index : 0;
         const indexToOpen = lastIndex - 1 < 0 ? this.#tablist.length - 1 : lastIndex - 1;
 
-        this.#tablist[ indexToOpen ].open();
+        this.#tablist[ indexToOpen ].focusTab();
+    }
+
+
+    #onFirst = (): void => {
+        if (this.#options.selectOnFocus) {
+            this.#tablist[ 0 ].open();
+            return;
+        }
+
+        this.#tablist[ 0 ].focusTab();
+    }
+
+
+    #onLast = (): void => {
+        if (this.#options.selectOnFocus) {
+            this.#tablist[ this.#tablist.length - 1 ].open();
+            return;
+        }
+
+        this.#tablist[ this.#tablist.length - 1 ].focusTab();
     }
 
 
@@ -162,7 +200,8 @@ export default class Tabs {
             const tab = new Tab( $tab as HTMLElement, {
                 ...this.#options,
                 index,
-                "onOpenTab": this.#onOpenTab
+                "onOpenTab": this.#onOpenTab,
+                "onFocusTab": this.#onFocusTab
             } );
 
             this.#tablist.push( tab );
@@ -180,16 +219,35 @@ export default class Tabs {
             this.#keyboard = new KeyboardHandler( this.#$tabsWrapper, {
                 "selector": this.#options.tabSelector,
                 "onUp":     this.#onPrevious,
-                "onDown":   this.#onNext
+                "onDown":   this.#onNext,
+                "onHome":   this.#onFirst,
+                "onEnd":   this.#onLast,
+                "onSelect": this.#onSelect
             } );
+
+            return;
         }
-        else {
-            this.#keyboard = new KeyboardHandler( this.#$tabsWrapper, {
-                "selector": this.#options.tabSelector,
-                "onRight":  this.#onNext,
-                "onLeft":   this.#onPrevious
-            } );
+
+        this.#keyboard = new KeyboardHandler( this.#$tabsWrapper, {
+            "selector": this.#options.tabSelector,
+            "onRight":  this.#onNext,
+            "onLeft":   this.#onPrevious,
+            "onHome":   this.#onFirst,
+            "onEnd":   this.#onLast,
+            "onSelect": this.#onSelect
+        } );
+    }
+
+    #onSelect = (): void => {
+        if (!this.#lastFocusedTab) {
+            return;
         }
+
+        this.#lastFocusedTab.open();
+    }
+
+    #onFocusTab = (tab: Tab): void => {
+        this.#lastFocusedTab = tab;
     }
 
 

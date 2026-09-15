@@ -1,51 +1,65 @@
-import { next } from "../../DOM/Traversing";
-
 /**
  * Tab of an accordion
  */
 export default class Tab {
-    #isOpen: boolean;
-    #originalOpenedState: boolean;
-    #$TAB_PANNEL: HTMLElement | null;
-    #options;
-    #$TAB;
+    #isOpen: boolean = false;
+    #originalOpenedState: boolean = false;
+    #$panel!: HTMLElement;
+    #options: FLib.Accordion.TabOptions;
+    #$tab: HTMLElement;
 
     get isOpen(): boolean {
         return this.#isOpen;
     }
 
-    constructor($TAB: HTMLElement, options: FLib.Accordion.TabOptions) {
+    constructor($tab: HTMLElement, options: FLib.Accordion.TabOptions) {
         this.#options = options;
-        this.#$TAB = $TAB;
+        this.#$tab = $tab;
+        this.#init();
+    }
 
-        const ID = $TAB.getAttribute("aria-controls");
-        this.#$TAB_PANNEL = ID
+    #init(): void {
+        const ID = this.#$tab.getAttribute("aria-controls");
+        const $panel = ID
             ? document.getElementById(ID)
-            : (next($TAB) as HTMLElement);
+            : this.#$tab.nextElementSibling as HTMLElement;
 
+        if (!$panel) {
+            let idError = "";
+            if (ID) {
+                idError = ` with id "${ ID }"`;
+            }
+            throw `[TAB] Missing tab panel${ idError }.`;
+        }
+
+        this.#$panel = $panel;
         this.#isOpen = this.#originalOpenedState =
-            $TAB.getAttribute("aria-expanded") === "true";
+            this.#$tab.getAttribute("aria-expanded") === "true";
+
+        this.#$panel.inert = true;
 
         if (this.#isOpen) {
             this.#openTab(true);
         }
+
     }
 
     #changeTabState = (): void => {
-        this.#$TAB.setAttribute(
+        this.#$tab.setAttribute(
             "aria-expanded",
             this.#isOpen ? "true" : "false",
         );
     };
 
     #openTab = (isOpenAtStart?: boolean): void => {
+        this.#$panel.inert = false;
         this.#options.animations
-            .open(this.#$TAB, this.#$TAB_PANNEL)
+            .open(this.#$tab, this.#$panel)
             .then(() => {
                 if (isOpenAtStart && this.#options.onOpenAtStart) {
-                    this.#options.onOpenAtStart(this.#$TAB, this.#$TAB_PANNEL);
+                    this.#options.onOpenAtStart(this.#$tab, this.#$panel);
                 } else if (!isOpenAtStart && this.#options.onOpen) {
-                    this.#options.onOpen(this.#$TAB, this.#$TAB_PANNEL);
+                    this.#options.onOpen(this.#$tab, this.#$panel);
                 }
             });
 
@@ -54,13 +68,14 @@ export default class Tab {
     };
 
     #closeTab = (autoClose?: boolean): void => {
+        this.#$panel.inert = true;
         this.#options.animations
-            .close(this.#$TAB, this.#$TAB_PANNEL)
+            .close(this.#$tab, this.#$panel)
             .then(() => {
                 this.#options.onClose?.(
-                    this.#$TAB,
-                    this.#$TAB_PANNEL,
-                    autoClose,
+                    this.#$tab,
+                    this.#$panel,
+                    autoClose ?? false,
                 );
             });
 
@@ -84,12 +99,13 @@ export default class Tab {
     }
 
     destroy(): this {
-        this.#options.animations.destroy(this.#$TAB, this.#$TAB_PANNEL);
+        this.#options.animations.destroy(this.#$tab, this.#$panel);
 
-        this.#$TAB.setAttribute(
+        this.#$tab.setAttribute(
             "aria-expanded",
             this.#originalOpenedState ? "true" : "false",
         );
+        this.#$panel.inert = false;
 
         return this;
     }

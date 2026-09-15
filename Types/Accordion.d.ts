@@ -27,15 +27,14 @@ declare namespace FLib {
             onOpenAtStart: Callback;
             onOpen: Callback;
             onClose: CloseCallback;
-            animations: Partial<AnimationOptions>;
+            animations: AnimationOptions;
         }
 
-        interface OptionsInit extends Partial<Options> {
-            animations?: Partial<AnimationOptions>;
-        }
+        type OptionsInit = Partial<Options>
 
         interface TabOptions extends Options {
             index: number;
+            animations: AnimationOptions;
         }
     }
 }

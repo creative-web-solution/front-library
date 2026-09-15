@@ -8,18 +8,18 @@ const DEFAULT_OPTIONS = {
     allowMultipleTab: false,
     atLeastOneOpen: false,
     animations: {
-        open: function ($TAB, $TAB_PANNEL) {
-            aClass([$TAB, $TAB_PANNEL], "on");
+        open: function ($tab: HTMLElement, $panel: HTMLElement) {
+            aClass([$tab, $panel], "on");
 
             return Promise.resolve();
         },
-        close: function ($TAB, $TAB_PANNEL) {
-            rClass([$TAB, $TAB_PANNEL], "on");
+        close: function ($tab: HTMLElement, $panel: HTMLElement) {
+            rClass([$tab, $panel], "on");
 
             return Promise.resolve();
         },
-        destroy: function ($TAB, $TAB_PANNEL) {
-            rClass([$TAB, $TAB_PANNEL], "on");
+        destroy: function ($tab: HTMLElement, $panel: HTMLElement) {
+            rClass([$tab, $panel], "on");
 
             return Promise.resolve();
         },

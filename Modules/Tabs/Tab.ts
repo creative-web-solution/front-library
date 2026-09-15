@@ -4,13 +4,13 @@ import { on, off }        from '../../Events/EventsManager';
 /**
  * Tab of a tabs list
  */
-export default class Tab implements FLib.Tabs.Tab {
+export default class Tab {
 
-    #options:             FLib.Tabs.TabOptions;
-    #$TAB:                HTMLElement;
-    #$TAB_PANNEL:         HTMLElement;
-    #isOpen:              boolean;
-    #originalOpenedState: boolean;
+    #options: FLib.Tabs.TabOptions;
+    #$tab: HTMLElement;
+    #panel!: HTMLElement;
+    #isOpen: boolean = false;
+    #originalOpenedState: boolean = false;
 
 
     get isOpened(): boolean {
@@ -22,27 +22,37 @@ export default class Tab implements FLib.Tabs.Tab {
     }
 
 
-    constructor( $TAB: HTMLElement, options: FLib.Tabs.TabOptions ) {
+    constructor( $tab: HTMLElement, options: FLib.Tabs.TabOptions ) {
         this.#options = options;
-        this.#$TAB    = $TAB;
+        this.#$tab    = $tab;
 
-        const ID = $TAB.getAttribute( 'aria-controls' );
+        this.#init();
+    }
+
+    #init(): void {
+        const ID = this.#$tab.getAttribute( 'aria-controls' );
 
         if ( !ID ) {
             throw `Missing "aria-controls" attributes on tab element`;
         }
 
-        this.#$TAB_PANNEL = document.getElementById( ID ) as HTMLElement;
+        this.#panel = document.getElementById( ID ) as HTMLElement;
 
-        if ( !this.#$TAB_PANNEL ) {
+        if ( !this.#panel ) {
             throw `Unable to find panel element id="${ ID }" attributes on tab element`;
         }
 
-        this.#isOpen = this.#originalOpenedState = $TAB.getAttribute( 'aria-selected' ) === 'true';
+        this.#isOpen = this.#originalOpenedState = this.#$tab.getAttribute( 'aria-selected' ) === 'true';
+        this.#panel.inert = true;
 
-        on( $TAB, {
+        on( this.#$tab, {
             "eventsName": "click",
             "callback":   this.#toggleTab
+        } );
+
+        on( this.#$tab, {
+            "eventsName": "focus",
+            "callback":   this.#onFocusTab
         } );
 
         if ( this.#isOpen ) {
@@ -50,30 +60,34 @@ export default class Tab implements FLib.Tabs.Tab {
         }
     }
 
+    #onFocusTab = (): void => {
+        this.#options.onFocusTab?.(this);
+    }
 
-    #changeTabState = ( isOpenAtStart?: boolean ): void => {
-        this.#$TAB.setAttribute( 'aria-selected', this.#isOpen ? 'true' : 'false' );
-        this.#$TAB.setAttribute( 'tabindex', this.#isOpen ? '0' : '-1' );
+    #toggleTab = ( e: Event ): void => {
+        e.preventDefault();
 
-        if ( this.#isOpen && !isOpenAtStart ) {
-            this.#$TAB.focus();
+        if( this.#isOpen ) {
+            this.#closeTab();
         }
-
+        else {
+            this.#openTab();
+        }
     }
 
 
     #openTab = ( isOpenAtStart?: boolean ): void => {
+        this.#panel.inert = false;
         this.#options.animations
-                    .open( this.#$TAB, this.#$TAB_PANNEL )
-                    .then( () => {
-
-                        if ( isOpenAtStart && this.#options.onOpenAtStart ) {
-                            this.#options.onOpenAtStart( this.#$TAB, this.#$TAB_PANNEL );
-                        }
-                        else if ( !isOpenAtStart && this.#options.onOpen ) {
-                            this.#options.onOpen( this.#$TAB, this.#$TAB_PANNEL );
-                        }
-                    } );
+            .open( this.#$tab, this.#panel )
+            .then( () => {
+                if ( isOpenAtStart && this.#options.onOpenAtStart ) {
+                    this.#options.onOpenAtStart( this.#$tab, this.#panel );
+                }
+                else if ( !isOpenAtStart && this.#options.onOpen ) {
+                    this.#options.onOpen( this.#$tab, this.#panel );
+                }
+            } );
 
         if ( this.#options.onOpenTab ) {
             this.#options.onOpenTab( this );
@@ -84,11 +98,12 @@ export default class Tab implements FLib.Tabs.Tab {
 
 
     #closeTab = ( autoClose?: boolean ): void => {
+        this.#panel.inert = true;
         this.#options.animations
-                    .close( this.#$TAB, this.#$TAB_PANNEL )
+                    .close( this.#$tab, this.#panel )
                     .then( () => {
                         if ( this.#options.onClose ) {
-                            this.#options.onClose( this.#$TAB, this.#$TAB_PANNEL, autoClose );
+                            this.#options.onClose( this.#$tab, this.#panel, autoClose );
                         }
                     } );
         this.#isOpen = false;
@@ -96,14 +111,12 @@ export default class Tab implements FLib.Tabs.Tab {
     }
 
 
-    #toggleTab = ( e: Event ): void => {
-        e.preventDefault();
+    #changeTabState = ( isOpenAtStart?: boolean ): void => {
+        this.#$tab.setAttribute( 'aria-selected', this.#isOpen ? 'true' : 'false' );
+        this.#$tab.setAttribute( 'tabindex', this.#isOpen ? '0' : '-1' );
 
-        if( this.#isOpen ) {
-            this.#closeTab();
-        }
-        else {
-            this.#openTab();
+        if ( this.#isOpen && !isOpenAtStart ) {
+            this.#$tab.focus();
         }
     }
 
@@ -125,16 +138,22 @@ export default class Tab implements FLib.Tabs.Tab {
         return this;
     }
 
+    focusTab(): this {
+        this.#$tab.focus();
+        return this;
+    }
+
 
     destroy(): this {
-        this.#options.animations.destroy( this.#$TAB, this.#$TAB_PANNEL );
+        this.#options.animations.destroy( this.#$tab, this.#panel );
+        this.#panel.inert = false;
 
-        off( this.#$TAB, {
+        off( this.#$tab, {
             "eventsName": "click",
             "callback": this.#toggleTab
         } );
 
-        this.#$TAB.setAttribute( 'aria-selected', this.#originalOpenedState ? 'true' : 'false' );
+        this.#$tab.setAttribute( 'aria-selected', this.#originalOpenedState ? 'true' : 'false' );
 
         return this;
     }

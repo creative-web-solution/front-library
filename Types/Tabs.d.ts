@@ -3,17 +3,11 @@ declare namespace FLib {
         type AnimationFunction = ( $tab: HTMLElement, $panel: HTMLElement ) => Promise<void>;
         type Callback          = ( $tab: HTMLElement, $panel: HTMLElement, autoClose?: boolean ) => void;
 
-        interface Tab {
-            isOpened:                    boolean;
-            index:                       number;
-            close( autoClose?: boolean ): this;
-            open( autoOpen?: boolean ):   this;
-            destroy():                   this;
-        }
-
         type Options = {
             /** @defaultValue 'li[aria-selected]' */
             tabSelector:    string;
+            /** @defaultValue false */
+            selectOnFocus?:  boolean;
             onOpenAtStart?: Callback;
             onOpen?:        Callback;
             onClose?:       Callback;
@@ -27,6 +21,7 @@ declare namespace FLib {
 
         type TabOptions = Options & {
             onOpenTab?: ( tab: Tab ) => void;
+            onFocusTab?: ( tab: Tab ) => void;
             index:     number;
         }
     }
