@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.61
+
+- [Slider]: Updates for accessibility
+
 ## 7.1.60
 
 - [Accordion]: Updates for accessibility

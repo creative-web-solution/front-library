@@ -1,11 +1,9 @@
-import { on, one }                  from '../../Events/EventsManager';
-import { gesture, gestureOff }      from '../../Events/Gesture';
-import KeyboardHandler              from '../../Events/KeyboardHandler';
-import { extend }                   from '../../Helpers/Extend';
-import { index }                    from '../../DOM/Index';
-import Slider                       from './Slider';
-import { Slide }                    from './Slide';
-
+import { off, on, one } from "../../Events/EventsManager";
+import { gesture, gestureOff } from "../../Events/Gesture";
+import KeyboardHandler from "../../Events/KeyboardHandler";
+import { extend } from "../../Helpers/Extend";
+import { index } from "../../DOM/Index";
+import Slider from "./Slider";
 
 /**
  * Controls of a slider
@@ -19,421 +17,646 @@ import { Slide }                    from './Slide';
  *  {
  *      "$btPrev": $previousButtton,
  *      "$btNext": $nextButton,
- *      "$pagination": $pagination,
- *      "paginationItemsSelector": '.item',
+ *      "$btPause": $btPause,
+ *      "$tabsList": $pagination,
+ *      "tabsSelector": '.item',
  *      "autoslide": 10, // in second
  *      "swipe": false,
  *      "enableKeyboard": true,
- *      "gestureOptions": Object
+ *      "gestureOptions": Object,
+ *      "onAutoplayChange": () => {
+ *      },
+ *      "onPreviousButtonClick": () => {
+ *      },
+ *      "onNextButtonClick": () => {
+ *      },
+ *      "onPauseButtonClick": () => {
+ *      },
+ *      "onTabClick": () => {
+ *      },
  *  }
  * );
  * ```
-*/
+ */
 export default class SliderControls {
+    #slider: Slider;
+    #autoslideTimeoutId: number = -1;
+    #keyboardHandlers: KeyboardHandler[] = [];
+    #$tabsList?: HTMLElement;
+    #$tabs: NodeListOf<HTMLElement> | null = null;
+    #$btPrevious?: HTMLElement;
+    #$btNext?: HTMLElement;
+    #$btPause?: HTMLElement;
+    #isAutoslideEnabled = false;
+    #options: FLib.Slider.ControlsOptions;
+    #isPauseRequested: boolean = false;
+    #hasHoverOnSlider: boolean = false;
+    #hasFocusOnTabs: boolean = false;
+    #hasFocusOnButtons: boolean = false;
 
-    #slider:                        Slider;
-    #autoslideTimeoutId;
-    #keyboardPreviousButton;
-    #keyboardNextButton;
-    #$bullets:                      NodeListOf<HTMLElement> | null = null;
-    #paginationKeyboardControls;
-    #inSlideKeyboardControls;
-    #isAutoslideEnabled             = false;
-    #options:                       FLib.Slider.ControlsOptions;
-
-
-    /**
-     * Controlled slider
-     */
     get slider(): Slider {
         return this.#slider;
     }
 
+    get isAutoSlidePaused(): boolean {
+        return (
+            this.#isPauseRequested ||
+            this.#hasFocusOnTabs ||
+            this.#hasHoverOnSlider ||
+            this.#hasFocusOnButtons
+        );
+    }
 
-    constructor( slider: Slider, options: FLib.Slider.ControlsOptions ) {
-        this.#slider  = slider;
+    get isPauseRequested(): boolean {
+        return this.#isPauseRequested;
+    }
+
+    constructor(slider: Slider, options: FLib.Slider.ControlsOptions) {
+        this.#slider = slider;
         this.#options = options;
+        this.#isPauseRequested = !Boolean(options.autoslide);
 
+        this.#initSlider();
+        this.#initTabs();
+        this.#initButtons();
+        this.#initSwipe();
+    }
 
-        if ( options.$pagination && options.paginationItemsSelector ) {
-            this.#$bullets = options.$pagination.querySelectorAll( options.paginationItemsSelector );
-        }
-
-
-        // ------------------- INIT DOM
-
-
-        on( slider, {
-            "eventsName": "before",
-            "callback": data => {
-                this.#updateBullets( data.targetSlide, data.currentSlide );
-            }
-        } );
-
-        on( slider, {
-            "eventsName": "start",
-            "callback": data => {
-                this.#updateBullets( data.currentSlide );
-            }
-        } );
-
-        if ( options.$pagination ) {
-            options.$pagination.setAttribute( 'role', 'tablist' );
-        }
-
-        if ( this.#$bullets ) {
-            this.#$bullets.forEach( ( $bullet, index ) => {
-                const matchSlide = slider.getSlide( index );
-
-                $bullet.setAttribute( 'role', 'tab' );
-                $bullet.setAttribute( 'aria-selected', 'false' );
-                $bullet.setAttribute( 'tabindex', '-1' );
-                $bullet.setAttribute( 'aria-controls', matchSlide.id );
-            } );
-        }
-
-        // ------------------- BIND GESTURES
-
-        if ( options.$btPrev ) {
-            gesture( options.$btPrev, '__sliderBtPrev', {
-                "tap": this.#onPrev.bind( this ),
-            } );
-        }
-
-        if ( options.$btNext ) {
-            gesture( options.$btNext, '__sliderBtNext', {
-                "tap": this.#onNext.bind( this ),
-            } );
-        }
-
-        if ( this.#$bullets && options.$pagination ) {
-            gesture( options.$pagination, '__sliderBtPagination', {
-                "selector": options.paginationItemsSelector,
-                "tap": this.#onPager.bind( this ),
-            } );
-        }
-
-        if ( options.swipe ) {
-            let gestureOptions = {
-                "preventStart": true,
-                "swipeLeft": () => {
-                    this.next();
-                },
-                "swipeRight": () => {
-                    this.previous();
+    #initSlider(): void {
+        on(this.#slider, {
+            eventsName: "before",
+            callback: (data: FLib.Slider.CallbackParam) => {
+                this.#updateTabs(data.targetSlide, data.currentSlide);
+                if (this.#hasFocusOnTabs) {
+                    this.#updateTabsFocus(data);
                 }
-            };
+            },
+        });
 
-            if ( options.gestureOptions ) {
-                gestureOptions = extend(
-                    gestureOptions,
-                    options.gestureOptions
-                );
-
-                if ( options.gestureOptions.swipeLeft ) {
-                    gestureOptions = extend(
-                        gestureOptions,
-                        {
-                            "swipeLeft": ( e: Event, $target: HTMLElement, type: string ) => {
-                                this.next();
-                                options.gestureOptions?.swipeLeft?.call( this, e, $target, type  );
-                            }
-                        }
-                    );
+        on(this.#slider, {
+            eventsName: "start",
+            callback: (data: FLib.Slider.CallbackParam) => {
+                this.#updateTabs(data.currentSlide);
+                if (this.#hasFocusOnTabs) {
+                    this.#updateTabsFocus(data);
                 }
+            },
+        });
 
-                if ( options.gestureOptions.swipeRight ) {
-                    gestureOptions = extend(
-                        gestureOptions,
-                        {
-                            "swipeRight": ( e: Event, $target: HTMLElement, type: string ) => {
-                                this.previous();
-                                options.gestureOptions?.swipeRight?.call( this, e, $target, type );
-                            }
-                        }
-                    );
-                }
-            }
+        on(this.#slider.$slider, {
+            eventsName: "mouseover",
+            callback: this.#onMouseOver,
+        });
 
-            gesture( slider.$slider, '__sliderSwipe', gestureOptions );
+        on(this.#slider.$slider, {
+            eventsName: "mouseout",
+            callback: this.#onMouseOut,
+        });
+    }
+
+    #initTabs(): void {
+        this.#$tabsList = this.#options.$tabsList;
+
+        if (!this.#$tabsList || !this.#options.tabsSelector) {
+            return;
         }
 
-        // ------------------- BIND KEYBOARD
+        this.#$tabsList.setAttribute("role", "tablist");
 
-        if ( options.enableKeyboard ) {
-            this.#inSlideKeyboardControls = new KeyboardHandler(
-                slider.$list,
-                {
-                    "onUp": e => {
-                        if ( e.ctrlKey ) {
-                            this.#updateBulletsFocus();
-                        }
+        on(this.#$tabsList, {
+            eventsName: "focusin",
+            callback: this.#onTabsListFocusIn,
+        });
+
+        on(this.#$tabsList, {
+            eventsName: "focusout",
+            callback: this.#onTabsListFocusOut,
+        });
+
+        this.#$tabs = this.#$tabsList.querySelectorAll(
+            this.#options.tabsSelector,
+        );
+
+        if (!this.#$tabs.length) {
+            return;
+        }
+
+        this.#$tabs.forEach(($tabs, index) => {
+            const matchSlide = this.#slider.getSlide(index);
+
+            $tabs.setAttribute("role", "tab");
+            $tabs.setAttribute("aria-selected", "false");
+            $tabs.setAttribute("tabindex", "-1");
+            $tabs.setAttribute("aria-controls", matchSlide.id);
+        });
+
+        on(this.#$tabsList, {
+            eventsName: "click",
+            selector: this.#options.tabsSelector,
+            callback: this.#onClickTabsHandler,
+        });
+
+        if (!this.#options.enableKeyboard) {
+            return;
+        }
+
+        this.#keyboardHandlers.push(
+            new KeyboardHandler(this.#$tabsList, {
+                selector: this.#options.tabsSelector,
+                onPrevious: this.#onTabsListKeyboardPreviousHandler,
+                onNext: this.#onTabsListKeyboardNextHandler,
+                onHome: this.#onTabsListKeyboardHomeHandler,
+                onEnd: this.#onTabsListKeyboardEndHandler,
+            }),
+        );
+    }
+
+    #initButtons(): void {
+        this.#$btPrevious = this.#options.$btPrev;
+        this.#$btNext = this.#options.$btNext;
+        this.#$btPause = this.#options.$btPause;
+
+        if (this.#$btPrevious) {
+            on(this.#$btPrevious, {
+                eventsName: "click",
+                callback: this.#onClickPreviousButtonHandler,
+            });
+
+            on(this.#$btPrevious, {
+                eventsName: "focus",
+                callback: this.#onButtonsFocusIn,
+            });
+
+            on(this.#$btPrevious, {
+                eventsName: "blur",
+                callback: this.#onButtonsFocusOut,
+            });
+        }
+
+        if (this.#$btNext) {
+            on(this.#$btNext, {
+                eventsName: "click",
+                callback: this.#onClickNextButtonHandler,
+            });
+
+            on(this.#$btNext, {
+                eventsName: "focus",
+                callback: this.#onButtonsFocusIn,
+            });
+
+            on(this.#$btNext, {
+                eventsName: "blur",
+                callback: this.#onButtonsFocusOut,
+            });
+        }
+
+        if (this.#$btPause) {
+            on(this.#$btPause, {
+                eventsName: "click",
+                callback: this.#onClickPauseButtonHandler,
+            });
+        }
+
+        if (!this.#options.enableKeyboard) {
+            return;
+        }
+
+        if (this.#$btNext) {
+            this.#keyboardHandlers.push(
+                new KeyboardHandler(this.#$btNext, {
+                    onSelect: (e: Event) => {
+                        this.#onClickNextButtonHandler(e, this.#$btNext);
                     },
-                    "onPageUp": e => {
-                        if (e.ctrlKey) {
-                            one(slider, {
-                                "eventsName": "before",
-                                "callback": this.#updateBulletsFocus
-                            });
-                            slider.previous();
-                        }
+                }),
+            );
+        }
+
+        if (this.#$btPrevious) {
+            this.#keyboardHandlers.push(
+                new KeyboardHandler(this.#$btPrevious, {
+                    onSelect: (e: Event) => {
+                        this.#onClickPreviousButtonHandler(
+                            e,
+                            this.#$btPrevious,
+                        );
                     },
-                    "onPageDown": e => {
-                        if (e.ctrlKey) {
-                            one(slider, {
-                                "eventsName": "before",
-                                "callback": this.#updateBulletsFocus
-                            });
-                            slider.next();
-                        }
-                    },
-                }
+                }),
+            );
+        }
+
+        if (this.#$btPause) {
+            this.#keyboardHandlers.push(
+                new KeyboardHandler(this.#$btPause, {
+                    onSelect: this.#onClickPauseButtonHandler,
+                }),
+            );
+        }
+    }
+
+    #initSwipe(): void {
+        if (this.#options.swipe) {
+            return;
+        }
+
+        let gestureOptions = {
+            preventStart: true,
+            swipeLeft: () => {
+                this.next();
+            },
+            swipeRight: () => {
+                this.previous();
+            },
+        };
+
+        if (this.#options.gestureOptions) {
+            gestureOptions = extend(
+                gestureOptions,
+                this.#options.gestureOptions,
             );
 
-            // ARROW KEY on bullets pagination
-
-            if (options.$pagination) {
-                this.#paginationKeyboardControls = new KeyboardHandler(
-                    options.$pagination,
-                    {
-                        "selector": options.paginationItemsSelector,
-                        "onPrevious": () => {
-                            one( slider, {
-                                "eventsName": "before",
-                                "callback": this.#updateBulletsFocus
-                            } );
-                            slider.previous();
-                        },
-                        "onNext": () => {
-                            one( slider, {
-                                "eventsName": "before",
-                                "callback": this.#updateBulletsFocus
-                            } );
-                            slider.next();
-                        },
-                    }
-                );
+            if (this.#options.gestureOptions.swipeLeft) {
+                gestureOptions = extend(gestureOptions, {
+                    swipeLeft: (
+                        e: Event,
+                        $target: HTMLElement,
+                        type: string,
+                    ) => {
+                        this.next();
+                        this.#options.gestureOptions?.swipeLeft?.call(
+                            this,
+                            e,
+                            $target,
+                            type,
+                        );
+                    },
+                });
             }
 
-            // SPACE and ENTER on buttons previous and next
-
-            if ( options.$btNext ) {
-                this.#keyboardNextButton = new KeyboardHandler(
-                    options.$btNext,
-                    {
-                        "onSelect": this.#onNext.bind( this ),
-                    }
-                );
-            }
-
-            if ( options.$btPrev ) {
-                this.#keyboardPreviousButton = new KeyboardHandler(
-                    options.$btPrev,
-                    {
-                        "onSelect": this.#onPrev.bind( this ),
-                    }
-                );
+            if (this.#options.gestureOptions.swipeRight) {
+                gestureOptions = extend(gestureOptions, {
+                    swipeRight: (
+                        e: Event,
+                        $target: HTMLElement,
+                        type: string,
+                    ) => {
+                        this.previous();
+                        this.#options.gestureOptions?.swipeRight?.call(
+                            this,
+                            e,
+                            $target,
+                            type,
+                        );
+                    },
+                });
             }
         }
 
-        // ------------------- START AUTOSLIDE
-
-        this.startAutoslide();
+        gesture(this.#slider.$slider, "__sliderSwipe", gestureOptions);
     }
 
-
-    /**
-     * Go to the next slide or page
-     *
-     * @param _$button - Internal use
-     */
-    next( _$button?: HTMLElement ): Promise<void> {
-        this.#_stopAutoslide();
-        return this.#slider.next( _$button );
-    }
-
-
-    /**
-     * Go to the previous slide or page
-     *
-     * @param _$button - Internal use
-     */
-    previous( _$button?: HTMLElement ): Promise<void> {
-        this.#_stopAutoslide();
-        return this.#slider.previous( _$button );
-    }
-
-
-    /**
-     * Go to the asked slide or page
-     *
-     * @param $button - Internal use
-     */
-    goTo( index: number, _$button?: HTMLElement ): Promise<void> {
-        this.#_stopAutoslide();
-        return this.#slider.goTo( index, _$button );
-    }
-
-
-    /**
-     * Check if the slider is enable or not
-     */
-    isEnabled(): boolean {
-        return this.#slider.isEnabled();
-    }
-
-
-    /**
-     * Destroy the slider and its controls
-     */
-    destroy(): void {
-        clearTimeout( this.#autoslideTimeoutId );
-        this.#slider.destroy();
-
-        if ( this.#options.$btPrev ) {
-            gestureOff( this.#options.$btPrev, '__sliderBtPrev' );
-        }
-
-        if ( this.#options.$btNext ) {
-            gestureOff( this.#options.$btNext, '__sliderBtNext' );
-        }
-
-        if ( this.#keyboardPreviousButton ) {
-            this.#keyboardPreviousButton.off();
-        }
-
-        if ( this.#keyboardNextButton ) {
-            this.#keyboardNextButton.off();
-        }
-
-        if ( this.#paginationKeyboardControls ) {
-            this.#paginationKeyboardControls.off();
-        }
-
-        if ( this.#inSlideKeyboardControls ) {
-            this.#inSlideKeyboardControls.off();
-        }
-
-        if ( this.#$bullets && this.#options.$pagination ) {
-            gestureOff( this.#options.$pagination, '__sliderBtPagination' );
-        }
-
-        if ( this.#options.swipe ) {
-            gestureOff( this.#slider.$slider, '__sliderSwipe' );
-        }
-    }
-
-
-    /**
-     * Start the autoslide
-     */
-    startAutoslide(): this {
-        if ( this.#options.autoslide ) {
-            this.#isAutoslideEnabled = true;
-            this.#autoslideLoop();
-        }
-
-        return this;
-    }
-
-
-    /**
-     * Stop the autoslide
-     */
-    stopAutoslide(): this {
-        this.#_stopAutoslide();
-
-        return this;
-    }
-
-
-    #onPrev = ( e: Event, $target: HTMLElement ): void => {
-        e.preventDefault();
-
-        this.previous( $target );
-    }
-
-
-    #onNext = ( e: Event, $target: HTMLElement ): void => {
-        e.preventDefault();
-
-        this.next( $target );
-    }
-
-
-    #onPager = ( e: Event, $target: HTMLElement ): void => {
-        e.preventDefault();
-
-        this.goTo( index( $target ), $target );
-    }
-
-
-    #_stopAutoslide = (): void => {
-        clearTimeout( this.#autoslideTimeoutId );
-        this.#isAutoslideEnabled = false;
-    }
-
-
-    #makeAutoslide = (): void => {
-        this.#slider.next().then( () => {
-            if ( this.#isAutoslideEnabled ) {
-                this.#autoslideLoop();
-            }
-        } );
-    }
-
-
-    #autoslideLoop = (): void => {
+    #onClickPauseButtonHandler = (): void => {
+        this.togglePause();
         const currentSlide = this.#slider.getCurrentSlide();
+        this.#options.onPauseButtonClick?.(
+            this.#isPauseRequested,
+            this.#$btPause!,
+            currentSlide,
+        );
+    };
 
-        clearTimeout( this.#autoslideTimeoutId );
+    #onClickPreviousButtonHandler = (
+        e?: Event,
+        $target?: HTMLElement,
+    ): void => {
+        e?.preventDefault();
+        this.previous($target);
+
+        if ($target) {
+            const currentSlide = this.#slider.getCurrentSlide();
+            this.#options.onPreviousButtonClick?.($target, currentSlide);
+        }
+    };
+
+    #onClickNextButtonHandler = (e?: Event, $target?: HTMLElement): void => {
+        e?.preventDefault();
+
+        this.next($target);
+
+        if ($target) {
+            const currentSlide = this.#slider.getCurrentSlide();
+            this.#options.onNextButtonClick?.($target, currentSlide);
+        }
+    };
+
+    #onClickTabsHandler = (e: Event, $target: HTMLElement): void => {
+        e.preventDefault();
+
+        this.goTo(index($target), $target);
+
+        this.#onTabsListAction();
+    };
+
+    #onTabsListKeyboardPreviousHandler = (): void => {
+        this.previous();
+        this.#onTabsListAction();
+    };
+
+    #onTabsListKeyboardNextHandler = (): void => {
+        this.next();
+        this.#onTabsListAction();
+    };
+
+    #onTabsListKeyboardHomeHandler = (): void => {
+        this.goTo(0);
+        this.#onTabsListAction();
+    };
+
+    #onTabsListKeyboardEndHandler = (): void => {
+        this.goTo(this.#slider.bulletCount - 1);
+        this.#onTabsListAction();
+    };
+
+    #onTabsListAction(): void {
+        if (!this.#$tabs?.length) {
+            return;
+        }
+
+        const currentSlide = this.#slider.lastMoveData?.targetSlide;
 
         if (!currentSlide) {
             return;
         }
 
-        this.#autoslideTimeoutId = setTimeout(
-            this.#makeAutoslide,
-            ( currentSlide.delay as number || this.#options.autoslide as number ) * 1000
+        this.#options.onTabClick?.(
+            this.#$tabs[currentSlide.index],
+            currentSlide,
         );
     }
 
+    #onTabsListFocusIn = (): void => {
+        this.#hasFocusOnTabs = true;
+        this.#onAutoplayChange();
+    };
 
-    #updateBullets = ( targetSlide: FLib.Slider.SlideProperties, currentSlide?: FLib.Slider.SlideProperties ): void => {
-        if ( !this.#$bullets ) {
+    #onTabsListFocusOut = (): void => {
+        this.#hasFocusOnTabs = false;
+        this.#onAutoplayChange();
+    };
+
+    #onButtonsFocusIn = (): void => {
+        this.#hasFocusOnButtons = true;
+        this.#onAutoplayChange();
+    };
+
+    #onButtonsFocusOut = (): void => {
+        this.#hasFocusOnButtons = false;
+        this.#onAutoplayChange();
+    };
+
+    #onMouseOver = (): void => {
+        this.#hasHoverOnSlider = true;
+        this.#onAutoplayChange();
+    };
+
+    #onMouseOut = (): void => {
+        this.#hasHoverOnSlider = false;
+        this.#onAutoplayChange();
+    };
+
+    #onAutoplayChange(): void {
+        this.#options.onAutoplayChange?.(!this.isAutoSlidePaused);
+        this.#slider.$list.setAttribute(
+            "aria-live",
+            this.isAutoSlidePaused ? "live" : "off",
+        );
+    }
+
+    /**
+     * @param _$button - Internal use
+     */
+    next(_$button?: HTMLElement): Promise<void> {
+        return this.#slider.next(_$button);
+    }
+
+    /**
+     * @param _$button - Internal use
+     */
+    previous(_$button?: HTMLElement): Promise<void> {
+        return this.#slider.previous(_$button);
+    }
+
+    /**
+     * @param $button - Internal use
+     */
+    goTo(index: number, _$button?: HTMLElement): Promise<void> {
+        return this.#slider.goTo(index, _$button);
+    }
+
+    isEnabled(): boolean {
+        return this.#slider.isEnabled();
+    }
+
+    togglePause(): this {
+        if (this.#isPauseRequested) {
+            this.resume();
+            return this;
+        }
+
+        this.pause();
+        return this;
+    }
+
+    pause(): this {
+        this.#isPauseRequested = true;
+        this.#onAutoplayChange();
+
+        return this;
+    }
+
+    resume(): this {
+        this.#isPauseRequested = false;
+        this.#onAutoplayChange();
+
+        return this;
+    }
+
+    startAutoslide(): this {
+        if (this.#options.autoslide) {
+            this.#isAutoslideEnabled = true;
+            this.#autoslideLoop();
+            this.#onAutoplayChange();
+        }
+
+        return this;
+    }
+
+    stopAutoslide(): this {
+        clearTimeout(this.#autoslideTimeoutId);
+        this.#isAutoslideEnabled = false;
+        this.#onAutoplayChange();
+
+        return this;
+    }
+
+    #makeAutoslide = (): void => {
+        if (this.isAutoSlidePaused) {
+            this.#autoslideLoop();
+            return;
+        }
+        this.#slider.next().then(() => {
+            if (this.#isAutoslideEnabled) {
+                this.#autoslideLoop();
+            }
+        });
+    };
+
+    #autoslideLoop = (): void => {
+        clearTimeout(this.#autoslideTimeoutId);
+        const currentSlide = this.#slider.getCurrentSlide();
+
+        if (!currentSlide) {
             return;
         }
 
-        const currentSlideIndex = (this.#slider.options.moveByPage ? currentSlide?.pageIndex : currentSlide?.index) ?? 0;
+        const delay =
+            ((currentSlide.delay as number) ||
+                (this.#options.autoslide as number)) * 1000;
 
-        if ( currentSlide && this.#$bullets[ currentSlideIndex ] ) {
-            const $BULLET = this.#$bullets[ currentSlideIndex ] as HTMLElement;
-            $BULLET.setAttribute( 'aria-selected', 'false' );
-            $BULLET.setAttribute( 'tabindex', '-1' );
+        if (this.isAutoSlidePaused) {
+            this.#autoslideTimeoutId = setTimeout(this.#autoslideLoop, delay);
+            return;
         }
 
-        const targetlideIndex = (this.#slider.options.moveByPage ? targetSlide?.pageIndex : targetSlide?.index) ?? 0;
+        this.#autoslideTimeoutId = setTimeout(this.#makeAutoslide, delay);
+    };
 
-        if ( targetSlide && this.#$bullets[ targetlideIndex ] ) {
-            const $BULLET = this.#$bullets[ targetlideIndex ] as HTMLElement;
-            $BULLET.setAttribute( 'aria-selected', 'true' );
-            $BULLET.setAttribute( 'tabindex', '0' );
+    #updateTabs = (
+        targetSlide: FLib.Slider.SlideProperties,
+        currentSlide?: FLib.Slider.SlideProperties,
+    ): void => {
+        if (!this.#$tabs?.length) {
+            return;
         }
-    }
 
+        const currentSlideIndex =
+            (this.#slider.options.moveByPage
+                ? currentSlide?.pageIndex
+                : currentSlide?.index) ?? 0;
 
-    #updateBulletsFocus = ( data?: { currentSlide: FLib.Slider.SlideProperties, targetSlide: FLib.Slider.SlideProperties } ): void => {
-        const currentSlide = data ? data.targetSlide : this.#slider.getCurrentSlide();
-
-        if ( this.#$bullets && this.#$bullets[ currentSlide.index ] ) {
-            (this.#$bullets[ currentSlide.index ] as HTMLElement).focus();
+        if (currentSlide && this.#$tabs[currentSlideIndex]) {
+            const $tab = this.#$tabs[currentSlideIndex] as HTMLElement;
+            $tab.setAttribute("aria-selected", "false");
+            $tab.setAttribute("tabindex", "-1");
         }
-        else if (
-            this.#options.$pagination &&
-            parseInt( this.#options.$pagination.getAttribute( 'tabindex' ) || '-1', 10 ) > -1
+
+        const targetlideIndex =
+            (this.#slider.options.moveByPage
+                ? targetSlide?.pageIndex
+                : targetSlide?.index) ?? 0;
+
+        if (targetSlide && this.#$tabs[targetlideIndex]) {
+            const $tab = this.#$tabs[targetlideIndex] as HTMLElement;
+            $tab.setAttribute("aria-selected", "true");
+            $tab.setAttribute("tabindex", "0");
+        }
+    };
+
+    #updateTabsFocus = (data: {
+        currentSlide: FLib.Slider.SlideProperties;
+        targetSlide: FLib.Slider.SlideProperties;
+    }): void => {
+        if (!this.#$tabs?.length || !this.#$tabsList) {
+            return;
+        }
+
+        const currentSlide = data.targetSlide;
+
+        if (this.#$tabs[currentSlide.index]) {
+            (this.#$tabs[currentSlide.index] as HTMLElement).focus();
+        } else if (
+            parseInt(this.#$tabsList.getAttribute("tabindex") || "-1", 10) > -1
         ) {
-            this.#options.$pagination.focus();
+            this.#$tabsList.focus();
+        }
+    };
+
+    destroy(): void {
+        clearTimeout(this.#autoslideTimeoutId);
+        this.#slider.destroy();
+
+        on(this.#slider.$slider, {
+            eventsName: "mouseover",
+            callback: this.#onMouseOver,
+        });
+        on(this.#slider.$slider, {
+            eventsName: "mouseout",
+            callback: this.#onMouseOut,
+        });
+
+        if (this.#$tabsList) {
+            off(this.#$tabsList, {
+                eventsName: "focusin",
+                callback: this.#onTabsListFocusIn,
+            });
+
+            off(this.#$tabsList, {
+                eventsName: "focusout",
+                callback: this.#onTabsListFocusOut,
+            });
+        }
+
+        if (this.#options.$btPrev) {
+            off(this.#options.$btPrev, {
+                eventsName: "click",
+                callback: this.#onClickPreviousButtonHandler,
+            });
+
+            off(this.#options.$btPrev, {
+                eventsName: "focus",
+                callback: this.#onTabsListFocusIn,
+            });
+
+            off(this.#options.$btPrev, {
+                eventsName: "blur",
+                callback: this.#onTabsListFocusOut,
+            });
+        }
+
+        if (this.#options.$btNext) {
+            off(this.#options.$btNext, {
+                eventsName: "click",
+                callback: this.#onClickNextButtonHandler,
+            });
+
+            off(this.#options.$btNext, {
+                eventsName: "focus",
+                callback: this.#onTabsListFocusIn,
+            });
+
+            off(this.#options.$btNext, {
+                eventsName: "blur",
+                callback: this.#onTabsListFocusOut,
+            });
+        }
+
+        if (this.#$btPause) {
+            off(this.#$btPause, {
+                eventsName: "click",
+                callback: this.#onClickPauseButtonHandler,
+            });
+        }
+
+        this.#keyboardHandlers.forEach((handler) => handler.off());
+
+        if (this.#$tabs?.length) {
+            off(this.#$tabsList, {
+                eventsName: "click",
+                callback: this.#onClickTabsHandler,
+            });
+        }
+
+        if (this.#options.swipe) {
+            gestureOff(this.#slider.$slider, "__sliderSwipe");
         }
     }
-
 }

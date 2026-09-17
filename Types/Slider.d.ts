@@ -3,104 +3,126 @@ declare namespace FLib {
         type SlideDirection = -1 | 1;
 
         type SlideProperties = {
-            $slide:     HTMLElement;
-            id:         string;
-            delay:      number;
-            index:      number;
-            position:   number;
-            isFirst:    boolean;
-            isLast:     boolean;
-            isVisible:  boolean;
-            isActive:   boolean;
-            page:       number;
-            pageIndex:  number;
-        }
-
+            $slide: HTMLElement;
+            id: string;
+            delay: number;
+            index: number;
+            position: number;
+            isFirst: boolean;
+            isLast: boolean;
+            isVisible: boolean;
+            isActive: boolean;
+            page: number;
+            pageIndex: number;
+        };
 
         type SlideOptions = {
             nbSlideVisibleBefore: number;
-            nbSlideVisibleAfter:  number;
-            slidePerPage:         number;
-            moveByPage:           boolean;
-            nbSlides:             number;
-            nbPages:              number;
-            speed:                number;
-            $slide:               HTMLElement;
-            index:                number;
+            nbSlideVisibleAfter: number;
+            slidePerPage: number;
+            moveByPage: boolean;
+            nbSlides: number;
+            nbPages: number;
+            speed: number;
+            $slide: HTMLElement;
+            index: number;
+            slideAriaLabel: string;
             /** Internal function using GSAP to set CSS styles. Can be override to use another library */
-            _setStyle?:             ( $elem, styles ) => void;
+            _setStyle?: ($elem, styles) => void;
             /** Internal function using GSAP to tween element. Can be override to use another library */
-            _tweenTo?:              ( $elem, styles ) => void;
+            _tweenTo?: ($elem, styles) => void;
             /** Internal function using GSAP to initialize and tween element. Can be override to use another library */
-            _tweenFromTo?:          ( $elem, init, styles  ) => void;
+            _tweenFromTo?: ($elem, init, styles) => void;
             /** Internal function using GSAP to remove tweens from element. Can be override to use another library */
-            _killTweens?:           ( $elem ) => void;
-        }
+            _killTweens?: ($elem) => void;
+        };
 
         type CallbackParam = {
             currentSlide: SlideProperties;
             targetSlide: SlideProperties;
             direction?: SlideDirection;
-            $button?: HTMLElement
-        }
-        type Callback     = ( data: CallbackParam ) => void;
-        type InitCallback = ({ currentSlide }: { currentSlide: SlideProperties }) => void;
+            $button?: HTMLElement;
+        };
+        type Callback = (data: CallbackParam) => void;
+        type InitCallback = ({
+            currentSlide,
+        }: {
+            currentSlide: SlideProperties;
+        }) => void;
 
         type Options = {
             /** @defaultValue 0 */
-            startSlide:             number;
+            startSlide: number;
             /** @defaultValue 0 */
-            nbSlideVisibleBefore:   number;
+            nbSlideVisibleBefore: number;
             /** @defaultValue 0 */
-            nbSlideVisibleAfter:    number;
+            nbSlideVisibleAfter: number;
             /** @defaultValue 1 */
-            slidePerPage:           number;
+            slidePerPage: number;
             /** @defaultValue true */
-            moveByPage:             boolean;
+            moveByPage: boolean;
             /** In second
              * @defaultValue 0.5
-            */
-            speed:                  number;
+             */
+            speed: number;
             /** @defaultValue true */
-            smoothHeight:           boolean;
+            smoothHeight: boolean;
             /** @defaultValue .list */
-            listSelector:           string;
+            listSelector: string;
             /** @defaultValue .item */
-            itemsSelector:          string;
+            itemsSelector: string;
             /** @defaultValue active-slide */
-            activeClass:            string;
+            activeClass: string;
             /** @defaultValue true*/
-            loop:                   boolean;
+            loop: boolean;
+            /** @defaultValue %p of %t */
+            slideAriaLabel: string;
             /** Called one time at the begining of the animation */
-            onBefore?:              Callback;
+            onBefore?: Callback;
             /** Called for every slide that will come in the 1st position during the animation */
-            onBeforeEach?:          Callback;
+            onBeforeEach?: Callback;
             /** Called one time at the end of the animation */
-            onAfter?:               Callback;
+            onAfter?: Callback;
             /** Called for every slide that is came in the 1st position during the animation */
-            onAfterEach?:           Callback;
+            onAfterEach?: Callback;
             /** Called one time at the initialisation of the slider */
-            onStart?:               InitCallback;
+            onStart?: InitCallback;
             /** Internal function using GSAP to set CSS styles. Can be override to use another library */
-            _setStyle:              ( $elem, styles ) => void;
+            _setStyle: ($elem, styles) => void;
             /** Internal function using GSAP to tween element. Can be override to use another library */
-            _tweenTo:               ( $elem, styles ) => void;
+            _tweenTo: ($elem, styles) => void;
             /** Internal function using GSAP to initialize and tween element. Can be override to use another library */
-            _tweenFromTo:           ( $elem, init, styles  ) => void;
+            _tweenFromTo: ($elem, init, styles) => void;
             /** Internal function using GSAP to remove tweens from element. Can be override to use another library */
-            _killTweens:            ( $elem ) => void;
-        }
+            _killTweens: ($elem) => void;
+        };
 
         type ControlsOptions = {
-            $btPrev?:                 HTMLElement;
-            $btNext?:                 HTMLElement;
-            $pagination?:             HTMLElement;
-            paginationItemsSelector?: string;
+            $btPrev?: HTMLElement;
+            $btNext?: HTMLElement;
+            $btPause?: HTMLElement;
+            $tabsList?: HTMLElement;
+            tabsSelector?: string;
             /** In second */
-            autoslide?:               number | boolean;
-            swipe?:                   boolean;
-            enableKeyboard?:          boolean;
-            gestureOptions?:          FLib.Events.Gesture.Options;
-        }
+            autoslide?: number | boolean;
+            swipe?: boolean;
+            enableKeyboard?: boolean;
+            gestureOptions?: FLib.Events.Gesture.Options;
+            onAutoplayChange?: (isPlaying: boolean) => void;
+            onPreviousButtonClick?: (
+                $button: HTMLElement,
+                currentSlide: Slide,
+            ) => void;
+            onNextButtonClick?: (
+                $button: HTMLElement,
+                currentSlide: Slide,
+            ) => void;
+            onPauseButtonClick?: (
+                isPaused: boolean,
+                $button: HTMLElement,
+                currentSlide: Slide,
+            ) => void;
+            onTabClick?: ($button: HTMLElement, currentSlide: Slide) => void;
+        };
     }
 }
