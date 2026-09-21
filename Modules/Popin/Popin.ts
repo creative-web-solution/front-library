@@ -242,7 +242,7 @@ export default class Popin {
     };
 
     #setPopin = (resp: string): Promise<void> => {
-        this.#$popinContent.innerHTML = resp;
+        this.#$popinContent.replaceChildren(resp);
 
         return this.#options
             .onLoad(this.#$popin)
@@ -250,15 +250,14 @@ export default class Popin {
     };
 
     #clearPopin = (): void => {
-        this.#$popinContent.innerHTML = "";
+        this.#$popinContent.replaceChildren("");
         this.#resizeRAF();
         this.#focusControl.clean();
     };
 
     #setPopinError = (message: string): void => {
-        this.#$popinContent.innerHTML = quickTemplate(
-            this.#templates.errorMessage,
-            { message: message },
+        this.#$popinContent.replaceChildren(
+            quickTemplate(this.#templates.errorMessage, { message: message }),
         );
         this.#resizeRAF();
     };

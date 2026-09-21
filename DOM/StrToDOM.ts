@@ -1,36 +1,18 @@
 /**
  * Convert an html string into a DOM object
  *
- * @param tag - Used to create an element to convert html inside. 'DIV' by default
- *
  * @example
  * $element = strToDOM( html );
  *
  * @example
  * // Use of tag parameter
- * $li = strToDOM( '<li></li>', 'UL' );
+ * $li = strToDOM( '<li></li>' );
  *
  * @returns The created DOM element
  */
-export function strToDOM<T extends HTMLElement>(html: string, tag = "DIV"): T {
-    let $child;
+export function strToDOM<T extends HTMLElement>(html: string): T {
+    const range = document.createRange();
+    const $frag: DocumentFragment = range.createContextualFragment(html);
 
-    const $frag: DocumentFragment = document.createDocumentFragment();
-    const $elem: HTMLElement = document.createElement(tag);
-
-    $elem.innerHTML = html;
-
-    while ($elem.childNodes.length) {
-        $child = $elem.childNodes[0];
-
-        if ($child && $child.nodeType === 1) {
-            $frag.appendChild($child);
-        } else {
-            $elem.removeChild($child);
-        }
-    }
-
-    const $result = $frag.childNodes.length === 1 ? $frag.childNodes[0] : $frag;
-
-    return $result as T;
+    return ($frag.childNodes.length === 1 ? $frag.childNodes[0] : $frag) as T;
 }

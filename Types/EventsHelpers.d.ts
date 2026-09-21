@@ -295,6 +295,8 @@ declare namespace FLib {
                 onEnd?: Callback;
                 /** Called on every key */
                 onKey?: Callback;
+                /** Called on every printable key */
+                onPrintableKey?: Callback;
             };
         }
 

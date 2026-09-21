@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 7.1.62
+
+- [Autocomplete]: Rework + updates for accessibility
+- [KeyboardHandler]: Add onPrintableKey callback
+- Replace innerHTML by replaceChildren everywhere
+- Update DOM remove function
+- Update strToDOM function
+
 ## 7.1.61
 
 - [Slider]: Updates for accessibility

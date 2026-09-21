@@ -61,9 +61,7 @@ export default class KeyboardHandler {
         callbacks: string[],
     ): void => {
         callbacks.forEach((cb) => {
-            if (this.#options[cb]) {
-                this.#options[cb].call($context, event, $context);
-            }
+            this.#options[cb]?.call($context, event, $context);
         });
     };
 
@@ -83,6 +81,10 @@ export default class KeyboardHandler {
 
         this.#handleCallbacks(e, $target, ["onKey"]);
 
+        if (this.#isPrintableCharacter(key)) {
+            this.#handleCallbacks(e, $target, ["onPrintableKey"]);
+        }
+
         const FNC = this.#eventsName.get(key);
 
         if (FNC) {
@@ -90,9 +92,10 @@ export default class KeyboardHandler {
         }
     };
 
-    /**
-     * Add the binding
-     */
+    #isPrintableCharacter(str) {
+        return str.length === 1 && str.match(/\S| /);
+    }
+
     on(): this {
         on(this.#$element, {
             eventsName: "keydown",
@@ -103,9 +106,6 @@ export default class KeyboardHandler {
         return this;
     }
 
-    /**
-     * Remove the binding
-     */
     off(): this {
         off(this.#$element, {
             eventsName: "keydown",
