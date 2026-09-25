@@ -7,7 +7,7 @@ import { windowSize } from "../../DOM/WindowSize";
 import PopinBackground from "./PopinBackground";
 import { defaultOptions, CLICK_EVENT_NAME } from "./Tools";
 import quickTemplate from "../QuickTemplate";
-import FocusTrapHelper from "@creative-web-solution/front-library/Events/FocusTrapHelper";
+import FocusTrapHelper from "../../Helpers/FocusTrapHelper";
 
 /**
  * Create a simple popin

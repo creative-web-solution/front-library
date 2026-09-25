@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.1.64
+
+- [FocusTrapHelper]: Move file
+
 ## 7.1.63
 
 - [Autocomplete]: Add events + dispose function + update doc
