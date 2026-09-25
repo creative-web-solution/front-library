@@ -5,9 +5,9 @@ import { strToDOM } from "../../DOM/StrToDOM";
 import { append } from "../../DOM/Manipulation";
 import { windowSize } from "../../DOM/WindowSize";
 import PopinBackground from "./PopinBackground";
-import PopinAccessibility from "./PopinAccessibility";
 import { defaultOptions, CLICK_EVENT_NAME } from "./Tools";
 import quickTemplate from "../QuickTemplate";
+import FocusTrapHelper from "@creative-web-solution/front-library/Events/FocusTrapHelper";
 
 /**
  * Create a simple popin
@@ -31,7 +31,7 @@ export default class Popin {
     #$popinContent: HTMLElement;
     #$initialFocus;
     #isInlinePopin: boolean;
-    #focusControl: PopinAccessibility;
+    #focusControl: FocusTrapHelper;
     #keyboardControls;
     #options: FLib.Popin.Options;
     #controllerOptions: FLib.Popin.ControllerOptions | undefined;
@@ -86,7 +86,7 @@ export default class Popin {
             this.#$popin;
 
         // Keyboard TAB focus control
-        this.#focusControl = new PopinAccessibility(this.#$popin);
+        this.#focusControl = new FocusTrapHelper(this.#$popin);
 
         // ------------------- BINDING
 

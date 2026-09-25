@@ -1,4 +1,5 @@
 import type Autocomplete from "./";
+import { type SelectedOptionParam } from "./";
 
 export type RenderOptionsType<OptionDataType> = {
     $searchField: HTMLElement;
@@ -45,25 +46,28 @@ export type SourceOptionsType<OptionDataType> = {
 export type SourceReturnType<OptionDataType> = Promise<OptionDataType[]>;
 
 export default abstract class AbstractAutocompleteAdapter<OptionDataType> {
-    abstract render(
-        options: RenderOptionsType<OptionDataType>,
-    ): RenderReturnType;
-    abstract optionRender(
-        options: OptionRenderOptionsType<OptionDataType>,
-    ): OptionRenderReturnType;
+    abortSource?(): void;
+    dispose?(autocomplete: Autocomplete<OptionDataType>): void;
     abstract errorRender(
         options: ErrorRenderOptionsType<OptionDataType>,
     ): ErrorRenderReturnType;
     abstract noResultRender(
         options: NoResultRenderOptionsType<OptionDataType>,
     ): NoResultRenderReturnType;
-    updateSearchFieldValue?(
-        options?: UpdateSearchFieldValueOptionType<OptionDataType>,
-    ): UpdateSearchFieldValueReturnType;
+    onCloseLayer?(autocomplete: Autocomplete<OptionDataType>): void;
+    onOpenLayer?(autocomplete: Autocomplete<OptionDataType>): void;
+    onReady?(autocomplete: Autocomplete<OptionDataType>): void;
+    onSelect?(option: SelectedOptionParam<OptionDataType>): void;
+    abstract optionRender(
+        options: OptionRenderOptionsType<OptionDataType>,
+    ): OptionRenderReturnType;
+    abstract render(
+        options: RenderOptionsType<OptionDataType>,
+    ): RenderReturnType;
     abstract source(
         options: SourceOptionsType<OptionDataType>,
     ): SourceReturnType<OptionDataType>;
-    abortSource?(): void;
-    onOpenLayer?(autocomplete: Autocomplete<OptionDataType>): void;
-    onCloseLayer?(autocomplete: Autocomplete<OptionDataType>): void;
+    updateSearchFieldValue?(
+        options?: UpdateSearchFieldValueOptionType<OptionDataType>,
+    ): UpdateSearchFieldValueReturnType;
 }

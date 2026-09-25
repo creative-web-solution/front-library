@@ -1,34 +1,32 @@
-import { aClass, rClass }  from '../../DOM/Class';
-import { extend }          from '../../Helpers/Extend';
-import KeyboardHandler     from '../../Events/KeyboardHandler';
-import Tab                 from './Tab';
-
+import { aClass, rClass } from "../../DOM/Class";
+import { extend } from "../../Helpers/Extend";
+import KeyboardHandler from "../../Events/KeyboardHandler";
+import Tab from "./Tab";
 
 const DEFAULT_OPTIONS = {
-    "tabSelector":      "li[aria-selected]",
-    "selectOnFocus":    false,
-    "animations": {
-        "open": function( $tab: HTMLElement, $panel: HTMLElement ) {
-            aClass( [ $tab, $panel ], 'on' );
+    tabSelector: "li[aria-selected]",
+    selectOnFocus: false,
+    animations: {
+        open: function ($tab: HTMLElement, $panel: HTMLElement) {
+            aClass([$tab, $panel], "on");
 
             return Promise.resolve();
         },
-        "close": function( $tab: HTMLElement, $panel: HTMLElement ) {
-            rClass( [ $tab, $panel ], 'on' );
+        close: function ($tab: HTMLElement, $panel: HTMLElement) {
+            rClass([$tab, $panel], "on");
 
             return Promise.resolve();
         },
-        "destroy": function( $tab: HTMLElement, $panel: HTMLElement ) {
-            rClass( [ $tab, $panel ], 'on' );
+        destroy: function ($tab: HTMLElement, $panel: HTMLElement) {
+            rClass([$tab, $panel], "on");
 
             return Promise.resolve();
-        }
+        },
     },
-    "onOpenAtStart": null,
-    "onOpen": null,
-    "onClose": null
+    onOpenAtStart: null,
+    onOpen: null,
+    onClose: null,
 };
-
 
 /**
  * Tabs
@@ -95,148 +93,161 @@ const DEFAULT_OPTIONS = {
  * If the tabs are displayed vertically, add aria-orientation="vertical" on the role="tablist" element
  */
 export default class Tabs {
+    #STATUS_ON = "STATUS_ON";
+    #STATUS_OFF = "STATUS_OFF";
 
-    #options:        FLib.Tabs.Options;
-    #$TABS_LIST:     HTMLElement;
-    #$TABS:          NodeList;
-    #tablist:        Tab[];
-    #status:         string;
-    #VERTICAL_MODE:  boolean;
-    #lastOpenedTab:  Tab | undefined;
+    #options: FLib.Tabs.Options;
+    #$TABS_LIST!: HTMLElement;
+    #$TABS!: NodeList;
+    #tablist: Tab[] = [];
+    #status: string = this.#STATUS_OFF;
+    #VERTICAL_MODE: boolean = false;
+    #lastOpenedTab: Tab | undefined;
     #lastFocusedTab: Tab | undefined;
-    #keyboard:       KeyboardHandler | undefined;
-    #$tabsWrapper:   HTMLElement;
+    #keyboard: KeyboardHandler | undefined;
+    #$tabsWrapper: HTMLElement;
 
-    #STATUS_ON  = 'STATUS_ON';
-    #STATUS_OFF = 'STATUS_OFF';
+    constructor(
+        $tabsWrapper: HTMLElement,
+        userOptions: Partial<FLib.Tabs.Options>,
+    ) {
+        this.#$tabsWrapper = $tabsWrapper;
+        this.#options = extend(DEFAULT_OPTIONS, userOptions);
 
-    constructor( $tabsWrapper: HTMLElement, userOptions: Partial<FLib.Tabs.Options> ) {
-        this.#$tabsWrapper  = $tabsWrapper;
+        this.#init();
+    }
 
-        this.#options       = extend( DEFAULT_OPTIONS, userOptions );
+    #init(): void {
+        this.#$TABS_LIST = this.#$tabsWrapper.querySelector(
+            '[role="tablist"]',
+        ) as HTMLElement;
+        this.#$TABS = this.#$TABS_LIST.querySelectorAll(
+            this.#options.tabSelector,
+        );
+        this.#tablist = [];
+        this.#status = this.#STATUS_OFF;
 
-        this.#$TABS_LIST    = $tabsWrapper.querySelector( '[role="tablist"]' ) as HTMLElement;
-        this.#$TABS         = this.#$TABS_LIST.querySelectorAll( this.#options.tabSelector );
-        this.#tablist       = [];
-        this.#status        = this.#STATUS_OFF;
-
-        this.#VERTICAL_MODE = this.#$TABS_LIST.getAttribute( 'aria-orientation' ) === 'vertical';
+        this.#VERTICAL_MODE =
+            this.#$TABS_LIST.getAttribute("aria-orientation") === "vertical";
 
         this.#on();
     }
 
-
-    #onOpenTab = ( tab: Tab ): void => {
-        if ( this.#lastOpenedTab ) {
-            this.#lastOpenedTab.close( true );
+    #onOpenTab = (tab: Tab): void => {
+        if (this.#lastOpenedTab) {
+            this.#lastOpenedTab.close(true);
         }
 
         this.#lastOpenedTab = tab;
-    }
-
+        this.#lastFocusedTab = tab;
+    };
 
     #onNext = (): void => {
         if (this.#options.selectOnFocus) {
-            const lastIndex   = this.#lastOpenedTab ? this.#lastOpenedTab.index : 0;
-            const indexToOpen = lastIndex + 1 >= this.#tablist.length ? 0 : lastIndex + 1;
+            const lastIndex = this.#lastOpenedTab
+                ? this.#lastOpenedTab.index
+                : 0;
+            const indexToOpen =
+                lastIndex + 1 >= this.#tablist.length ? 0 : lastIndex + 1;
 
-            this.#tablist[ indexToOpen ].open();
+            this.#tablist[indexToOpen].open();
             return;
         }
 
-        const lastIndex   = this.#lastFocusedTab ? this.#lastFocusedTab.index : 0;
-        const indexToOpen = lastIndex + 1 >= this.#tablist.length ? 0 : lastIndex + 1;
+        const lastIndex = this.#lastFocusedTab ? this.#lastFocusedTab.index : 0;
+        const indexToOpen =
+            lastIndex + 1 >= this.#tablist.length ? 0 : lastIndex + 1;
 
-        this.#tablist[ indexToOpen ].focusTab();
-    }
-
+        this.#tablist[indexToOpen].focusTab();
+    };
 
     #onPrevious = (): void => {
         if (this.#options.selectOnFocus) {
-            const lastIndex   = this.#lastOpenedTab ? this.#lastOpenedTab.index : 0;
-            const indexToOpen = lastIndex - 1 < 0 ? this.#tablist.length - 1 : lastIndex - 1;
+            const lastIndex = this.#lastOpenedTab
+                ? this.#lastOpenedTab.index
+                : 0;
+            const indexToOpen =
+                lastIndex - 1 < 0 ? this.#tablist.length - 1 : lastIndex - 1;
 
-            this.#tablist[ indexToOpen ].open();
+            this.#tablist[indexToOpen].open();
             return;
         }
 
-        const lastIndex   = this.#lastFocusedTab ? this.#lastFocusedTab.index : 0;
-        const indexToOpen = lastIndex - 1 < 0 ? this.#tablist.length - 1 : lastIndex - 1;
+        const lastIndex = this.#lastFocusedTab ? this.#lastFocusedTab.index : 0;
+        const indexToOpen =
+            lastIndex - 1 < 0 ? this.#tablist.length - 1 : lastIndex - 1;
 
-        this.#tablist[ indexToOpen ].focusTab();
-    }
-
+        this.#tablist[indexToOpen].focusTab();
+    };
 
     #onFirst = (): void => {
         if (this.#options.selectOnFocus) {
-            this.#tablist[ 0 ].open();
+            this.#tablist[0].open();
             return;
         }
 
-        this.#tablist[ 0 ].focusTab();
-    }
-
+        this.#tablist[0].focusTab();
+    };
 
     #onLast = (): void => {
         if (this.#options.selectOnFocus) {
-            this.#tablist[ this.#tablist.length - 1 ].open();
+            this.#tablist[this.#tablist.length - 1].open();
             return;
         }
 
-        this.#tablist[ this.#tablist.length - 1 ].focusTab();
-    }
-
+        this.#tablist[this.#tablist.length - 1].focusTab();
+    };
 
     #on = (): void => {
         let hasAnOpenedTab;
 
-        if( this.#status === this.#STATUS_ON ) {
+        if (this.#status === this.#STATUS_ON) {
             return;
         }
 
         this.#status = this.#STATUS_ON;
 
-        this.#$TABS.forEach( ( $tab, index ) => {
-            const tab = new Tab( $tab as HTMLElement, {
+        this.#$TABS.forEach(($tab, index) => {
+            const tab = new Tab($tab as HTMLElement, {
                 ...this.#options,
                 index,
-                "onOpenTab": this.#onOpenTab,
-                "onFocusTab": this.#onFocusTab
-            } );
+                onOpenTab: this.#onOpenTab,
+                onFocusTab: this.#onFocusTab,
+            });
 
-            this.#tablist.push( tab );
+            this.#tablist.push(tab);
 
-            if ( tab.isOpened ) {
+            if (tab.isOpened) {
                 hasAnOpenedTab = tab.isOpened;
             }
-        } );
+        });
 
-        if ( !hasAnOpenedTab && this.#tablist.length ) {
-            this.#tablist[ 0 ].open( true );
+        if (!hasAnOpenedTab && this.#tablist.length) {
+            this.#tablist[0].open(true);
         }
 
-        if ( this.#VERTICAL_MODE ) {
-            this.#keyboard = new KeyboardHandler( this.#$tabsWrapper, {
-                "selector": this.#options.tabSelector,
-                "onUp":     this.#onPrevious,
-                "onDown":   this.#onNext,
-                "onHome":   this.#onFirst,
-                "onEnd":   this.#onLast,
-                "onSelect": this.#onSelect
-            } );
+        if (this.#VERTICAL_MODE) {
+            this.#keyboard = new KeyboardHandler(this.#$tabsWrapper, {
+                selector: this.#options.tabSelector,
+                onUp: this.#onPrevious,
+                onDown: this.#onNext,
+                onHome: this.#onFirst,
+                onEnd: this.#onLast,
+                onSelect: this.#onSelect,
+            });
 
             return;
         }
 
-        this.#keyboard = new KeyboardHandler( this.#$tabsWrapper, {
-            "selector": this.#options.tabSelector,
-            "onRight":  this.#onNext,
-            "onLeft":   this.#onPrevious,
-            "onHome":   this.#onFirst,
-            "onEnd":   this.#onLast,
-            "onSelect": this.#onSelect
-        } );
-    }
+        this.#keyboard = new KeyboardHandler(this.#$tabsWrapper, {
+            selector: this.#options.tabSelector,
+            onRight: this.#onNext,
+            onLeft: this.#onPrevious,
+            onHome: this.#onFirst,
+            onEnd: this.#onLast,
+            onSelect: this.#onSelect,
+        });
+    };
 
     #onSelect = (): void => {
         if (!this.#lastFocusedTab) {
@@ -244,26 +255,24 @@ export default class Tabs {
         }
 
         this.#lastFocusedTab.open();
-    }
+    };
 
     #onFocusTab = (tab: Tab): void => {
         this.#lastFocusedTab = tab;
-    }
-
+    };
 
     #off = (): void => {
-        if( this.#status === this.#STATUS_OFF ){
+        if (this.#status === this.#STATUS_OFF) {
             return;
         }
         this.#status = this.#STATUS_OFF;
 
-        this.#tablist.forEach( tab => {
+        this.#tablist.forEach((tab) => {
             tab.destroy();
-        } );
+        });
 
         this.#keyboard?.off();
-    }
-
+    };
 
     /**
      * Remove all events, css class, ...
@@ -273,7 +282,6 @@ export default class Tabs {
 
         return this;
     }
-
 
     /**
      * Restart the module

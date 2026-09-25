@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 7.1.63
+
+- [Autocomplete]: Add events + dispose function + update doc
+- [Tabs]: Fix focus on tabs
+- Add FocusTrapHelper
+
 ## 7.1.62
 
 - [Autocomplete]: Rework + updates for accessibility

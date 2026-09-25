@@ -1,16 +1,16 @@
-import { FOCUSABLE_ELEMENTS_SELECTOR } from "./Tools";
+import { FOCUSABLE_ELEMENTS_SELECTOR } from "../Tools/DOM";
 
-export default class PopinAccessibility {
+export default class FocusTrapHelper {
     #$elements: HTMLElement[] | undefined;
     #$firstElement: HTMLElement | undefined;
     #$lastElement: HTMLElement | undefined;
     #$startSentinel: HTMLElement | null = null;
     #$endSentinel: HTMLElement | null = null;
-    #$popin: HTMLElement;
+    #$element: HTMLElement;
     #isFocusBackHandled: boolean = false;
 
-    constructor($popin: HTMLElement) {
-        this.#$popin = $popin;
+    constructor($element: HTMLElement) {
+        this.#$element = $element;
 
         this.refresh();
     }
@@ -29,21 +29,21 @@ export default class PopinAccessibility {
         this.#$lastElement.focus();
     }
 
-    handleBackwardTab(e: Event): void {
+    handleBackwardTab = (e: Event): void => {
         this.#getFocusableElements();
         if (document.activeElement === this.#$firstElement) {
             e.preventDefault();
             this.focusLastElement();
         }
-    }
+    };
 
-    handleForwardTab(e: Event): void {
+    handleForwardTab = (e: Event): void => {
         this.#getFocusableElements();
         if (document.activeElement === this.#$lastElement) {
             e.preventDefault();
             this.focusFirstElement();
         }
-    }
+    };
 
     refresh(): void {
         this.#addSentinels();
@@ -53,11 +53,16 @@ export default class PopinAccessibility {
 
     #getFocusableElements(): void {
         this.#$elements = Array.from(
-            this.#$popin.querySelectorAll<HTMLElement>(
+            this.#$element.querySelectorAll<HTMLElement>(
                 FOCUSABLE_ELEMENTS_SELECTOR,
             ),
-        ).filter(($element) => $element.offsetParent !== null && $element !== this.#$startSentinel && $element !== this.#$endSentinel);
-        this.#$firstElement = this.#$elements[0] ?? this.#$popin;
+        ).filter(
+            ($element) =>
+                $element.offsetParent !== null &&
+                $element !== this.#$startSentinel &&
+                $element !== this.#$endSentinel,
+        );
+        this.#$firstElement = this.#$elements[0] ?? this.#$element;
         this.#$lastElement = this.#$elements[this.#$elements.length - 1];
     }
 
@@ -73,8 +78,8 @@ export default class PopinAccessibility {
             $sentinel.style.cssText =
                 "position:fixed;width:1px;height:1px;overflow:hidden;";
         });
-        this.#$popin.prepend(this.#$startSentinel);
-        this.#$popin.append(this.#$endSentinel);
+        this.#$element.prepend(this.#$startSentinel);
+        this.#$element.append(this.#$endSentinel);
         this.#$startSentinel.addEventListener("focus", () =>
             this.focusLastElement(),
         );
@@ -92,7 +97,7 @@ export default class PopinAccessibility {
     }
 
     #onFocusBackInDocument = (e: FocusEvent): void => {
-        if (!this.#$popin.contains(e.target as Node)) {
+        if (!this.#$element.contains(e.target as Node)) {
             this.focusFirstElement();
         }
     };

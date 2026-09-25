@@ -1,11 +1,11 @@
-import { off, on } from "../../Events/EventsManager";
+import { fire, off, on } from "../../Events/EventsManager";
 import { debounce } from "../../Helpers/Debounce";
 import AbstractAutocompleteAdapter from "./AbstractAutocompleteAdapter";
 import { extend } from "../../Helpers/Extend";
 import { offset } from "../../DOM/Offset";
 import { height } from "../../DOM/Size";
 import { outerHeight, outerSize } from "../../DOM/OuterSize";
-import { position } from "@creative-web-solution/front-library/DOM/Position";
+import { position } from "../../DOM/Position";
 
 type AutocompleteOptions<OptionDataType> = {
     adapter: AbstractAutocompleteAdapter<OptionDataType>;
@@ -14,8 +14,12 @@ type AutocompleteOptions<OptionDataType> = {
     hideLayerDelay: number;
     layerPosition: "top" | "bottom";
     minChar: number;
-    onSelect?: (options: SelectedOptionParam<OptionDataType>) => void;
+    onCloseLayer?(autocomplete: Autocomplete<OptionDataType>): void;
+    onOpenLayer?(autocomplete: Autocomplete<OptionDataType>): void;
+    onReady?(autocomplete: Autocomplete<OptionDataType>): void;
+    onSelect?(option: SelectedOptionParam<OptionDataType>): void;
     $searchField: HTMLInputElement;
+    showLayerClass?: string;
 };
 
 type AutocompleteUserOptions<OptionDataType> = Partial<
@@ -25,7 +29,8 @@ type AutocompleteUserOptions<OptionDataType> = Partial<
     $searchField: HTMLInputElement;
 };
 
-type SelectedOptionParam<OptionDataType> = {
+export type SelectedOptionParam<OptionDataType> = {
+    autocomplete: Autocomplete<OptionDataType>;
     option: OptionDataType;
     index: number;
     query: string;
@@ -37,6 +42,13 @@ type OptionType<OptionDataType> = {
     option: OptionDataType;
     $option: HTMLElement;
 };
+
+export const AutocompleteEventsName = {
+    onReady: "onready",
+    onSelect: "onselect",
+    onOpenLayer: "onopenlayer",
+    onCloseLayer: "oncloselayer",
+} as const;
 
 const ARIA_SELECTED_ATTRIBUTE = "aria-selected";
 const FOCUSED_ATTRIBUTE = "data-focus";
@@ -81,6 +93,14 @@ export default class Autocomplete<OptionDataType> {
         return this.#isDisabled || this.#$searchField.disabled;
     }
 
+    get $layer(): HTMLElement {
+        return this.#$layer;
+    }
+
+    get $list(): HTMLElement {
+        return this.#$list;
+    }
+
     get $searchField(): HTMLInputElement {
         return this.#$searchField;
     }
@@ -103,6 +123,8 @@ export default class Autocomplete<OptionDataType> {
         this.#initSearchFieldEvents();
         this.#initListboxEvents();
         this.#initButtonEvents();
+
+        setTimeout(this.#dispatchReadyEvents, 0);
     }
 
     #initElements(): void {
@@ -213,6 +235,20 @@ export default class Autocomplete<OptionDataType> {
             callback: this.#onButtonClickHandler,
         });
     }
+
+    #dispatchReadyEvents = (): void => {
+        this.#configuration.onReady?.(this);
+        fire(this, {
+            eventsName: AutocompleteEventsName.onReady,
+            detail: this,
+        });
+
+        this.#configuration.adapter.onReady?.(this);
+        fire(this.#configuration.adapter, {
+            eventsName: AutocompleteEventsName.onReady,
+            detail: this,
+        });
+    };
 
     #onSearchFieldKeydownHandler = (e: KeyboardEvent): void => {
         if (this.isDisable || e.ctrlKey || e.shiftKey) {
@@ -397,38 +433,38 @@ export default class Autocomplete<OptionDataType> {
         this.#show();
     };
 
-    #onSearchFieldFocusHandler = (e: KeyboardEvent): void => {
+    #onSearchFieldFocusHandler = (e: Event): void => {
         this.#currentQuery = this.#$searchField.value;
         this.#setVisualFocusOnSearchField();
         this.#highlightedOption = null;
         this.#clearOptionsAttribute();
     };
 
-    #onSearchFieldBlurHandler = (e: KeyboardEvent): void => {
+    #onSearchFieldBlurHandler = (e: Event): void => {
         this.#clearVisualFocus();
     };
 
-    #onListBoxOverHandler = (e: KeyboardEvent): void => {
+    #onListBoxOverHandler = (e: PointerEvent): void => {
         this.#listboxHasHover = true;
     };
 
-    #onListBoxOutHandler = (e: KeyboardEvent): void => {
+    #onListBoxOutHandler = (e: PointerEvent): void => {
         this.#listboxHasHover = false;
         this.#requestHide();
     };
 
-    #onOptionClickHandler = (e: KeyboardEvent, $target: HTMLElement): void => {
+    #onOptionClickHandler = (e: PointerEvent, $target: HTMLElement): void => {
         const option = this.#getOptionByElement($target);
         this.#select(option);
         this.#hide(true);
     };
 
-    #onOptionOverHandler = (e: KeyboardEvent): void => {
+    #onOptionOverHandler = (e: PointerEvent): void => {
         this.#listboxHasHover = true;
         this.#show();
     };
 
-    #onOptionOutHandler = (e: KeyboardEvent): void => {
+    #onOptionOutHandler = (e: PointerEvent): void => {
         this.#listboxHasHover = false;
         this.#requestHide();
     };
@@ -474,10 +510,27 @@ export default class Autocomplete<OptionDataType> {
 
         this.#hide();
 
-        this.#configuration.onSelect?.({
+        this.#dispatchSelectEvents({
             ...newSelectedOption,
+            autocomplete: this,
             query: this.#currentQuery,
             results: this.#options.map((result) => result.option),
+        });
+    }
+
+    #dispatchSelectEvents(
+        eventParam: SelectedOptionParam<OptionDataType>,
+    ): void {
+        this.#configuration.onSelect?.({ ...eventParam });
+        fire(this, {
+            eventsName: AutocompleteEventsName.onSelect,
+            detail: { ...eventParam },
+        });
+
+        this.#configuration.adapter.onSelect?.({ ...eventParam });
+        fire(this.#configuration.adapter, {
+            eventsName: AutocompleteEventsName.onSelect,
+            detail: { ...eventParam },
         });
     }
 
@@ -614,6 +667,7 @@ export default class Autocomplete<OptionDataType> {
 
     async #sourceCall(query: string): Promise<void> {
         this.#currentQuery = query;
+        this.#selectedOption = null;
 
         try {
             const results = await this.#adapter.source({
@@ -671,7 +725,6 @@ export default class Autocomplete<OptionDataType> {
                 autocomplete: this,
             }),
         );
-        this.#$layer.setAttribute("aria-hidden", "true");
         this.#show();
     }
 
@@ -716,7 +769,11 @@ export default class Autocomplete<OptionDataType> {
 
         const wrapperStyle = this.#$layer.style;
 
-        wrapperStyle.display = "block";
+        if (this.#configuration.showLayerClass) {
+            this.#$layer.classList.add(this.#configuration.showLayerClass);
+        } else {
+            wrapperStyle.display = "block";
+        }
 
         if (!this.#configuration.cssPositionning) {
             const parentFieldOffset = offset(this.#$searchField.parentElement!);
@@ -746,7 +803,25 @@ export default class Autocomplete<OptionDataType> {
             });
         }, 0);
 
+        this.#dispatchOpenLayerEvents();
+    }
+
+    #dispatchOpenLayerEvents(): void {
+        this.#configuration.onOpenLayer?.(this);
+        fire(this, {
+            eventsName: AutocompleteEventsName.onOpenLayer,
+            detail: this,
+        });
+
         this.#configuration.adapter.onOpenLayer?.(this);
+        fire(this.#configuration.adapter, {
+            eventsName: AutocompleteEventsName.onOpenLayer,
+            detail: this,
+        });
+    }
+
+    hideLayer(): void {
+        this.#hide(true);
     }
 
     #hide(force: boolean = false): void {
@@ -773,14 +848,32 @@ export default class Autocomplete<OptionDataType> {
         this.#clearActiveDescendant();
         this.#$button?.setAttribute("aria-expanded", "false");
 
-        this.#$layer.style.display = "none";
+        if (this.#configuration.showLayerClass) {
+            this.#$layer.classList.remove(this.#configuration.showLayerClass);
+        } else {
+            this.#$layer.style.display = "none";
+        }
+
         this.#$layer.inert = true;
         this.#selectionLocked = true;
         this.#highlightedOption = null;
-        this.#selectedOption = null;
         this.#clearOptionsAttribute();
 
+        this.#dispatchCloseLayerEvents();
+    }
+
+    #dispatchCloseLayerEvents(): void {
+        this.#configuration.onCloseLayer?.(this);
+        fire(this, {
+            eventsName: AutocompleteEventsName.onCloseLayer,
+            detail: this,
+        });
+
         this.#configuration.adapter.onCloseLayer?.(this);
+        fire(this.#configuration.adapter, {
+            eventsName: AutocompleteEventsName.onCloseLayer,
+            detail: this,
+        });
     }
 
     #clickOutsideHandler = (e: Event): void => {
@@ -813,7 +906,6 @@ export default class Autocomplete<OptionDataType> {
         this.#selectedOption = null;
         this.#highlightedOption = null;
         this.#$list.replaceChildren();
-        this.#$layer.removeAttribute("aria-hidden");
         this.#$searchField.removeAttribute("aria-describedby");
         this.#$searchField.removeAttribute("aria-activedescendant");
 
@@ -825,5 +917,89 @@ export default class Autocomplete<OptionDataType> {
         this.#$searchField.value = "";
 
         return this;
+    }
+
+    dispose(): void {
+        this.reset();
+        this.#disposeSearchFieldEvents();
+        this.#disposeListboxEvents();
+        this.#disposeButtonEvents();
+
+        off(document.body, {
+            eventsName: "click",
+            callback: this.#clickOutsideHandler,
+        });
+
+        this.#$searchField.removeAttribute("autocomplete");
+        this.#$searchField.removeAttribute("aria-autocomplete");
+        this.#$searchField.removeAttribute("aria-expanded");
+        this.#$searchField.removeAttribute("role");
+
+        this.#configuration.adapter.dispose?.(this);
+    }
+
+    #disposeSearchFieldEvents(): void {
+        off(this.#$searchField, {
+            eventsName: "keydown",
+            callback: this.#onSearchFieldKeydownHandler,
+        });
+
+        off(this.#$searchField, {
+            eventsName: "keyup",
+            callback: this.#onSearchFieldKeyupHandler,
+        });
+
+        off(this.#$searchField, {
+            eventsName: "click",
+            callback: this.#onSearchFieldClickHandler,
+        });
+
+        off(this.#$searchField, {
+            eventsName: "focus",
+            callback: this.#onSearchFieldFocusHandler,
+        });
+
+        off(this.#$searchField, {
+            eventsName: "blur",
+            callback: this.#onSearchFieldBlurHandler,
+        });
+    }
+
+    #disposeListboxEvents(): void {
+        off(this.#$list, {
+            eventsName: "pointerover",
+            callback: this.#onListBoxOverHandler,
+        });
+
+        off(this.#$list, {
+            eventsName: "pointerout",
+            callback: this.#onListBoxOutHandler,
+        });
+
+        off(this.#$list, {
+            eventsName: "click",
+            callback: this.#onOptionClickHandler,
+        });
+
+        off(this.#$list, {
+            eventsName: "pointerover",
+            callback: this.#onOptionOverHandler,
+        });
+
+        off(this.#$list, {
+            eventsName: "pointerout",
+            callback: this.#onOptionOutHandler,
+        });
+    }
+
+    #disposeButtonEvents(): void {
+        if (!this.#$button) {
+            return;
+        }
+
+        off(this.#$button, {
+            eventsName: "click",
+            callback: this.#onButtonClickHandler,
+        });
     }
 }
